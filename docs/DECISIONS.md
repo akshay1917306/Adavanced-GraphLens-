@@ -1,0 +1,22 @@
+# Decision log
+
+Closes the open decisions in blueprint v1.0 section 5.3. A decision that needs
+measurement is assigned to the phase that measures it. Changes to frozen decisions
+go through an ADR (see `docs/adr/`).
+
+| # | Decision | Outcome | Status | Date |
+|---|---|---|---|---|
+| D1 | Phase plan | Follow the blueprint roadmap (section 5.1): phases 0 to 8. The owner's earlier generic list (landing page, auth, ACL...) came from a different project and is not used | Owner said "start the phase" after this was proposed; please confirm at Phase 0 review | 2026-10-21 |
+| D2 | LLM provider | OpenAI, see ADR-0001 | Provider chosen by owner; ADR text awaiting review | 2026-10-21 |
+| D3 | Corpus and domain | Research literature. Phase 0 uses a 10-document **synthetic** fixture. The real corpus (200 to 300 CC BY papers on one topic) is chosen by the owner before Phase 1 | Open: owner picks topic | |
+| D4 | Ontology scope | 6 entity types, 8 predicates (blueprint default), `ontology/research_v1.yaml` | Decided | 2026-10-21 |
+| D5 | Extraction model | `LLM_MODEL_SMALL` first; compare on a 5% sample in Phase 2, upgrade if precision < 0.80 | Method decided, measured in Phase 2 | 2026-10-21 |
+| D6 | Gleaning passes | Compare 0 and 2 on the sample in Phase 2 | Method decided, measured in Phase 2 | 2026-10-21 |
+| D7 | Community level for global search | Default level 1; test 0 and 2 in Phase 3 | Decided (default) | 2026-10-21 |
+| D8 | Neo4j edition | Community 5.26 (LTS line), self-hosted in Docker | Decided | 2026-10-21 |
+| D9 | Embeddings | Local bge-base-en-v1.5, 768 dimensions (Phase 1) | Decided | 2026-10-21 |
+| D10 | Judge protocol | `LLM_MODEL_MAIN`, answer order swapped, 10% human spot check (ADR-0001) | Decided | 2026-10-21 |
+| D11 | Sign-in method | Deferred to v1.5 | Deferred | 2026-10-21 |
+| D12 | Hosting | Deferred to Phase 7 | Deferred | 2026-10-21 |
+| D13 | Phase tags | Tag `phase-N` on the approved merge commit (the blueprint does not name tags) | Proposed | 2026-10-21 |
+| D14 | Python packaging | `uv` with a lock file; exact versions in `api/pyproject.toml` | Decided | 2026-10-21 |
