@@ -1,0 +1,25 @@
+# Secrets: never commit real environment files
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local data volumes and editor files
+.data/
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
