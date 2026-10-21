@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>CommunityLens: Summarizing Research Themes</title></head>
+<body>
+<h1>CommunityLens: Summarizing Research Themes with Graph Communities</h1>
+<p><strong>Authors:</strong> Rhea Lindqvist, Priya Saldanha</p>
+<p><strong>Affiliation:</strong> Harborview University</p>
+<p><em>Synthetic fixture document. All names, methods, datasets, and results are fictional.</em></p>
+<h2>Abstract</h2>
+<p>CommunityLens groups entities in a knowledge graph into communities and writes a
+short summary for each one. It targets corpus-level summarization, such as
+answering "what are the main themes in this collection".</p>
+<h2>Method</h2>
+<p>CommunityLens applies hierarchical Leiden clustering to an entity graph built
+from paper abstracts, then summarizes each community.</p>
+<h2>Evaluation</h2>
+<p>We evaluate on ThemeSet, a set of 120 corpus-level questions. Human judges prefer
+CommunityLens summaries over a vector RAG baseline in 68 percent of pairs.</p>
+</body>
+</html>

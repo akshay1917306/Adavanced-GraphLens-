@@ -1,0 +1,30 @@
+source,source_type,predicate,target,target_type,document
+LatticeRank paper,Paper,PROPOSES,LatticeRank,Method,p01_lattice_rank.md
+LatticeRank paper,Paper,AUTHORED_BY,Ilsa Kerrow,Author,p01_lattice_rank.md
+LatticeRank paper,Paper,AUTHORED_BY,Tomas Venn,Author,p01_lattice_rank.md
+Ilsa Kerrow,Author,AFFILIATED_WITH,Northfield Institute of Computing,Organization,p01_lattice_rank.md
+LatticeRank,Method,ADDRESSES,Multi-hop question answering,Task,p01_lattice_rank.md
+LatticeRank,Method,EVALUATED_ON,MiraQA,Dataset,p01_lattice_rank.md
+LatticeRank,Method,EVALUATED_ON,ChainBench,Dataset,p01_lattice_rank.md
+MiraQA paper,Paper,AUTHORED_BY,Priya Saldanha,Author,p02_mira_qa.md
+MiraQA paper,Paper,AUTHORED_BY,Ilsa Kerrow,Author,p02_mira_qa.md
+DenseLite,Method,EVALUATED_ON,MiraQA,Dataset,p02_mira_qa.md
+HopFuse paper,Paper,PROPOSES,HopFuse,Method,p03_hop_fuse.md
+HopFuse paper,Paper,USES,DenseLite,Method,p03_hop_fuse.md
+HopFuse paper,Paper,CITES,LatticeRank paper,Paper,p03_hop_fuse.md
+HopFuse paper,Paper,CITES,MiraQA paper,Paper,p03_hop_fuse.md
+HopFuse,Method,IMPROVES_ON,LatticeRank,Method,p03_hop_fuse.md
+HopFuse,Method,EVALUATED_ON,MiraQA,Dataset,p03_hop_fuse.md
+HopFuse,Method,EVALUATED_ON,ChainBench,Dataset,p03_hop_fuse.md
+Ada Morrow,Author,AFFILIATED_WITH,Coastline AI Lab,Organization,p04_chainbench.txt
+Jonah Pell,Author,AFFILIATED_WITH,Coastline AI Lab,Organization,p04_chainbench.txt
+DenseLite paper,Paper,PROPOSES,DenseLite,Method,p05_denselite.md
+DenseLite,Method,EVALUATED_ON,ChainBench,Dataset,p05_denselite.md
+CommunityLens paper,Paper,PROPOSES,CommunityLens,Method,p06_community_lens.html
+CommunityLens,Method,ADDRESSES,Corpus-level summarization,Task,p06_community_lens.html
+CommunityLens,Method,EVALUATED_ON,ThemeSet,Dataset,p06_community_lens.html
+Rhea Lindqvist,Author,AFFILIATED_WITH,Harborview University,Organization,p06_community_lens.html
+PathExplain paper,Paper,PROPOSES,PathExplain,Method,p08_path_explain.md
+PathExplain,Method,ADDRESSES,Relation explanation,Task,p08_path_explain.md
+PathExplain,Method,IMPROVES_ON,HopFuse,Method,p08_path_explain.md
+PathExplain,Method,EVALUATED_ON,ChainBench,Dataset,p08_path_explain.md

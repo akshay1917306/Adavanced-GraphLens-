@@ -1,0 +1,18 @@
+ChainBench: Long Reasoning Chains Over Technical Reports
+
+Authors: Ada Morrow, Jonah Pell
+Affiliation: Coastline AI Lab
+Synthetic fixture document. All names, methods, datasets, and results are fictional.
+
+Abstract
+ChainBench is a benchmark of 1,500 questions whose answers require three to
+five reasoning hops across fictional technical reports. It targets multi-hop
+question answering and also includes 200 unanswerable questions to test
+refusal behaviour.
+
+Data
+Each question comes with the list of supporting passages. The unanswerable
+questions look similar but have no supporting passage in the corpus.
+
+Baselines
+BM25 ranking reaches 38.2 exact match. DenseLite reaches 40.9 exact match.

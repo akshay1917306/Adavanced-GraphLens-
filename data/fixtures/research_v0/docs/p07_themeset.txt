@@ -1,0 +1,13 @@
+ThemeSet: Corpus-Level Questions for Evaluating Global Search
+
+Authors: Rhea Lindqvist
+Affiliation: Harborview University
+Synthetic fixture document. All names, methods, datasets, and results are fictional.
+
+Abstract
+ThemeSet contains 120 questions about whole collections of documents, for
+example "which research directions appear most often". It targets corpus-level
+summarization. Answers are judged pairwise on comprehensiveness and diversity.
+
+Usage
+CommunityLens was the first method evaluated on ThemeSet.
