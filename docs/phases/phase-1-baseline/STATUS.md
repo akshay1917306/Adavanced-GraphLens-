@@ -1,13 +1,18 @@
 # Phase 1 status
 
-Last updated: 2026-10-23
+Last updated: 2026-10-24
 
 ## State
 
-**In progress. Ingest, chunking, embeddings and the baseline answer are built and verified
-(steps 1 to 5 of 8), the evaluation set (step 7) is approved and loaded, and the baseline
-results table (step 8) is recorded, and the Prefect flow (step 6) works.** Left: the phase
-documents (walkthrough, README, notebook notes), CI for `pipeline/`, and the owner's review.
+**Built and verified by Claude on 2026-10-24. Waiting for the owner's review.** All 8 steps
+are done: corpus, ingest, chunking, embeddings, baseline answer, Prefect flow, evaluation set
+(approved), baseline results. WALKTHROUGH.md and the root README are written. The phase is
+**not approved, not pushed, not tagged**. Local branch `phase-1/baseline`; nothing from
+Phase 1 is on GitHub.
+
+Final checks run on 2026-10-24 on the owner's machine: 106 tests pass, `ruff` clean,
+`eval-verify` 0 problems, API health ok, data intact (726 units, 726 vectors, 40 questions,
+40 results). The CI job for `pipeline/` is written but has **not run on GitHub**.
 
 ## Completed
 
