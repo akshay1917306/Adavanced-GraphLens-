@@ -1,7 +1,7 @@
 {
   "version": 0,
   "corpus": "qa_v0",
-  "status": "DRAFT, owner review pending",
+  "status": "APPROVED by the owner on 2026-10-24 (message: all 40 OK as drafted; no per-question edits)",
   "drafted_by": "Claude (from the abstracts of the 25 papers)",
   "note": "Every quote is an exact substring of the cited text unit; this is checked by a script.",
   "questions": [
@@ -18,7 +18,7 @@
           "quote": "verbalized tables from Wikipedia and graphs from Wikidata are used as augmented knowledge sources"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L02",
@@ -33,7 +33,7 @@
           "quote": "technique to create counterfactual evaluation and training data with minimal human supervision"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L03",
@@ -48,7 +48,7 @@
           "quote": "reduces the model size up to 98% compared to conventional KGE models"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L04",
@@ -63,7 +63,7 @@
           "quote": "the answers are only applicable when certain conditions apply"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L05",
@@ -78,7 +78,7 @@
           "quote": "with less than 40% of the computation cost"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L06",
@@ -93,7 +93,7 @@
           "quote": "we evaluate it on two reading comprehension datasets, namely WikiHop and MedHop"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L07",
@@ -108,7 +108,7 @@
           "quote": "We study learning from user feedback for extractive question answering by simulating feedback using supervised data"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L08",
@@ -123,7 +123,7 @@
           "quote": "obtains a 9.88% improvements in the F1 metric on CQA dataset"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L09",
@@ -138,7 +138,7 @@
           "quote": "while converging 4x-7x faster"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L10",
@@ -153,7 +153,7 @@
           "quote": "which generates query graphs by exploring the relevant facts of mentioned entities"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L11",
@@ -168,7 +168,7 @@
           "quote": "we also create a unified dataset building on four previously released numerical QA datasets over tabular data"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L12",
@@ -183,7 +183,7 @@
           "quote": "we enrich the samples via hidden space augmentation"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L13",
@@ -198,7 +198,7 @@
           "quote": "our model outperforms the previous state-of-the-art model by 1.0 and 0.7 exact match scores"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L14",
@@ -213,7 +213,7 @@
           "quote": "We hire domain experts in seven areas to provide preference judgments over pairs of answers"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L15",
@@ -228,7 +228,7 @@
           "quote": "The reasoning steps are organized as a structured entailment tree"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L16",
@@ -243,7 +243,7 @@
           "quote": "providing the true answer by only one fact, rather than multi-hop reasoning, which is referred to as disconnected reasoning problem"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L17",
@@ -258,7 +258,7 @@
           "quote": "The benchmark includes 11,746 human-written answers along with 74,527 supporting documents"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L18",
@@ -273,7 +273,7 @@
           "quote": "more than 50% of lexical matching failures are attributed to semantically equivalent answers"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L19",
@@ -288,7 +288,7 @@
           "quote": "a large-scale OLTQA dataset we curate from 43 existing QA datasets"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L20",
@@ -303,7 +303,7 @@
           "quote": "a substantial portion of the answers is not attributable to any retrieved passages (up to 47% of answers exactly matching a gold reference)"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L21",
@@ -318,7 +318,7 @@
           "quote": "explicitly modeling rationales as sets"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L22",
@@ -333,7 +333,7 @@
           "quote": "decomposes the task into three stages: question generation, question answering, and rewriting"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L23",
@@ -348,7 +348,7 @@
           "quote": "Providing the relevant background, however, helps users better catch model errors, reducing over-reliance on incorrect predictions"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L24",
@@ -363,7 +363,7 @@
           "quote": "20,000 subgraphs with synthesized questions"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L25",
@@ -378,7 +378,7 @@
           "quote": "performance on three MHQA datasets compared to the baseline"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L26",
@@ -398,7 +398,7 @@
           "quote": "Extensive experiments have been conducted on the benchmark HotpotQA dataset"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L27",
@@ -418,7 +418,7 @@
           "quote": "which utilizes an encoder-decoder Transformer structure to translate the query to a path"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L28",
@@ -438,7 +438,7 @@
           "quote": "we propose a subgraph-aware self-attention mechanism to imitate the GNN for performing structured reasoning"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L29",
@@ -458,7 +458,7 @@
           "quote": "finding that no existing metrics are predictive of human preference judgments"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "L30",
@@ -478,7 +478,7 @@
           "quote": "Providing the relevant background, however, helps users better catch model errors"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G01",
@@ -518,7 +518,7 @@
           "quote": "a new multi-document NFQA benchmark built on WikiHow"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G02",
@@ -558,7 +558,7 @@
           "quote": "Our new model uses a knowledge graph to establish the structural relationship among the retrieved passages"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G03",
@@ -598,7 +598,7 @@
           "quote": "Answering the questions requires compositional logical reasoning across complex context"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G04",
@@ -638,7 +638,7 @@
           "quote": "we collect gold decontextualizations from experienced scientific article readers"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G05",
@@ -668,7 +668,7 @@
           "quote": "to assess the attribution level of a state-of-theart cross-lingual question answering (QA) system"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G06",
@@ -698,7 +698,7 @@
           "quote": "The automated models struggle in detecting hallucinations in LLM answers"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G07",
@@ -728,7 +728,7 @@
           "quote": "even with fewer updated parameters and less training data"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G08",
@@ -763,7 +763,7 @@
           "quote": "renders the models more robust against overfitting as the number of reasoning steps grows"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G09",
@@ -798,7 +798,7 @@
           "quote": "gold decontextualizations from experienced scientific article readers"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     },
     {
       "id": "G10",
@@ -838,7 +838,7 @@
           "quote": "we retrieve top-k similar question-answer pairs at the inference stage"
         }
       ],
-      "review": "pending"
+      "review": "approved"
     }
   ]
 }

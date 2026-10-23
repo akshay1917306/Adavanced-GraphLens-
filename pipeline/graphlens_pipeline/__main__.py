@@ -43,6 +43,13 @@ def main(argv: list[str] | None = None) -> int:
     review = sub.add_parser("eval-review", help="write the review page for the owner")
     review.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     review.add_argument("--out", type=Path, default=Path("/tmp/REVIEW.md"))  # noqa: S108
+    load = sub.add_parser("eval-load", help="store the approved questions in the database")
+    load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    run = sub.add_parser("eval-run", help="run the baseline on the evaluation set and score it")
+    run.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    run.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
+    run.add_argument("--max-cost-usd", type=float, default=0.25, help="stop when this is spent")
+    run.add_argument("--out-dir", type=Path, default=Path("/out"))
     args = parser.parse_args(argv)
 
     if args.command == "eval-review":
@@ -57,6 +64,17 @@ def main(argv: list[str] | None = None) -> int:
         print("DATABASE_URL is not set.", file=sys.stderr)
         return 2
     engine = create_engine(database_url)  # the URL is never printed
+
+    if args.command == "eval-load":
+        from graphlens_pipeline.evalrun import load_eval_sets
+        from graphlens_pipeline.evalset import load_questions
+
+        for name, count in load_eval_sets(engine, load_questions(args.questions)).items():
+            print(f"{name}: {'already present' if count == 0 else f'{count} questions loaded'}")
+        return 0
+
+    if args.command == "eval-run":
+        return _eval_run(engine, args)
 
     if args.command == "eval-verify":
         from graphlens_pipeline.evalset import fetch_unit_texts, load_questions, verify
@@ -108,6 +126,81 @@ def main(argv: list[str] | None = None) -> int:
     for paper_id, reason in report.failures.items():
         print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
     return 1 if report.failures else 0
+
+
+def _eval_run(engine, args) -> int:
+    import datetime as dt
+    import json
+    from dataclasses import asdict
+
+    from qdrant_client import QdrantClient
+    from sqlalchemy import text
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.evalrun import (
+        by_kind,
+        estimate_cost,
+        make_answer_fn,
+        render_results,
+        run_eval,
+        save_run,
+        summarize,
+    )
+    from graphlens_pipeline.evalset import load_questions
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+
+    qdrant_url = os.environ.get("QDRANT_URL")
+    if not qdrant_url:
+        print("QDRANT_URL is not set.", file=sys.stderr)
+        return 2
+    questions = [q for q in load_questions(args.questions) if q.get("review") == "approved"]
+    if not questions:
+        print("No approved questions.", file=sys.stderr)
+        return 1
+    client, embedder = QdrantClient(url=qdrant_url), FastEmbedder()
+
+    try:
+        llm = OpenAiLlm()
+    except LlmError as error:
+        if not args.dry_run:
+            print(f"Cannot start: {error}", file=sys.stderr)
+            return 2
+        llm = None
+
+    if args.dry_run:
+        model = (llm.model if llm else os.environ.get("LLM_MODEL_MAIN")) or "gpt-4.1-mini"
+        print(json.dumps(estimate_cost(questions, client, engine, embedder, model), indent=2))
+        print("Dry run: no model was called, nothing was spent.")
+        return 0
+
+    outcomes, capped = run_eval(
+        questions, make_answer_fn(client, engine, embedder, llm), llm, args.max_cost_usd
+    )
+    summary, kinds = summarize(outcomes), by_kind(outcomes)
+    git_sha = os.environ.get("GIT_SHA", "unknown")
+    with engine.connect() as conn:
+        units = conn.execute(text("SELECT count(*) FROM text_units")).scalar_one()
+    meta = {"date": dt.date.today().isoformat(), "model": llm.model, "git_sha": git_sha,
+            "units": units}  # fmt: skip
+    config = {**meta, "passages_per_question": 6, "max_cost_usd": args.max_cost_usd}
+    run_id = save_run(engine, questions, outcomes, config, {"all": summary, **kinds}, git_sha)
+
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    stem = f"baseline-{meta['date']}"
+    (args.out_dir / f"{stem}.md").write_text(
+        render_results(summary, kinds, outcomes, meta), encoding="utf-8"
+    )
+    (args.out_dir / f"{stem}.json").write_text(
+        json.dumps({"meta": meta, "summary": summary, "by_kind": kinds,
+                    "outcomes": [asdict(o) for o in outcomes]}, indent=2) + "\n",
+        encoding="utf-8",
+    )  # fmt: skip
+    print(f"Run {run_id}: {summary['questions_run']}/{summary['questions_total']} questions, "
+          f"cost ${summary['total_cost_usd']}, correct {summary['correct']}")  # fmt: skip
+    if capped:
+        print("STOPPED: the cost cap was reached before all questions ran.", file=sys.stderr)
+        return 1
+    return 0
 
 
 def _ask(engine, question: str, k: int) -> int:

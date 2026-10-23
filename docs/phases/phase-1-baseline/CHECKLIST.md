@@ -22,9 +22,10 @@ Mark an item only after it was actually run. State where it was run.
 - [ ] Context size, retries, timeouts and a per-run cost cap are enforced
       (done: context 3000 tokens, output 500, question 1000 characters, timeout 60 s, 2 retries.
       Still open: the cost cap for a batch run, which comes with the evaluation runner)
-- [ ] Evaluation set v0: 30 local and 10 global questions, reviewed by the owner
-      (drafted and machine-checked: 40 questions, 25 evidence units, every quote found in the
-      corpus text; **owner review pending**, see `data/eval/v0/REVIEW.md`)
+- [x] Evaluation set v0: 30 local and 10 global questions, reviewed by the owner
+      (machine-checked: 40 questions, 25 evidence units, every quote found in the corpus text;
+      the owner answered "all OK" in chat on 2026-10-24, with no per-question notes in
+      `data/eval/v0/REVIEW.md`; loaded into `eval_sets` and `eval_questions`)
 - [ ] Baseline results table recorded with model IDs, date and cost
 
 ## Tests

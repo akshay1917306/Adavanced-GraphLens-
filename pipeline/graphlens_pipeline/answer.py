@@ -70,8 +70,9 @@ class AnswerResult:
     question: str
     answer: str
     refused: bool
-    passages: list[Passage]
+    passages: list[Passage]  # evidence shown to the user (empty after a refusal)
     cited: list[int] = field(default_factory=list)
+    sent: list[Passage] = field(default_factory=list)  # every passage the model was given
     invalid_citations: list[int] = field(default_factory=list)
     citations_valid: bool = False
     model: str = ""
@@ -213,6 +214,7 @@ def answer_question(
         answer=text_out,
         refused=text_out.startswith(REFUSAL_MARKER),
         passages=passages,
+        sent=passages,
         model=reply.model,
         tokens_in=reply.tokens_in,
         tokens_out=reply.tokens_out,

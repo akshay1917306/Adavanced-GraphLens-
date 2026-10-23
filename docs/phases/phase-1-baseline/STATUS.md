@@ -5,8 +5,9 @@ Last updated: 2026-10-23
 ## State
 
 **In progress. Ingest, chunking, embeddings and the baseline answer are built and verified
-(steps 1 to 5 of 8). Step 7 (evaluation set) is drafted and waiting for the owner's review.**
-The batch runner and results table (step 8) and the Prefect flow (step 6) are not started.
+(steps 1 to 5 of 8). Step 7 (evaluation set) is approved and loaded; the runner for step 8
+(results table) is built and waits for the owner's approval of the live run cost.**
+The Prefect flow (step 6) is not started.
 
 ## Completed
 
@@ -91,6 +92,21 @@ The batch runner and results table (step 8) and the Prefect flow (step 6) are no
   global reference answers are summaries of abstract quotes, not a complete list.
 - Tests: 84 pass in Docker (12 new for the question checker). `ruff` clean.
 
+## Evaluation runner (2026-10-24, Claude)
+
+- Owner reviewed `REVIEW.md` and answered "all OK" in chat (no per-question edits were written
+  in the file). All 40 questions are marked `approved` and loaded into `eval_sets` and
+  `eval_questions` (30 local, 10 global).
+- New commands: `eval-verify`, `eval-review`, `eval-load`, and `eval-run` (with `--dry-run` and
+  `--max-cost-usd`). The run measures supporting-fact coverage (evidence quotes found in the
+  passages sent), citation-number validity, correctness by an LLM judge, cost and latency,
+  and stores everything in `eval_runs` and `eval_results`.
+- Dry run (no model called): 40 questions, about 109k input and 9.6k output tokens, estimated
+  **$0.059** for answers plus judge on `gpt-4.1-mini`. Default cost cap `--max-cost-usd 0.25`.
+- Tests: 103 pass in Docker (19 new, answers and judge are labelled mocks). `ruff` clean.
+- Not done: the live 40-question run waits for the owner's approval of the cost. Judge caveat:
+  the judge is the same model family as the answerer; the owner should spot-check 4 answers.
+
 ## Known limits of the cleaning (not fixed, recorded honestly)
 
 - Footnote text can land in the middle of a sentence (for example a "Data and code available at
@@ -122,12 +138,13 @@ Nothing running.
 
 1. (done) Embeddings, see above.
 2. (done) Baseline answer, see above.
-3. Evaluation set v0: drafted (see above). **Owner reviews `data/eval/v0/REVIEW.md`.** Then
-   Claude applies the changes, loads the questions into `eval_sets` and `eval_questions`,
-   and builds a batch runner with a cost cap, a results table (correctness by an LLM judge
-   with swapped order, citation check, whether the evidence passages were retrieved) and a
-   cost record. Show the estimate and get the owner's approval before the batch.
-4. Prefect flow with checkpoints (resume without repeating work), docs, README, walkthrough.
+3. (done) Evaluation set v0 approved and loaded; runner built and dry-run.
+4. **Owner approves the live run (about $0.06).** Then:
+   `$env:GIT_SHA = git rev-parse --short HEAD`, then
+   `docker compose run --rm -v "$PWD/data/eval/v0/results:/out" pipeline eval-run`.
+   Results go to `data/eval/v0/results/baseline-<date>.md` and `.json`.
+   The owner spot-checks a few answers in the results file.
+5. Prefect flow with checkpoints (resume without repeating work), docs, README, walkthrough.
 3. Prefect flow with checkpoints, then evaluation set v0 (30 local and 10 global questions,
    reviewed by the owner), and the baseline results table with cost.
 
