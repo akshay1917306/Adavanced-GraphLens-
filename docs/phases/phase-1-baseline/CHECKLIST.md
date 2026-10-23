@@ -23,6 +23,8 @@ Mark an item only after it was actually run. State where it was run.
       (done: context 3000 tokens, output 500, question 1000 characters, timeout 60 s, 2 retries.
       Still open: the cost cap for a batch run, which comes with the evaluation runner)
 - [ ] Evaluation set v0: 30 local and 10 global questions, reviewed by the owner
+      (drafted and machine-checked: 40 questions, 25 evidence units, every quote found in the
+      corpus text; **owner review pending**, see `data/eval/v0/REVIEW.md`)
 - [ ] Baseline results table recorded with model IDs, date and cost
 
 ## Tests

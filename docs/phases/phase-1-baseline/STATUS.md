@@ -5,7 +5,8 @@ Last updated: 2026-10-23
 ## State
 
 **In progress. Ingest, chunking, embeddings and the baseline answer are built and verified
-(steps 1 to 5 of 8).** The evaluation set, results table and the Prefect flow are not started.
+(steps 1 to 5 of 8). Step 7 (evaluation set) is drafted and waiting for the owner's review.**
+The batch runner and results table (step 8) and the Prefect flow (step 6) are not started.
 
 ## Completed
 
@@ -75,6 +76,21 @@ Last updated: 2026-10-23
 - Pricing used for the cost line: OpenAI pricing page read on 2026-10-24
   (`gpt-4.1-mini`: $0.40 input and $1.60 output per 1M tokens).
 
+## Evaluation set v0 draft (2026-10-24, Claude)
+
+- `data/eval/v0/questions.json`: 30 local questions (25 single-paper, 5 using two papers) and
+  10 global questions. Each has a reference answer and exact evidence quotes. Status: DRAFT.
+- `docker compose run --rm pipeline eval-verify` checks every quote against the database:
+  40 questions, 25 evidence units, 0 problems. (A first draft had 1 wrong quote; it was
+  caught by this check and fixed.)
+- `data/eval/v0/REVIEW.md` is the page for the owner to read and mark OK, CHANGE or DROP.
+- Limits, stated plainly: the questions come from the **abstracts** only, so they are mostly
+  fact lookups and may be easy for the baseline; only 5 are real two-paper questions (the
+  blueprint expects a harder multi-hop benchmark of 50 questions later); the questions were
+  written by an AI, so only the owner's review makes them a trustworthy answer key; the 10
+  global reference answers are summaries of abstract quotes, not a complete list.
+- Tests: 84 pass in Docker (12 new for the question checker). `ruff` clean.
+
 ## Known limits of the cleaning (not fixed, recorded honestly)
 
 - Footnote text can land in the middle of a sentence (for example a "Data and code available at
@@ -106,9 +122,10 @@ Nothing running.
 
 1. (done) Embeddings, see above.
 2. (done) Baseline answer, see above.
-3. Evaluation set v0: 30 local and 10 global questions drawn from the 25 papers, each with
-   the supporting passages. Claude drafts, the owner reviews. Then a batch runner with a cost
-   cap, results table (correctness by an LLM judge with swapped order, citation check) and a
+3. Evaluation set v0: drafted (see above). **Owner reviews `data/eval/v0/REVIEW.md`.** Then
+   Claude applies the changes, loads the questions into `eval_sets` and `eval_questions`,
+   and builds a batch runner with a cost cap, a results table (correctness by an LLM judge
+   with swapped order, citation check, whether the evidence passages were retrieved) and a
    cost record. Show the estimate and get the owner's approval before the batch.
 4. Prefect flow with checkpoints (resume without repeating work), docs, README, walkthrough.
 3. Prefect flow with checkpoints, then evaluation set v0 (30 local and 10 global questions,

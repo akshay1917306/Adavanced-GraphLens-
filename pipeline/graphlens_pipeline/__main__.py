@@ -35,13 +35,39 @@ def main(argv: list[str] | None = None) -> int:
     )
     ask.add_argument("question")
     ask.add_argument("--k", type=int, default=6, help="how many passages to retrieve")
+    eval_dir = Path("/data/eval/v0")
+    check = sub.add_parser(
+        "eval-verify", help="check that every evidence quote exists in the corpus"
+    )
+    check.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    review = sub.add_parser("eval-review", help="write the review page for the owner")
+    review.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    review.add_argument("--out", type=Path, default=Path("/tmp/REVIEW.md"))  # noqa: S108
     args = parser.parse_args(argv)
+
+    if args.command == "eval-review":
+        from graphlens_pipeline.evalset import load_questions, render_review
+
+        args.out.write_text(render_review(load_questions(args.questions)), encoding="utf-8")
+        print(f"Wrote {args.out}")
+        return 0
 
     database_url = os.environ.get("DATABASE_URL")
     if not database_url:
         print("DATABASE_URL is not set.", file=sys.stderr)
         return 2
     engine = create_engine(database_url)  # the URL is never printed
+
+    if args.command == "eval-verify":
+        from graphlens_pipeline.evalset import fetch_unit_texts, load_questions, verify
+
+        questions = load_questions(args.questions)
+        wanted = {item["unit_id"] for q in questions for item in q["evidence"]}
+        problems = verify(questions, fetch_unit_texts(engine, wanted), {"local": 30, "global": 10})
+        for problem in problems:
+            print(f"PROBLEM {problem.question_id}: {problem.message}", file=sys.stderr)
+        print(f"{len(questions)} questions, {len(wanted)} evidence units, {len(problems)} problems")
+        return 1 if problems else 0
 
     if args.command == "ask":
         return _ask(engine, args.question, args.k)

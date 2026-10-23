@@ -1,0 +1,844 @@
+{
+  "version": 0,
+  "corpus": "qa_v0",
+  "status": "DRAFT, owner review pending",
+  "drafted_by": "Claude (from the abstracts of the 25 papers)",
+  "note": "Every quote is an exact substring of the cited text unit; this is checked by a script.",
+  "questions": [
+    {
+      "id": "L01",
+      "kind": "local",
+      "hops": 1,
+      "question": "How does the UDT-QA framework make tables and knowledge graphs usable for open-domain question answering?",
+      "reference_answer": "It turns tables from Wikipedia and graphs from Wikidata into text with a data-to-text verbalizer, so a retriever and reader can use them as extra knowledge sources.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.113",
+          "unit_id": "u_b8cfb9072b0d_0000",
+          "quote": "verbalized tables from Wikipedia and graphs from Wikidata are used as augmented knowledge sources"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L02",
+      "kind": "local",
+      "hops": 1,
+      "question": "What does the Retrieve-Generate-Filter technique create, and with how much human supervision?",
+      "reference_answer": "Counterfactual evaluation and training data for question answering, with minimal human supervision.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.117",
+          "unit_id": "u_6183c13e0bb6_0000",
+          "quote": "technique to create counterfactual evaluation and training data with minimal human supervision"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L03",
+      "kind": "local",
+      "hops": 1,
+      "question": "By how much does the sequence-to-sequence knowledge graph embedding model reduce model size compared with conventional embedding models?",
+      "reference_answer": "Up to 98%.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0000",
+          "quote": "reduces the model size up to 98% compared to conventional KGE models"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L04",
+      "kind": "local",
+      "hops": 1,
+      "question": "What are conditional answers in the ConditionalQA dataset?",
+      "reference_answer": "Answers that are only applicable when certain conditions apply.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.253",
+          "unit_id": "u_85db020b91cb_0000",
+          "quote": "the answers are only applicable when certain conditions apply"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L05",
+      "kind": "local",
+      "hops": 1,
+      "question": "What share of the Fusion-in-Decoder computation cost does KG-FiD need to reach comparable or better answer prediction?",
+      "reference_answer": "Less than 40% of the computation cost.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0000",
+          "quote": "with less than 40% of the computation cost"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L06",
+      "kind": "local",
+      "hops": 1,
+      "question": "Which two datasets are used to evaluate the deep inductive logic reasoning model for multi-hop reading comprehension?",
+      "reference_answer": "WikiHop and MedHop.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.343",
+          "unit_id": "u_f1e807c70065_0000",
+          "quote": "we evaluate it on two reading comprehension datasets, namely WikiHop and MedHop"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L07",
+      "kind": "local",
+      "hops": 1,
+      "question": "How is user feedback simulated in the study of bandit learning for extractive question answering?",
+      "reference_answer": "By simulating feedback from supervised data, treating the problem as contextual bandit learning.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.355",
+          "unit_id": "u_e4de0d926563_0000",
+          "quote": "We study learning from user feedback for extractive question answering by simulating feedback using supervised data"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L08",
+      "kind": "local",
+      "hops": 1,
+      "question": "What F1 improvement does the ALCQA framework obtain on the CQA dataset?",
+      "reference_answer": "A 9.88% improvement in F1.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.10",
+          "unit_id": "u_a97dfd913ccf_0000",
+          "quote": "obtains a 9.88% improvements in the F1 metric on CQA dataset"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L09",
+      "kind": "local",
+      "hops": 1,
+      "question": "How much faster does SQUIRE converge than prior multi-hop knowledge graph reasoning methods?",
+      "reference_answer": "4x to 7x faster.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0000",
+          "quote": "while converging 4x-7x faster"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L10",
+      "kind": "local",
+      "hops": 1,
+      "question": "How does the SF-TQA method generate query graphs for temporal question answering?",
+      "reference_answer": "By exploring relevant facts of the mentioned entities, with the exploration restricted by the Semantic Framework of Temporal Constraints.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0000",
+          "quote": "which generates query graphs by exploring the relevant facts of mentioned entities"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L11",
+      "kind": "local",
+      "hops": 1,
+      "question": "What dataset do the authors of the quantitative reasoning paper create?",
+      "reference_answer": "A unified dataset built on four previously released numerical question answering datasets over tabular data.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.125",
+          "unit_id": "u_039c611d6451_0000",
+          "quote": "we also create a unified dataset building on four previously released numerical QA datasets over tabular data"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L12",
+      "kind": "local",
+      "hops": 1,
+      "question": "What kind of data augmentation does the QADA framework use for question answering domain adaptation?",
+      "reference_answer": "Hidden space augmentation of the training samples.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.147",
+          "unit_id": "u_56d31becd18d_0000",
+          "quote": "we enrich the samples via hidden space augmentation"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L13",
+      "kind": "local",
+      "hops": 1,
+      "question": "By how much does the single end-to-end open-domain QA model beat the previous state of the art on Natural Questions and TriviaQA?",
+      "reference_answer": "By 1.0 and 0.7 exact match points.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0000",
+          "quote": "our model outperforms the previous state-of-the-art model by 1.0 and 0.7 exact match scores"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L14",
+      "kind": "local",
+      "hops": 1,
+      "question": "How many areas of domain experts judged long-form answers in the evaluation study, and what did they provide?",
+      "reference_answer": "Experts in seven areas gave preference judgments over pairs of answers.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0000",
+          "quote": "We hire domain experts in seven areas to provide preference judgments over pairs of answers"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L15",
+      "kind": "local",
+      "hops": 1,
+      "question": "How does FAME organize its reasoning steps?",
+      "reference_answer": "As a structured entailment tree.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.218",
+          "unit_id": "u_bd66cdf3c6b3_0000",
+          "quote": "The reasoning steps are organized as a structured entailment tree"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L16",
+      "kind": "local",
+      "hops": 1,
+      "question": "What is the disconnected reasoning problem in multi-hop question answering?",
+      "reference_answer": "Models give the true answer using only one fact instead of reasoning over several facts.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0000",
+          "quote": "providing the true answer by only one fact, rather than multi-hop reasoning, which is referred to as disconnected reasoning problem"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L17",
+      "kind": "local",
+      "hops": 1,
+      "question": "How many human-written answers and supporting documents does the WikiHowQA benchmark contain?",
+      "reference_answer": "11,746 human-written answers and 74,527 supporting documents.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0000",
+          "quote": "The benchmark includes 11,746 human-written answers along with 74,527 supporting documents"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L18",
+      "kind": "local",
+      "hops": 1,
+      "question": "What share of lexical matching failures in open-domain QA evaluation is due to semantically equivalent answers?",
+      "reference_answer": "More than 50%.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0000",
+          "quote": "more than 50% of lexical matching failures are attributed to semantically equivalent answers"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L19",
+      "kind": "local",
+      "hops": 1,
+      "question": "From how many existing QA datasets was the Open Long-Tailed QA dataset curated?",
+      "reference_answer": "43 existing QA datasets.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.351",
+          "unit_id": "u_533dbf92ffe5_0000",
+          "quote": "a large-scale OLTQA dataset we curate from 43 existing QA datasets"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L20",
+      "kind": "local",
+      "hops": 1,
+      "question": "What share of answers in the cross-lingual attribution study cannot be attributed to any retrieved passage?",
+      "reference_answer": "A substantial portion, up to 47% of answers that exactly match a gold reference.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0000",
+          "quote": "a substantial portion of the answers is not attributable to any retrieved passages (up to 47% of answers exactly matching a gold reference)"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L21",
+      "kind": "local",
+      "hops": 1,
+      "question": "How does the Hop, Union, Generate approach model rationales for multi-hop question answering?",
+      "reference_answer": "It explicitly models rationales as sets, which lets it capture interactions between documents and sentences.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.1001",
+          "unit_id": "u_08db683fca63_0000",
+          "quote": "explicitly modeling rationales as sets"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L22",
+      "kind": "local",
+      "hops": 1,
+      "question": "Into which three stages does the decontextualization framework split the task?",
+      "reference_answer": "Question generation, question answering and rewriting.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.193",
+          "unit_id": "u_d352bfc2d1e1_0000",
+          "quote": "decomposes the task into three stages: question generation, question answering, and rewriting"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L23",
+      "kind": "local",
+      "hops": 1,
+      "question": "What effect does background information have on users' over-reliance on incorrect QA predictions?",
+      "reference_answer": "Providing the relevant background helps users catch model errors and reduces over-reliance on incorrect predictions.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.201",
+          "unit_id": "u_71f8f712a4f8_0000",
+          "quote": "Providing the relevant background, however, helps users better catch model errors, reducing over-reliance on incorrect predictions"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L24",
+      "kind": "local",
+      "hops": 1,
+      "question": "How many subgraphs with synthesized questions are used to adapt ReasoningLM?",
+      "reference_answer": "20,000 subgraphs.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0000",
+          "quote": "20,000 subgraphs with synthesized questions"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L25",
+      "kind": "local",
+      "hops": 1,
+      "question": "On how many multi-hop QA datasets does GEMFormer improve performance over the baseline?",
+      "reference_answer": "Three.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.262",
+          "unit_id": "u_2dae343019ba_0000",
+          "quote": "performance on three MHQA datasets compared to the baseline"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L26",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which datasets are used to test the inductive logic reasoning model and the counterfactual multi-hop QA approach?",
+      "reference_answer": "The inductive logic reasoning model is tested on WikiHop and MedHop; the counterfactual multi-hop approach on HotpotQA.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.343",
+          "unit_id": "u_f1e807c70065_0000",
+          "quote": "namely WikiHop and MedHop"
+        },
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0000",
+          "quote": "Extensive experiments have been conducted on the benchmark HotpotQA dataset"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L27",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which knowledge graph approaches in the corpus use an encoder-decoder Transformer, and for what?",
+      "reference_answer": "One uses it as a scalable knowledge graph embedding model for link prediction and question answering; SQUIRE uses it to translate a query into a path for multi-hop reasoning.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0000",
+          "quote": "an off-the-shelf encoder-decoder Transformer model can serve as a scalable and versatile KGE model"
+        },
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0000",
+          "quote": "which utilizes an encoder-decoder Transformer structure to translate the query to a path"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L28",
+      "kind": "local",
+      "hops": 2,
+      "question": "How do KG-FiD and ReasoningLM each use graph structure for question answering?",
+      "reference_answer": "KG-FiD uses a graph neural network over a knowledge graph to re-rank retrieved passages; ReasoningLM uses a subgraph-aware self-attention mechanism to imitate a graph neural network inside a language model.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0000",
+          "quote": "a graph neural network (GNN) to re-rank the passages and select only a top few for further processing"
+        },
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0000",
+          "quote": "we propose a subgraph-aware self-attention mechanism to imitate the GNN for performing structured reasoning"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L29",
+      "kind": "local",
+      "hops": 2,
+      "question": "What do the studies of open-domain QA evaluation and long-form QA evaluation conclude about evaluation methods?",
+      "reference_answer": "For open-domain QA there appears to be no substitute for human evaluation; for long-form QA no existing automatic metric predicts human preference judgments.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0000",
+          "quote": "At this time, there appears to be no substitute for human evaluation"
+        },
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0000",
+          "quote": "finding that no existing metrics are predictive of human preference judgments"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "L30",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which papers address trust in QA answers, one by attributing answers to sources and one by studying how users verify them?",
+      "reference_answer": "The cross-lingual attribution paper studies attributing answers to retrieved sources; the background-information paper shows that relevant background helps users catch model errors.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0000",
+          "quote": "Our work is the first to study attribution for cross-lingual question answering"
+        },
+        {
+          "paper_id": "2023.emnlp-main.201",
+          "unit_id": "u_71f8f712a4f8_0000",
+          "quote": "Providing the relevant background, however, helps users better catch model errors"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G01",
+      "kind": "global",
+      "hops": 6,
+      "question": "What are the main research directions in this corpus?",
+      "reference_answer": "Question answering over knowledge graphs; multi-hop reasoning; open-domain QA with retrieval; evaluating QA systems; trust and attribution of answers; new datasets and benchmarks.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0000",
+          "quote": "Question Answering over Knowledge Graph (KGQA) aims to seek answer entities"
+        },
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0000",
+          "quote": "Multi-hop QA requires reasoning over multiple supporting facts to answer the question"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0000",
+          "quote": "Recent approaches to Open-domain Question Answering refer to an external knowledge base"
+        },
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0000",
+          "quote": "its flexibility poses enormous challenges for evaluation"
+        },
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0000",
+          "quote": "Our work is the first to study attribution for cross-lingual question answering"
+        },
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0000",
+          "quote": "a new multi-document NFQA benchmark built on WikiHow"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G02",
+      "kind": "global",
+      "hops": 6,
+      "question": "Which papers in the corpus work with knowledge graphs, and for which tasks?",
+      "reference_answer": "KG link prediction and KGQA (sequence-to-sequence KGE); multi-hop KG reasoning (SQUIRE); temporal KGQA (SF-TQA); complex KBQA (ALCQA); KGQA with a pre-trained language model (ReasoningLM); open-domain QA with a knowledge graph (KG-FiD).",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0000",
+          "quote": "state-of-the-art results for KG link prediction and incomplete KG question answering"
+        },
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0000",
+          "quote": "Multi-hop knowledge graph (KG) reasoning has been widely studied in recent years"
+        },
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0000",
+          "quote": "Answering factual questions with temporal intent over knowledge graphs"
+        },
+        {
+          "paper_id": "2022.emnlp-main.10",
+          "unit_id": "u_a97dfd913ccf_0000",
+          "quote": "Complex knowledge base question answering can be achieved by converting questions into sequences of predefined actions"
+        },
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0000",
+          "quote": "directly support subgraph reasoning for KGQA, namely ReasoningLM"
+        },
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0000",
+          "quote": "Our new model uses a knowledge graph to establish the structural relationship among the retrieved passages"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G03",
+      "kind": "global",
+      "hops": 6,
+      "question": "How do the papers in the corpus approach multi-hop reasoning?",
+      "reference_answer": "Inductive logic rules (DILR); causal counterfactual inference against shortcuts (counterfactual multi-hop QA); rationales modeled as sets (Hop, Union, Generate); a global memory (GEMFormer); paths generated by a sequence-to-sequence model (SQUIRE); a dataset requiring compositional logical reasoning (ConditionalQA).",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.343",
+          "unit_id": "u_f1e807c70065_0000",
+          "quote": "inducing feasible rules that entail the target relation"
+        },
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0000",
+          "quote": "a counterfactual inference is proposed to disentangle the disconnected reasoning from the total causal effect"
+        },
+        {
+          "paper_id": "2023.emnlp-main.1001",
+          "unit_id": "u_08db683fca63_0000",
+          "quote": "explicitly modeling rationales as sets"
+        },
+        {
+          "paper_id": "2023.emnlp-main.262",
+          "unit_id": "u_2dae343019ba_0000",
+          "quote": "first collects relevant information over the entire document to the memory"
+        },
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0000",
+          "quote": "translate the query to a path"
+        },
+        {
+          "paper_id": "2022.acl-long.253",
+          "unit_id": "u_85db020b91cb_0000",
+          "quote": "Answering the questions requires compositional logical reasoning across complex context"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G04",
+      "kind": "global",
+      "hops": 6,
+      "question": "What new datasets or benchmarks are introduced in the corpus?",
+      "reference_answer": "ConditionalQA; WikiHowQA; XOR-AttriQA; an Open Long-Tailed QA dataset from 43 datasets; a unified numerical QA dataset over tables; gold decontextualizations for scientific snippets.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.253",
+          "unit_id": "u_85db020b91cb_0000",
+          "quote": "We call this dataset ConditionalQA"
+        },
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0000",
+          "quote": "we present WIKI HOWQA"
+        },
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0000",
+          "quote": "we introduce the XOR-AttriQA dataset"
+        },
+        {
+          "paper_id": "2023.acl-long.351",
+          "unit_id": "u_533dbf92ffe5_0000",
+          "quote": "a large-scale OLTQA dataset we curate from 43 existing QA datasets"
+        },
+        {
+          "paper_id": "2022.emnlp-main.125",
+          "unit_id": "u_039c611d6451_0000",
+          "quote": "we also create a unified dataset building on four previously released numerical QA datasets"
+        },
+        {
+          "paper_id": "2023.emnlp-main.193",
+          "unit_id": "u_d352bfc2d1e1_0000",
+          "quote": "we collect gold decontextualizations from experienced scientific article readers"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G05",
+      "kind": "global",
+      "hops": 4,
+      "question": "How is the evaluation of question answering systems discussed across the corpus?",
+      "reference_answer": "Long-form answers need multi-faceted human evaluation because automatic metrics do not predict preferences; lexical matching underestimates open-domain QA models; a new human evaluation framework is proposed for multi-document non-factoid QA; attribution is evaluated for cross-lingual QA.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0000",
+          "quote": "We encourage future work to move away from a single"
+        },
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0000",
+          "quote": "Lexical matching remains the de facto evaluation method for open-domain question answering"
+        },
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0000",
+          "quote": "propose a novel human evaluation framework that utilizes highlighted relevant supporting passages"
+        },
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0000",
+          "quote": "to assess the attribution level of a state-of-theart cross-lingual question answering (QA) system"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G06",
+      "kind": "global",
+      "hops": 4,
+      "question": "Which papers address factuality, faithfulness or attribution problems of language model answers?",
+      "reference_answer": "FAME builds faithful reasoning steps as entailment trees; the cross-lingual attribution paper finds many answers not attributable to retrieved passages; WikiHowQA targets factual consistency with supporting documents; the open-domain evaluation paper notes models struggle to detect hallucinations.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.218",
+          "unit_id": "u_bd66cdf3c6b3_0000",
+          "quote": "revealing the intermediate reasoning steps that the models faithfully follow remains challenging"
+        },
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0000",
+          "quote": "their raw generations often fall short in factuality"
+        },
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0000",
+          "quote": "evaluate answers’ grounding and factual consistency in relation to supporting documents"
+        },
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0000",
+          "quote": "The automated models struggle in detecting hallucinations in LLM answers"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G07",
+      "kind": "global",
+      "hops": 4,
+      "question": "Which approaches aim to make question answering systems smaller or cheaper to run?",
+      "reference_answer": "The sequence-to-sequence KGE model cuts model size by up to 98%; KG-FiD uses under 40% of the computation; the single-model open-domain QA approach uses model capacity more efficiently; ReasoningLM needs fewer updated parameters and less training data.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0000",
+          "quote": "reduces the model size up to 98% compared to conventional KGE models"
+        },
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0000",
+          "quote": "with less than 40% of the computation cost"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0000",
+          "quote": "which is a more efficient use of model capacity"
+        },
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0000",
+          "quote": "even with fewer updated parameters and less training data"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G08",
+      "kind": "global",
+      "hops": 5,
+      "question": "How do the papers handle robustness and adapting QA models to new domains or unseen tasks?",
+      "reference_answer": "Counterfactual data augmentation improves robustness; QADA adapts to unseen target domains with hidden space augmentation; OLTQA targets seen and unseen QA tasks; bandit learning from user feedback lets systems adapt to new domains without annotation; the quantitative reasoning method improves robustness as reasoning steps grow.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.117",
+          "unit_id": "u_6183c13e0bb6_0000",
+          "quote": "improvements to robustness to local perturbations"
+        },
+        {
+          "paper_id": "2022.emnlp-main.147",
+          "unit_id": "u_56d31becd18d_0000",
+          "quote": "adapt QA models to an unseen target domain"
+        },
+        {
+          "paper_id": "2023.acl-long.351",
+          "unit_id": "u_533dbf92ffe5_0000",
+          "quote": "optimizing performance over seen and unseen QA tasks"
+        },
+        {
+          "paper_id": "2022.acl-long.355",
+          "unit_id": "u_e4de0d926563_0000",
+          "quote": "deploy systems in new domains without any annotation"
+        },
+        {
+          "paper_id": "2022.emnlp-main.125",
+          "unit_id": "u_039c611d6451_0000",
+          "quote": "renders the models more robust against overfitting as the number of reasoning steps grows"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G09",
+      "kind": "global",
+      "hops": 5,
+      "question": "How are human users or human judges involved in the studies in this corpus?",
+      "reference_answer": "Users give feedback to improve extractive QA (bandit study); users' reliance on QA predictions is studied with and without background information; domain experts judge long-form answers; open-domain QA answers are evaluated manually; scientific article readers write gold decontextualizations.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.355",
+          "unit_id": "u_e4de0d926563_0000",
+          "quote": "can dramatically improve given feedback from users"
+        },
+        {
+          "paper_id": "2023.emnlp-main.201",
+          "unit_id": "u_71f8f712a4f8_0000",
+          "quote": "we study how users interact with QA systems in the absence of sufficient information to assess their predictions"
+        },
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0000",
+          "quote": "We hire domain experts in seven areas"
+        },
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0000",
+          "quote": "by manually evaluating their answers on a subset of NQ-OPEN"
+        },
+        {
+          "paper_id": "2023.emnlp-main.193",
+          "unit_id": "u_d352bfc2d1e1_0000",
+          "quote": "gold decontextualizations from experienced scientific article readers"
+        }
+      ],
+      "review": "pending"
+    },
+    {
+      "id": "G10",
+      "kind": "global",
+      "hops": 6,
+      "question": "Which retrieval techniques appear in the corpus papers?",
+      "reference_answer": "Retriever-reader frameworks over data and text (UDT-QA); a retriever with a GNN re-ranker (KG-FiD); retriever and reranker as attention inside one model; Retrieve-Generate-Filter counterfactual generation; retrieve-then-rerank to select in-context examples (OLTQA); retrieval of similar question-answer pairs (ALCQA).",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.113",
+          "unit_id": "u_b8cfb9072b0d_0000",
+          "quote": "The retriever-reader framework is popular for open-domain question answering"
+        },
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0000",
+          "quote": "built on top of a dense passage retriever and a generative reader"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0000",
+          "quote": "casting the retriever and the reranker as internal passage-wise attention mechanisms"
+        },
+        {
+          "paper_id": "2022.acl-long.117",
+          "unit_id": "u_6183c13e0bb6_0000",
+          "quote": "Retrieve-Generate- Filter (RGF) technique"
+        },
+        {
+          "paper_id": "2023.acl-long.351",
+          "unit_id": "u_533dbf92ffe5_0000",
+          "quote": "A retrieve-then-rerank frame is further introduced to select in-context examples"
+        },
+        {
+          "paper_id": "2022.emnlp-main.10",
+          "unit_id": "u_a97dfd913ccf_0000",
+          "quote": "we retrieve top-k similar question-answer pairs at the inference stage"
+        }
+      ],
+      "review": "pending"
+    }
+  ]
+}
