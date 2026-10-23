@@ -24,10 +24,12 @@ ATTEMPTS = 3
 
 def download(url: str) -> bytes:
     """Fetch one URL, retrying a few times, refusing anything larger than MAX_BYTES."""
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    if not url.startswith("https://"):
+        raise ValueError("only https URLs are allowed")
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})  # noqa: S310
     for attempt in range(1, ATTEMPTS + 1):
         try:
-            with urllib.request.urlopen(request, timeout=60) as response:  # noqa: S310 (https only)
+            with urllib.request.urlopen(request, timeout=60) as response:  # noqa: S310
                 data = response.read(MAX_BYTES + 1)
             if len(data) > MAX_BYTES:
                 raise ValueError(f"file larger than {MAX_BYTES} bytes")

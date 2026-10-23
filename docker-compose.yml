@@ -85,6 +85,21 @@ services:
       redis:
         condition: service_healthy
 
+  # Pipeline tools. Not started by `docker compose up`; run on demand:
+  #   docker compose run --rm pipeline ingest
+  pipeline:
+    build: ./pipeline
+    profiles: ["tools"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      SCHEMA_SQL: /schema/0001_initial_schema.sql
+    volumes:
+      - ./data:/data:ro
+      - ./api/alembic/versions:/schema:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   neo4j_data:

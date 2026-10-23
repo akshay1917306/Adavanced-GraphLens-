@@ -27,13 +27,33 @@ SOURCES = ["2022.acl", "2023.acl", "2022.emnlp", "2023.emnlp"]
 ALLOWED_VOLUMES = {"long", "main"}
 KEYWORDS = ("question answering", "multi-hop", "reading comprehension", "qa")
 # Keep the corpus on text question answering: skip dialogue, images and tables.
-EXCLUDE = ("dialogue", "chatbot", "conversational", "image", "visual", "video", "table", "tabular", "speech")
+EXCLUDE = (
+    "dialogue",
+    "chatbot",
+    "conversational",
+    "image",
+    "visual",
+    "video",
+    "table",
+    "tabular",
+    "speech",
+)
 LICENSE = "CC BY 4.0"
 LICENSE_BASIS = "https://aclanthology.org/faq/copyright/"
 USER_AGENT = "GraphLens-corpus-builder/0.1 (research project; contact: repo owner)"
 FIELDS = [
-    "paper_id", "title", "year", "venue", "authors", "pdf_url", "page_url",
-    "license", "license_basis_url", "retrieved_on", "sha256", "bytes",
+    "paper_id",
+    "title",
+    "year",
+    "venue",
+    "authors",
+    "pdf_url",
+    "page_url",
+    "license",
+    "license_basis_url",
+    "retrieved_on",
+    "sha256",
+    "bytes",
 ]
 
 
@@ -48,10 +68,12 @@ class Paper:
 
 def fetch(url: str, attempts: int = 3) -> bytes:
     """Download a URL with a bounded number of retries."""
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    if not url.startswith("https://"):
+        raise ValueError("only https URLs are allowed")
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})  # noqa: S310
     for attempt in range(1, attempts + 1):
         try:
-            with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310 (fixed https URLs)
+            with urllib.request.urlopen(request, timeout=120) as response:  # noqa: S310
                 return response.read()
         except (TimeoutError, OSError) as error:
             if attempt == attempts:
@@ -62,7 +84,11 @@ def fetch(url: str, attempts: int = 3) -> bytes:
 
 
 def parse_source(name: str, data: bytes) -> list[Paper]:
-    root = ET.fromstring(data)
+    # The Anthology files declare no entities. Refuse any that do, which also blocks
+    # entity-expansion attacks, instead of adding a dependency for this small script.
+    if b"<!ENTITY" in data or b"<!DOCTYPE" in data:
+        raise ValueError(f"{name}: unexpected DTD in XML, refusing to parse")
+    root = ET.fromstring(data)  # noqa: S314
     year = name.split(".")[0]
     venue = name.split(".")[1].upper()
     papers: list[Paper] = []
@@ -97,8 +123,9 @@ def main() -> None:
 
     per_source: list[list[Paper]] = []
     for name in SOURCES:
-        per_source.append(sorted(parse_source(name, fetch(XML_URL.format(name=name))),
-                                 key=lambda p: p.paper_id))
+        per_source.append(
+            sorted(parse_source(name, fetch(XML_URL.format(name=name))), key=lambda p: p.paper_id)
+        )
     # Round-robin across sources so one venue does not dominate; deterministic order.
     chosen: list[Paper] = []
     index = 0
@@ -115,20 +142,22 @@ def main() -> None:
         writer.writeheader()
         for paper in chosen:
             anthology_id = paper.paper_id
-            writer.writerow({
-                "paper_id": anthology_id,
-                "title": paper.title,
-                "year": paper.year,
-                "venue": paper.venue,
-                "authors": paper.authors,
-                "pdf_url": f"https://aclanthology.org/{anthology_id}.pdf",
-                "page_url": f"https://aclanthology.org/{anthology_id}/",
-                "license": LICENSE,
-                "license_basis_url": LICENSE_BASIS,
-                "retrieved_on": today,
-                "sha256": "",
-                "bytes": "",
-            })
+            writer.writerow(
+                {
+                    "paper_id": anthology_id,
+                    "title": paper.title,
+                    "year": paper.year,
+                    "venue": paper.venue,
+                    "authors": paper.authors,
+                    "pdf_url": f"https://aclanthology.org/{anthology_id}.pdf",
+                    "page_url": f"https://aclanthology.org/{anthology_id}/",
+                    "license": LICENSE,
+                    "license_basis_url": LICENSE_BASIS,
+                    "retrieved_on": today,
+                    "sha256": "",
+                    "bytes": "",
+                }
+            )
     print(f"Wrote {len(chosen)} papers to {args.out}")
 
 
