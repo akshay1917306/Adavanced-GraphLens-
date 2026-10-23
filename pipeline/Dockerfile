@@ -5,6 +5,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
     TIKTOKEN_CACHE_DIR=/opt/tiktoken \
+    PREFECT_HOME=/tmp/prefect \
+    PREFECT_SERVER_ANALYTICS_ENABLED=false \
+    DO_NOT_TRACK=1 \
     PATH="/opt/venv/bin:$PATH"
 
 RUN pip install --no-cache-dir uv==0.11.32

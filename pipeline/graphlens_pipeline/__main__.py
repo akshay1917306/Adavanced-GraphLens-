@@ -43,6 +43,12 @@ def main(argv: list[str] | None = None) -> int:
     review = sub.add_parser("eval-review", help="write the review page for the owner")
     review.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     review.add_argument("--out", type=Path, default=Path("/tmp/REVIEW.md"))  # noqa: S108
+    index = sub.add_parser("index", help="run the whole flow: ingest, then embed (no OpenAI cost)")
+    index.add_argument("--manifest", type=Path, default=Path("/data/corpus/qa_v0/manifest.csv"))
+    index.add_argument("--pdf-dir", type=Path, default=Path("/data/corpus/qa_v0/pdfs"))
+    index.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    index.add_argument("--corpus-slug", default="qa_v0")
+    index.add_argument("--index-version", default="baseline-1")
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     run = sub.add_parser("eval-run", help="run the baseline on the evaluation set and score it")
@@ -64,6 +70,27 @@ def main(argv: list[str] | None = None) -> int:
         print("DATABASE_URL is not set.", file=sys.stderr)
         return 2
     engine = create_engine(database_url)  # the URL is never printed
+
+    if args.command == "index":
+        qdrant_url = os.environ.get("QDRANT_URL")
+        if not qdrant_url:
+            print("QDRANT_URL is not set.", file=sys.stderr)
+            return 2
+        from graphlens_pipeline.flow import index_baseline
+
+        summary = index_baseline(
+            database_url, qdrant_url, str(args.manifest), str(args.pdf_dir), args.corpus_name,
+            DEFAULT_DESCRIPTION, args.corpus_slug, args.index_version,
+        )  # fmt: skip
+        ingest, embed = summary["ingest"], summary["embed"]
+        print(
+            f"INDEX DONE: ingest {ingest['ingested']} new / {ingest['skipped']} present "
+            f"({ingest['text_units']} units); embed {embed['embedded']} new / "
+            f"{embed['skipped']} present into {embed['collection']}."
+        )
+        for paper_id, reason in ingest["failures"].items():
+            print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
+        return 1 if ingest["failures"] else 0
 
     if args.command == "eval-load":
         from graphlens_pipeline.evalrun import load_eval_sets

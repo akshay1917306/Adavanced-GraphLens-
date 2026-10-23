@@ -6,7 +6,8 @@ Last updated: 2026-10-23
 
 **In progress. Ingest, chunking, embeddings and the baseline answer are built and verified
 (steps 1 to 5 of 8), the evaluation set (step 7) is approved and loaded, and the baseline
-results table (step 8) is recorded.** Left: the Prefect flow (step 6) and the phase documents.
+results table (step 8) is recorded, and the Prefect flow (step 6) works.** Left: the phase
+documents (walkthrough, README, notebook notes), CI for `pipeline/`, and the owner's review.
 
 ## Completed
 
@@ -135,6 +136,21 @@ What this means, with limits:
 - Citation numbers valid means the numbers exist, not that sentences are supported.
 - Only 25 papers; results do not transfer to the real corpus.
 
+## Prefect flow (2026-10-24, Claude)
+
+- `docker compose run --rm pipeline index`: one flow, two tasks (ingest, embed), each with 2
+  retries and 5 second pauses. Real-data run on the 25 papers: nothing new, 52 seconds, state
+  Completed.
+- Dependency facts: Prefect 3.8.8 (Apache-2.0) adds 78 packages (61 to 139) and about 170 MB;
+  the image is now 1.3 GB. Prefect 3.8.8 needs FastAPI 0.139 or newer, but its server code
+  breaks with FastAPI 0.156 or newer (`Body(min_items=...)`), so FastAPI is pinned to 0.143.0
+  (D21). Prefect telemetry is switched off in the image (`DO_NOT_TRACK=1`,
+  `PREFECT_SERVER_ANALYTICS_ENABLED=false`, checked inside the container).
+- Prefect's own run records are temporary (inside the container). The database is the truth.
+- Not done: writing `index_runs` and `run_stages` rows. They describe versioned index runs and
+  a quality gate, which start in Phase 2; using them now would bend their meaning.
+- Tests: 106 pass in Docker (3 new flow tests with real Postgres and Qdrant, mock embeddings).
+
 ## Known limits of the cleaning (not fixed, recorded honestly)
 
 - Footnote text can land in the middle of a sentence (for example a "Data and code available at
@@ -171,9 +187,10 @@ Nothing running.
    `$env:GIT_SHA = git rev-parse --short HEAD`, then
    `docker compose run --rm -v "$PWD/data/eval/v0/results:/out" pipeline eval-run`.
    The owner spot-checks the four answers listed in the results discussion.
-5. Prefect flow with checkpoints (blueprint 2.5): ingest, embed and eval as resumable steps.
-   Prefect is a large dependency; check version, licence and size first.
+5. (done) Prefect flow for ingest and embed.
 6. Phase docs: WALKTHROUGH.md, root README update, notebook notes, final completion report.
+   Also decide with the owner: CI for the `pipeline/` folder (the existing CI covers api, web
+   and compose only), and how the owner re-runs everything on their own machine.
    Then stop for the owner's review; nothing is pushed until the owner says so.
 3. Prefect flow with checkpoints, then evaluation set v0 (30 local and 10 global questions,
    reviewed by the owner), and the baseline results table with cost.

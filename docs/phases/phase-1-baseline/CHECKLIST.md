@@ -18,7 +18,11 @@ Mark an item only after it was actually run. State where it was run.
       (the model cites passage numbers; each number maps to a unit ID; numbers that match no
       passage are flagged. This checks that the numbers exist, not that the passage supports
       the sentence)
-- [ ] A failed run resumes without repeating finished work
+- [x] A failed run resumes without repeating finished work
+      (Prefect flow `index-baseline`. Tested with a mock that fails once in the middle of
+      embedding: the retry skipped the batch that was already stored and no text was embedded
+      twice. Resume comes from idempotent stages; Prefect adds retries and logs. Real data run:
+      `docker compose run --rm pipeline index` adds nothing when everything is already there)
 - [x] Context size, retries, timeouts and a per-run cost cap are enforced
       (context 3000 tokens, output 500, question 1000 characters, timeout 60 s, 2 retries,
       `eval-run --max-cost-usd`. Not enforced: the daily cap `LLM_DAILY_COST_CAP_USD`)
