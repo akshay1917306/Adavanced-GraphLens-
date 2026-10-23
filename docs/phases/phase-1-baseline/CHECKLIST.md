@@ -11,7 +11,9 @@ Mark an item only after it was actually run. State where it was run.
 - [x] Chunks are at most 450 tokens with 75 overlap and keep section metadata (CR-0002)
       (726 units, 17 to 450 tokens, average 308; sections kept in `documents.metadata`, see D16;
       3 units, 0.4%, still exceed bge's 512 tokens)
-- [ ] Embeddings stored in Qdrant (dense and sparse); re-running adds nothing new
+- [x] Embeddings stored in Qdrant (dense and sparse); re-running adds nothing new
+      (726 points; second run: 0 embedded, 726 skipped; first run took 282 s on the owner's PC;
+      3 units cut at 512 model tokens)
 - [ ] Baseline answer returns citations that point to real text unit IDs
 - [ ] A failed run resumes without repeating finished work
 - [ ] Context size, retries, timeouts and a per-run cost cap are enforced

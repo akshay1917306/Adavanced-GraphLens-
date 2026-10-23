@@ -92,12 +92,15 @@ services:
     profiles: ["tools"]
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      QDRANT_URL: http://qdrant:6333
       SCHEMA_SQL: /schema/0001_initial_schema.sql
     volumes:
       - ./data:/data:ro
       - ./api/alembic/versions:/schema:ro
     depends_on:
       postgres:
+        condition: service_healthy
+      qdrant:
         condition: service_healthy
 
 volumes:

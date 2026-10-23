@@ -4,8 +4,8 @@ Last updated: 2026-10-23
 
 ## State
 
-**In progress. Ingest and chunking built and verified (steps 1 to 3 of 8).** Embeddings,
-baseline answers, the flow and the evaluation set are not started.
+**In progress. Ingest, chunking and embeddings built and verified (steps 1 to 4 of 8).**
+Baseline answers, the flow and the evaluation set are not started.
 
 ## Completed
 
@@ -44,6 +44,19 @@ baseline answers, the flow and the evaluation set are not started.
 - Found and fixed while testing: a PDF with NUL characters crashed the insert; false headings
   (list items, algorithm lines, wrapped headings) created tiny chunks.
 
+## Embeddings (2026-10-24, run by Claude on the owner's machine)
+
+- `docker compose run --rm pipeline embed`: 726 units embedded into collection
+  `units_qa_v0_baseline_1` (dense 768, cosine; sparse BM25 with IDF). Alias `units_live` points
+  at it. A second run embedded nothing. 3 units are longer than 512 model tokens (tail cut).
+- Models: fastembed with the int8-quantised bge-base ONNX file (about 210 MB) and Qdrant/bm25
+  (D19). The unquantised model was not compared; quality loss is not measured.
+- Spot check with 3 searches (exact name, meaning without shared words, multi-step reasoning):
+  dense, sparse and hybrid all returned the expected papers. This is a sanity check, not an
+  evaluation; real scores come with evaluation set v0.
+- Tests: 46 pass in Docker (7 new embedding tests: mocks for speed, plus a test with the real
+  models). `ruff` clean. Image size 1.13 GB (models baked in so runs work offline).
+
 ## Known limits of the cleaning (not fixed, recorded honestly)
 
 - Footnote text can land in the middle of a sentence (for example a "Data and code available at
@@ -73,9 +86,10 @@ Nothing running.
 
 ## Exact next action
 
-1. Embeddings: local `bge-base-en-v1.5` (about 440 MB download; check licence and
-   compatibility first), dense plus sparse vectors into Qdrant, re-runnable.
-2. Baseline answer: hybrid retrieval, bounded context, cited answer with the OpenAI model.
+1. (done) Embeddings, see above.
+2. Baseline answer: hybrid retrieval (dense plus sparse with RRF fusion, already tried in the
+   spot check), bounded context, cited answer with the OpenAI model (`gpt-4.1-mini` for now).
+   Show the cost estimate and get the owner's approval before any batch of live calls.
 3. Prefect flow with checkpoints, then evaluation set v0 (30 local and 10 global questions,
    reviewed by the owner), and the baseline results table with cost.
 
@@ -83,6 +97,7 @@ Commands (from the repository folder, no Ubuntu needed):
 
     docker compose up -d                       # databases and API
     docker compose run --rm pipeline ingest    # parse, chunk and store the 25 papers
+    docker compose run --rm pipeline embed     # local embeddings into Qdrant
     docker compose run --rm --entrypoint pytest pipeline -q   # tests
 
 ## Local state

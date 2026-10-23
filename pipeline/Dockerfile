@@ -14,14 +14,27 @@ COPY pyproject.toml uv.lock ./
 # Dev tools (pytest, ruff) are included so tests can run in this container.
 RUN uv sync --frozen --no-install-project
 
-# Download the token vocabulary once at build time, so runs work offline afterwards.
-RUN python -c "import tiktoken; tiktoken.get_encoding('o200k_base')"
+# Download the models once at build time (about 300 MB), so runs work offline afterwards:
+# the token vocabulary, the dense and sparse embedding models, and the bge tokenizer.
+ENV FASTEMBED_CACHE_PATH=/opt/fastembed \
+    HF_HOME=/opt/hf
+# Each download is its own step with up to 3 tries, because the connection can drop.
+RUN for i in 1 2 3; do python -c "import tiktoken; tiktoken.get_encoding('o200k_base')" && break; \
+    [ "$i" = 3 ] && exit 1; sleep 5; done
+RUN for i in 1 2 3; do python -c "from fastembed import SparseTextEmbedding, TextEmbedding; \
+TextEmbedding('BAAI/bge-base-en-v1.5'); SparseTextEmbedding('Qdrant/bm25')" && break; \
+    [ "$i" = 3 ] && exit 1; sleep 5; done
+RUN for i in 1 2 3; do python -c "from tokenizers import Tokenizer; \
+Tokenizer.from_pretrained('BAAI/bge-base-en-v1.5')" && break; \
+    [ "$i" = 3 ] && exit 1; sleep 5; done
+ENV HF_HUB_OFFLINE=1
 
 COPY graphlens_pipeline ./graphlens_pipeline
 COPY tests ./tests
 
 # Run as a normal user, not root.
-RUN useradd --create-home --uid 10001 graphlens && chmod -R a+rX /opt/tiktoken
+RUN useradd --create-home --uid 10001 graphlens \
+ && chmod -R a+rX /opt/tiktoken /opt/fastembed /opt/hf
 USER graphlens
 
 ENTRYPOINT ["python", "-m", "graphlens_pipeline"]

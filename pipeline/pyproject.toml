@@ -4,9 +4,11 @@ version = "0.0.1"
 description = "GraphLens indexing pipeline: ingest, chunk and (later) embed, extract and build the graph"
 requires-python = ">=3.11,<3.12"
 dependencies = [
+    "fastembed==0.9.0",  # local embeddings (ONNX), Apache-2.0
     "fonttools==4.66.1",  # lets pypdf decode the encoding of embedded fonts (math symbols)
     "psycopg[binary]==3.3.6",
     "pypdf==6.19.0",
+    "qdrant-client==1.15.1",  # same minor version as the Qdrant server (v1.15.4)
     "sqlalchemy==2.1.5",
     "tiktoken==0.14.0",
 ]
@@ -28,7 +30,10 @@ ignore = ["S101"]  # assert is fine in tests
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-markers = ["integration: needs the Postgres container (DATABASE_URL); uses its own throwaway database"]
+markers = [
+    "integration: needs the Postgres and Qdrant containers; uses its own throwaway database and collections",
+    "model: loads the real local embedding models (baked into the Docker image)",
+]
 
 [dependency-groups]
 dev = [
