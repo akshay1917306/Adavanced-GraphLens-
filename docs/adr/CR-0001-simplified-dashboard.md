@@ -18,13 +18,16 @@ Phase 5 builds a **simple view first**: one main screen and one compare switch.
 | Part | Simple view |
 |---|---|
 | Ask screen | Question box, answer with numbered source chips, a "Why this answer" panel |
-| Why this answer | The sources used, plus a small chain such as `HopFuse - improves on - LatticeRank` |
+| Why this answer | The sources used, plus a **small evidence graph** (about 4 to 6 dots, shapes by type, line width by strength, dashed for low confidence). Selecting a dot shows its source passage |
 | Mode | Automatic by default; one **Compare with normal RAG** switch shows both answers side by side |
 | Trust | One badge: "Citations checked" or "Some statements not supported" |
 | Feedback | Thumbs up or down |
 
 Moved to "later view" (kept in the backlog, built only if time allows): the full graph
-explorer, community tree, manual mode chips (Local, Global, Relate), entity pages.
+explorer (300 nodes, filters, table view), community tree, manual mode chips (Local,
+Global, Relate), entity pages. The small evidence graph above **stays in v1**, because the
+blueprint treats the graph as core evidence, not an extra. It still needs a text
+alternative (list of the same dots and links) for accessibility.
 
 ## What does not change
 
