@@ -12,7 +12,7 @@ must beat in later phases. Without a baseline, nobody can show that the graph he
 | ID | Requirement | In this phase |
 |---|---|---|
 | G1 | Ingest documents, dedupe by content hash | PDF and text first; HTML and Markdown if the corpus needs them |
-| G2 | Split into text units with section metadata | About 600 tokens, 100 overlap |
+| G2 | Split into text units with section metadata | 450 tokens, 75 overlap (CR-0002; the blueprint said 600 and 100, but bge reads only 512) |
 | G6 | Embed text units | Text units only (entities and reports come later) |
 | G11 | Baseline vector RAG mode | Hybrid (dense plus sparse) retrieval and a cited answer |
 

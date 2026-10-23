@@ -36,8 +36,9 @@ baseline answers, the flow and the evaluation set are not started.
 - New `pipeline/` package (Docker image, pinned deps in `uv.lock`): PDF reading with safety
   checks, cleaning (ligatures, hyphens, page numbers, headers, References cut, Acknowledgements
   dropped, NUL removed), section detection, sentence-aware chunking, ingest into Postgres.
-- Real run: 25 of 25 papers ingested, 598 text units (17 to 600 tokens, average 371).
-  Second run added nothing (25 skipped).
+- Real run: 25 of 25 papers ingested. After CR-0002 (chunk size 450, overlap 75, because bge
+  reads only 512 tokens): 726 text units (17 to 450 tokens, average 308). Second run added
+  nothing (25 skipped). With the bge tokenizer, 3 units (0.4%) are still over 512 tokens.
 - Tests: 39 pass in Docker (unit and integration; integration tests create and drop their own
   throwaway database). `ruff check` and `ruff format --check` clean.
 - Found and fixed while testing: a PDF with NUL characters crashed the insert; false headings

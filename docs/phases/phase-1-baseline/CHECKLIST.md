@@ -8,8 +8,9 @@ Mark an item only after it was actually run. State where it was run.
       (25 papers; evidence is the ACL Anthology policy page, not a per-PDF check)
 - [x] Ingest skips a file with the same content hash (run twice on the real 25 papers:
       25 new, then 0 new and 25 skipped)
-- [x] Chunks are about 600 tokens with 100 overlap and keep section metadata
-      (598 units, 17 to 600 tokens, average 371; sections kept in `documents.metadata`, see D16)
+- [x] Chunks are at most 450 tokens with 75 overlap and keep section metadata (CR-0002)
+      (726 units, 17 to 450 tokens, average 308; sections kept in `documents.metadata`, see D16;
+      3 units, 0.4%, still exceed bge's 512 tokens)
 - [ ] Embeddings stored in Qdrant (dense and sparse); re-running adds nothing new
 - [ ] Baseline answer returns citations that point to real text unit IDs
 - [ ] A failed run resumes without repeating finished work

@@ -1,4 +1,7 @@
-"""Split sections into text units of about 600 tokens with 100 tokens of overlap.
+"""Split sections into text units of at most 450 tokens with 75 tokens of overlap.
+
+The blueprint says about 600 tokens, but the embedding model (bge-base) reads only 512, so
+longer units would lose their tail. CR-0002 lowers the target; see docs/adr/CR-0002.
 
 Blueprint 2.5: text units respect section boundaries, so a chunk never mixes two sections.
 Chunks end at sentence boundaries. A single sentence longer than the limit is cut by tokens.
@@ -13,9 +16,9 @@ import tiktoken
 from graphlens_pipeline.cleaning import Section
 
 ENCODING_NAME = "o200k_base"
-TARGET_TOKENS = 600
-OVERLAP_TOKENS = 100
-CHUNKER_VERSION = "1"
+TARGET_TOKENS = 450
+OVERLAP_TOKENS = 75
+CHUNKER_VERSION = "2"
 
 SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+(?=[A-Z])")
 ABBREVIATIONS = (

@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from sqlalchemy import text
 
+from graphlens_pipeline.chunking import TARGET_TOKENS
 from graphlens_pipeline.ingest import ingest_manifest, unit_id
 from tests.conftest import fake_pages
 
@@ -98,7 +99,7 @@ def test_ingest_stores_documents_and_units(engine, tmp_path):
             )
         ).all()
     assert all(r.license == "CC BY 4.0" and r.trust_level == "medium" for r in rows)
-    assert all(r.token_count <= 600 for r in rows)
+    assert all(r.token_count <= TARGET_TOKENS for r in rows)
     assert all(r.id == unit_id(r.content_hash, r.ordinal) for r in rows)
     by_doc: dict[str, list] = {}
     for r in rows:
