@@ -8,7 +8,7 @@ go through an ADR (see `docs/adr/`).
 |---|---|---|---|---|
 | D1 | Phase plan | Follow the blueprint roadmap (section 5.1): phases 0 to 8. The owner's earlier generic list (landing page, auth, ACL...) came from a different project and is not used | Owner said "start the phase" after this was proposed; please confirm at Phase 0 review | 2026-10-21 |
 | D2 | LLM provider | OpenAI, see ADR-0001 | Provider chosen by owner; ADR text awaiting review | 2026-10-21 |
-| D3 | Corpus and domain | Research literature. Phase 0 uses a 10-document **synthetic** fixture. The real corpus (200 to 300 CC BY papers on one topic) is chosen by the owner before Phase 1 | Open: owner picks topic | |
+| D3 | Corpus and domain | Research literature. Phase 0 uses a 10-document **synthetic** fixture. Real corpus: question answering (QA) methods and benchmarks from the ACL Anthology, CC BY papers only, 20 to 30 for development, 200 to 300 later after a cost estimate | Decided by owner | 2026-10-23 |
 | D4 | Ontology scope | 6 entity types, 8 predicates (blueprint default), `ontology/research_v1.yaml` | Decided | 2026-10-21 |
 | D5 | Extraction model | `LLM_MODEL_SMALL` first; compare on a 5% sample in Phase 2, upgrade if precision < 0.80 | Method decided, measured in Phase 2 | 2026-10-21 |
 | D6 | Gleaning passes | Compare 0 and 2 on the sample in Phase 2 | Method decided, measured in Phase 2 | 2026-10-21 |
