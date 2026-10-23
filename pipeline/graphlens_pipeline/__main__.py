@@ -30,6 +30,11 @@ def main(argv: list[str] | None = None) -> int:
     embed.add_argument("--index-version", default="baseline-1")
     embed.add_argument("--batch-size", type=int, default=32)
     embed.add_argument("--no-live", action="store_true", help="do not move the units_live alias")
+    ask = sub.add_parser(
+        "ask", help="answer one question with plain RAG (calls OpenAI, costs money)"
+    )
+    ask.add_argument("question")
+    ask.add_argument("--k", type=int, default=6, help="how many passages to retrieve")
     args = parser.parse_args(argv)
 
     database_url = os.environ.get("DATABASE_URL")
@@ -37,6 +42,9 @@ def main(argv: list[str] | None = None) -> int:
         print("DATABASE_URL is not set.", file=sys.stderr)
         return 2
     engine = create_engine(database_url)  # the URL is never printed
+
+    if args.command == "ask":
+        return _ask(engine, args.question, args.k)
 
     if args.command == "embed":
         qdrant_url = os.environ.get("QDRANT_URL")
@@ -74,6 +82,46 @@ def main(argv: list[str] | None = None) -> int:
     for paper_id, reason in report.failures.items():
         print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
     return 1 if report.failures else 0
+
+
+def _ask(engine, question: str, k: int) -> int:
+    qdrant_url = os.environ.get("QDRANT_URL")
+    if not qdrant_url:
+        print("QDRANT_URL is not set.", file=sys.stderr)
+        return 2
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import AnswerError, answer_question
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+
+    try:
+        result = answer_question(
+            question, QdrantClient(url=qdrant_url), engine, FastEmbedder(), OpenAiLlm(), k=k
+        )
+    except (AnswerError, LlmError) as error:
+        print(f"Could not answer: {error}", file=sys.stderr)
+        return 1
+
+    print(f"\nQ: {result.question}\n\nA: {result.answer}\n")
+    for passage in result.passages:
+        mark = "*" if passage.number in result.cited else " "
+        label = f"{passage.paper_id} | {passage.section[:32]} | {passage.title[:60]}"
+        print(f" {mark}[{passage.number}] {label}")
+    if result.refused:
+        print("\nRefused: not enough evidence in the retrieved passages.")
+    elif result.citations_valid:
+        print("\nCitation numbers: all match a passage that was sent (support not checked).")
+    else:
+        print(
+            f"\nWARNING: citations missing or invalid {result.invalid_citations or '(none cited)'}."
+        )
+    cost = "unknown" if result.cost_usd is None else f"${result.cost_usd:.5f}"
+    print(
+        f"Model {result.model}: {result.tokens_in} tokens in, {result.tokens_out} out, "
+        f"cost {cost}, {result.latency_ms} ms"
+    )
+    return 0
 
 
 if __name__ == "__main__":

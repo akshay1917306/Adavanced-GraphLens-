@@ -14,9 +14,14 @@ Mark an item only after it was actually run. State where it was run.
 - [x] Embeddings stored in Qdrant (dense and sparse); re-running adds nothing new
       (726 points; second run: 0 embedded, 726 skipped; first run took 282 s on the owner's PC;
       3 units cut at 512 model tokens)
-- [ ] Baseline answer returns citations that point to real text unit IDs
+- [x] Baseline answer returns citations that point to real text unit IDs
+      (the model cites passage numbers; each number maps to a unit ID; numbers that match no
+      passage are flagged. This checks that the numbers exist, not that the passage supports
+      the sentence)
 - [ ] A failed run resumes without repeating finished work
 - [ ] Context size, retries, timeouts and a per-run cost cap are enforced
+      (done: context 3000 tokens, output 500, question 1000 characters, timeout 60 s, 2 retries.
+      Still open: the cost cap for a batch run, which comes with the evaluation runner)
 - [ ] Evaluation set v0: 30 local and 10 global questions, reviewed by the owner
 - [ ] Baseline results table recorded with model IDs, date and cost
 
@@ -27,7 +32,7 @@ Mark an item only after it was actually run. State where it was run.
 - [x] Negative tests: empty file, corrupt PDF, not a PDF, encrypted PDF, scanned PDF, too large,
       too many pages, duplicate file, unlicensed paper, changed file, NUL characters,
       one bad paper does not stop the batch
-- [ ] OpenAI calls mocked in routine tests and labelled as mocks
+- [x] OpenAI calls mocked in routine tests and labelled as mocks (`FakeLlm`, `FakeEmbedder`)
 - [x] One small live call to confirm the key and model work (2026-10-23, `gpt-4.1-mini`, 15 tokens)
 - [ ] `ruff` and `pytest` pass; CI green (ruff and 39 pytest tests pass locally in Docker;
       CI is not set up for the pipeline folder yet)

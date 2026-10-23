@@ -93,6 +93,8 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       QDRANT_URL: http://qdrant:6333
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LLM_MODEL_MAIN: ${LLM_MODEL_MAIN:-}
       SCHEMA_SQL: /schema/0001_initial_schema.sql
     volumes:
       - ./data:/data:ro

@@ -4,8 +4,8 @@ Last updated: 2026-10-23
 
 ## State
 
-**In progress. Ingest, chunking and embeddings built and verified (steps 1 to 4 of 8).**
-Baseline answers, the flow and the evaluation set are not started.
+**In progress. Ingest, chunking, embeddings and the baseline answer are built and verified
+(steps 1 to 5 of 8).** The evaluation set, results table and the Prefect flow are not started.
 
 ## Completed
 
@@ -57,6 +57,24 @@ Baseline answers, the flow and the evaluation set are not started.
 - Tests: 46 pass in Docker (7 new embedding tests: mocks for speed, plus a test with the real
   models). `ruff` clean. Image size 1.13 GB (models baked in so runs work offline).
 
+## Baseline answer (2026-10-24, run by Claude on the owner's machine)
+
+- `docker compose run --rm pipeline ask "..."`: hybrid search (dense and sparse, RRF) for 6
+  passages, numbered context (3000 token budget), one `gpt-4.1-mini` call (500 token output
+  cap, 60 s timeout, 2 retries, temperature 0), then a check that every `[n]` is a passage sent.
+- Live check with 3 questions (cost shown by the program, about $0.0037 in total, about $0.0012
+  per question): two answerable questions about ConditionalQA and KG-FiD returned cited answers
+  with all citation numbers valid; "capital of Australia" was refused. I read the two answers
+  and they match the topics of the cited papers, but I did not verify each sentence against its
+  passage. Quality is only measured by evaluation set v0 later.
+- The model sees passage text as untrusted data (system rule plus `<passage>` wrappers). This
+  is tested with a mock, not proven against real attacks.
+- Tests: 72 pass in Docker (26 new; the model is a labelled mock). `ruff` clean.
+- Not done yet: the daily cost cap `LLM_DAILY_COST_CAP_USD` is not enforced by any code; the
+  batch runner must enforce a per-run cap before the 40-question run.
+- Pricing used for the cost line: OpenAI pricing page read on 2026-10-24
+  (`gpt-4.1-mini`: $0.40 input and $1.60 output per 1M tokens).
+
 ## Known limits of the cleaning (not fixed, recorded honestly)
 
 - Footnote text can land in the middle of a sentence (for example a "Data and code available at
@@ -87,9 +105,12 @@ Nothing running.
 ## Exact next action
 
 1. (done) Embeddings, see above.
-2. Baseline answer: hybrid retrieval (dense plus sparse with RRF fusion, already tried in the
-   spot check), bounded context, cited answer with the OpenAI model (`gpt-4.1-mini` for now).
-   Show the cost estimate and get the owner's approval before any batch of live calls.
+2. (done) Baseline answer, see above.
+3. Evaluation set v0: 30 local and 10 global questions drawn from the 25 papers, each with
+   the supporting passages. Claude drafts, the owner reviews. Then a batch runner with a cost
+   cap, results table (correctness by an LLM judge with swapped order, citation check) and a
+   cost record. Show the estimate and get the owner's approval before the batch.
+4. Prefect flow with checkpoints (resume without repeating work), docs, README, walkthrough.
 3. Prefect flow with checkpoints, then evaluation set v0 (30 local and 10 global questions,
    reviewed by the owner), and the baseline results table with cost.
 
@@ -98,6 +119,7 @@ Commands (from the repository folder, no Ubuntu needed):
     docker compose up -d                       # databases and API
     docker compose run --rm pipeline ingest    # parse, chunk and store the 25 papers
     docker compose run --rm pipeline embed     # local embeddings into Qdrant
+    docker compose run --rm pipeline ask "Your question"   # plain RAG answer (costs about $0.001)
     docker compose run --rm --entrypoint pytest pipeline -q   # tests
 
 ## Local state

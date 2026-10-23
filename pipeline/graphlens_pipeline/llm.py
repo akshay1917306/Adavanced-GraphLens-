@@ -1,0 +1,81 @@
+"""The only place that talks to OpenAI. Bounded: timeout, few retries, token limits, cost.
+
+The API key is read from the OPENAI_API_KEY environment variable and is never printed,
+logged or stored. Error messages carry only the error type.
+"""
+
+import os
+from dataclasses import dataclass
+from typing import Protocol
+
+# US dollars per 1 million tokens (input, output). Source: OpenAI pricing page, read on
+# 2026-10-24 (standard tier). A model not listed here has an unknown cost and is refused
+# when a cost cap is set.
+PRICES_PER_MILLION: dict[str, tuple[float, float]] = {
+    "gpt-4.1-mini": (0.40, 1.60),
+    "gpt-4.1": (2.00, 8.00),
+    "gpt-5.4-mini": (0.75, 4.50),
+    "gpt-5.4": (2.50, 15.00),
+}
+TIMEOUT_SECONDS = 60.0
+MAX_RETRIES = 2
+
+
+class LlmError(Exception):
+    """The model call failed. The message never contains the key or the request text."""
+
+
+@dataclass(frozen=True)
+class LlmResult:
+    text: str
+    model: str
+    tokens_in: int
+    tokens_out: int
+
+
+class Llm(Protocol):
+    model: str
+
+    def complete(self, system: str, user: str, max_output_tokens: int) -> LlmResult: ...
+
+
+def cost_usd(model: str, tokens_in: int, tokens_out: int) -> float | None:
+    """Cost of one call in dollars, or None when the model has no known price."""
+    prices = PRICES_PER_MILLION.get(model.split("-20")[0])  # "gpt-4.1-mini-2025-04-14" too
+    if prices is None:
+        return None
+    return (tokens_in * prices[0] + tokens_out * prices[1]) / 1_000_000
+
+
+class OpenAiLlm:
+    def __init__(self, model: str | None = None) -> None:
+        from openai import OpenAI
+
+        api_key = os.environ.get("OPENAI_API_KEY", "")
+        self.model = model or os.environ.get("LLM_MODEL_MAIN", "")
+        if not api_key or api_key.startswith("sk-placeholder"):
+            raise LlmError("OPENAI_API_KEY is not set")
+        if not self.model or self.model.startswith("to-be-chosen"):
+            raise LlmError("LLM_MODEL_MAIN is not set")
+        self._client = OpenAI(api_key=api_key, timeout=TIMEOUT_SECONDS, max_retries=MAX_RETRIES)
+
+    def complete(self, system: str, user: str, max_output_tokens: int) -> LlmResult:
+        try:
+            response = self._client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+                max_completion_tokens=max_output_tokens,
+                temperature=0,
+            )
+        except Exception as error:  # the SDK raises many types; report only the type
+            raise LlmError(f"model call failed ({type(error).__name__})") from error
+        usage = response.usage
+        return LlmResult(
+            text=response.choices[0].message.content or "",
+            model=response.model,
+            tokens_in=usage.prompt_tokens if usage else 0,
+            tokens_out=usage.completion_tokens if usage else 0,
+        )

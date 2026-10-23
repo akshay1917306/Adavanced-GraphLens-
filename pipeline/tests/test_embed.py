@@ -50,6 +50,12 @@ class FakeEmbedder:
     def token_counts(self, texts):
         return [MAX_INPUT_TOKENS + 1 if self.long_units else 100 for _ in texts]
 
+    def dense_query(self, question):
+        return self._vector(question)
+
+    def sparse_query(self, question):
+        return self.sparse([question])[0]
+
     @staticmethod
     def _vector(text):
         seed = hashlib.sha256(text.encode()).digest()
