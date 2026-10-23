@@ -6,7 +6,7 @@ approval, a merged pull request, and a `phase-N` tag.
 | Phase | Folder | Status |
 |---|---|---|
 | 0. Setup and decisions | [phase-0-setup](phase-0-setup/) | Approved, merged, tag `phase-0` |
-| 1. Baseline RAG and evaluation set v0 | [phase-1-baseline](phase-1-baseline/) | Started (docs only) |
+| 1. Baseline RAG and evaluation set v0 | [phase-1-baseline](phase-1-baseline/) | Built, in review |
 | 2. Extraction and graph | phase-2-extraction | Planned |
 | 3. Communities and global search | phase-3-communities | Planned |
 | 4. Local search, router, relate, citation check | phase-4-local-search | Planned |

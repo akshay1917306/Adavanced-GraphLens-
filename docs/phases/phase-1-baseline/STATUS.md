@@ -178,7 +178,15 @@ Nothing running.
 - Confirm models for later: both lines are `gpt-4.1-mini` for now. Revisit before Phase 2
   with an extraction cost estimate (ADR-0001 addendum to record final IDs and date).
 
-## Exact next action
+## Exact next action (after the owner's review)
+
+1. Owner follows "How to run it" and "How to test it" in WALKTHROUGH.md on their machine and
+   reports problems. Owner also reads the four spot-check answers (L14, L26, L23, G01).
+2. If approved: Claude pushes `phase-1/baseline`, opens a PR, waits for CI (the new `pipeline`
+   job is untested), fixes what fails, merges (fast-forward), tags `phase-1`, verifies on
+   GitHub, then plans Phase 2. Never force-push.
+
+## Older notes (kept for history)
 
 1. (done) Embeddings, see above.
 2. (done) Baseline answer, see above.
