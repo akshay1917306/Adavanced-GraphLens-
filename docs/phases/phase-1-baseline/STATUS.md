@@ -4,8 +4,8 @@ Last updated: 2026-10-23
 
 ## State
 
-**In progress, blocked on the owner's machine (Docker cannot start).** No pipeline code
-written yet beyond the corpus scripts.
+**In progress. Docker blocker resolved on 2026-10-23.** The stack runs on the owner's
+Windows machine. No pipeline code written yet beyond the corpus scripts.
 
 ## Completed
 
@@ -19,19 +19,26 @@ written yet beyond the corpus scripts.
   $0.00001). Key and model work.
 - CR-0001 (simplified dashboard, small evidence graph kept) drafted, not yet approved as a CR.
 
+## Verified on the owner's machine (2026-10-23, run by Claude)
+
+- Owner enabled CPU virtualization and installed WSL; Docker engine 29.9.2 runs.
+- `docker compose up -d --build`: 5 containers up and healthy (Postgres, Neo4j, Qdrant,
+  Redis, API). `GET /api/v1/health` returned `ok` for all four services.
+- Alembic revision `0001` applied; 24 tables exist (23 blueprint tables plus `alembic_version`).
+- Fixture load: 10 documents (9 medium, 1 low trust).
+- Note: the fixture loader needs `data/` and `ontology/` mounted into the container
+  (the image does not contain them):
+  `docker compose run --rm --no-deps -v "$PWD/data:/data:ro" -v "$PWD/ontology:/ontology:ro" api python -m app.fixtures --load`
+
 ## Current work
 
 Nothing running.
 
 ## Blockers
 
-1. **Docker engine does not start on the owner's Windows machine.** Findings:
-   `docker info` says "Docker Desktop is unable to start"; the Docker log says the engine
-   has not answered for 11+ hours; `wsl --status` prints only its help text (WSL not set
-   up); firmware virtualization reports `False`. Fix needs the owner: enable CPU
-   virtualization in BIOS, run `wsl --install` as administrator, restart.
-2. Dev tools missing on Windows (uv, Node, pytest, ruff, Python 3.11). The repo is designed
-   for Ubuntu on WSL; installing it in WSL solves this too.
+1. The first image download was very slow (about 0.3 to 1 MB/s). Later builds use the cache.
+2. Dev tools (uv, Node, pytest, ruff, Python 3.11) are not installed on Windows. Pipeline
+   code and tests will run inside Docker instead. Ubuntu on WSL is optional.
 
 ## Decisions waiting for the owner
 
