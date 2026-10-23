@@ -5,9 +5,8 @@ Last updated: 2026-10-23
 ## State
 
 **In progress. Ingest, chunking, embeddings and the baseline answer are built and verified
-(steps 1 to 5 of 8). Step 7 (evaluation set) is approved and loaded; the runner for step 8
-(results table) is built and waits for the owner's approval of the live run cost.**
-The Prefect flow (step 6) is not started.
+(steps 1 to 5 of 8), the evaluation set (step 7) is approved and loaded, and the baseline
+results table (step 8) is recorded.** Left: the Prefect flow (step 6) and the phase documents.
 
 ## Completed
 
@@ -107,6 +106,35 @@ The Prefect flow (step 6) is not started.
 - Not done: the live 40-question run waits for the owner's approval of the cost. Judge caveat:
   the judge is the same model family as the answerer; the owner should spot-check 4 answers.
 
+## Baseline results (live run, 2026-10-24 local time, run by Claude with the owner's approval)
+
+Run id `209e17c2-a537-4057-bf32-56f5adfb471a`, git `2968644`, model `gpt-4.1-mini` for answers
+and judge, 40 of 40 questions, **total cost $0.05245** (estimate was $0.059; cap was $0.25),
+133 seconds, latency p50 1.7 s and max 4.2 s. Files: `data/eval/v0/results/baseline-2026-10-23.md`
+and `.json` (the file date is the container's UTC date).
+
+| | All | Local (30) | Global (10) |
+|---|---|---|---|
+| Correct (LLM judge) | 70% | 93% | 0% |
+| Correct or partial | 100% | 100% | 100% |
+| Supporting-fact coverage | 68% | 88% | 9% |
+| Citation numbers valid | 100% | 100% | 100% |
+
+What this means, with limits:
+- **Plain RAG is strong on single-fact questions and weak on corpus-wide questions.** All 10
+  global questions were only "partial", and the retrieved passages held only 9% of the evidence.
+  That gap is what GraphRAG (communities and global search) must close in Phases 3 and 4.
+- **The local score is probably too high to be useful for comparison.** The questions were
+  written from abstracts, so they are easy; 93% leaves little room to show a gain. The harder
+  benchmark (50 multi-hop questions) comes later.
+- **Judge noise.** Spot-check by Claude of 4 answers: L14 and L26 were judged "partial" only
+  because the answer added true extra detail (the instructions say extra detail is fine), so the
+  judge was too strict; L23 was "correct" and its coverage 0% only because the exact quote was
+  in another chunk of the same paper; G01 "partial" looks right. The judge is the same model as
+  the answerer. The owner's own spot-check of these four is still wanted.
+- Citation numbers valid means the numbers exist, not that sentences are supported.
+- Only 25 papers; results do not transfer to the real corpus.
+
 ## Known limits of the cleaning (not fixed, recorded honestly)
 
 - Footnote text can land in the middle of a sentence (for example a "Data and code available at
@@ -139,12 +167,14 @@ Nothing running.
 1. (done) Embeddings, see above.
 2. (done) Baseline answer, see above.
 3. (done) Evaluation set v0 approved and loaded; runner built and dry-run.
-4. **Owner approves the live run (about $0.06).** Then:
+4. (done) Live baseline run, results above. To repeat it:
    `$env:GIT_SHA = git rev-parse --short HEAD`, then
    `docker compose run --rm -v "$PWD/data/eval/v0/results:/out" pipeline eval-run`.
-   Results go to `data/eval/v0/results/baseline-<date>.md` and `.json`.
-   The owner spot-checks a few answers in the results file.
-5. Prefect flow with checkpoints (resume without repeating work), docs, README, walkthrough.
+   The owner spot-checks the four answers listed in the results discussion.
+5. Prefect flow with checkpoints (blueprint 2.5): ingest, embed and eval as resumable steps.
+   Prefect is a large dependency; check version, licence and size first.
+6. Phase docs: WALKTHROUGH.md, root README update, notebook notes, final completion report.
+   Then stop for the owner's review; nothing is pushed until the owner says so.
 3. Prefect flow with checkpoints, then evaluation set v0 (30 local and 10 global questions,
    reviewed by the owner), and the baseline results table with cost.
 
