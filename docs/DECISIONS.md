@@ -20,3 +20,4 @@ go through an ADR (see `docs/adr/`).
 | D12 | Hosting | Deferred to Phase 7 | Deferred | 2026-10-21 |
 | D13 | Phase tags | Tag `phase-N` on the approved merge commit (the blueprint does not name tags) | Proposed | 2026-10-21 |
 | D14 | Python packaging | `uv` with a lock file; exact versions in `api/pyproject.toml` | Decided | 2026-10-21 |
+| D15 | PDF text extraction | **pypdf** (BSD-3). Tested on 5 corpus papers on 2026-10-23: pypdf kept normal word spacing (about 0.13 spaces per character) and read the two columns in order. pdfminer.six (MIT) glued words together (about 0.002 spaces per character), also with a tuned setting. PyMuPDF rejected because of its AGPL license. pypdf output still needs cleaning: ligatures (NFKC), end-of-line hyphens, page numbers, running headers, and cutting at References | Decided, re-measure if a paper extracts badly | 2026-10-23 |
