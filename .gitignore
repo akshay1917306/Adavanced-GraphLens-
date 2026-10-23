@@ -20,6 +20,8 @@ next-env.d.ts
 
 # Local data volumes and editor files
 .data/
+# Downloaded papers stay local; the manifest (with hashes) is committed
+data/corpus/*/pdfs/
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
