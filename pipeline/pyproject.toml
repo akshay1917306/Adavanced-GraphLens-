@@ -11,6 +11,7 @@ dependencies = [
     "fastembed==0.9.0",  # local embeddings (ONNX), Apache-2.0
     "fonttools==4.66.1",  # lets pypdf decode the encoding of embedded fonts (math symbols)
     "neo4j==5.28.2",  # official Neo4j driver (bolt), same major version as the server (5.26)
+    "graspologic-native==1.3.1",  # hierarchical Leiden (the Rust core of graspologic, no heavy deps)
     "numpy==2.4.6",
     "openai==3.28.0",  # the only code that calls OpenAI is graphlens_pipeline/llm.py
     "prefect==3.8.8",  # runs the stages as a flow with retries (Apache-2.0)

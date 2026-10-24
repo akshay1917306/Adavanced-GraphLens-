@@ -88,6 +88,12 @@ def main(argv: list[str] | None = None) -> int:
     quality.add_argument("--index-version", default="idx2-full-g0")
     quality.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     quality.add_argument("--out", type=Path, default=None, help="write the report here")
+    comm = sub.add_parser(
+        "communities", help="find hierarchical communities and write them to Neo4j (no cost)"
+    )
+    comm.add_argument("--index-version", default="idx2-full-g0")
+    comm.add_argument("--max-cluster-size", type=int, default=50)
+    comm.add_argument("--seed", type=int, default=42)
     for name, helptext in (
         ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
         ("labels-render", "write the review pages from the label files"),
@@ -158,6 +164,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "quality-report":
         return _quality_report(engine, args)
+
+    if args.command == "communities":
+        return _communities(args)
 
     if args.command.startswith("labels-"):
         return _labels(engine, args)
@@ -352,6 +361,49 @@ def _graph_load(engine, args) -> int:
         == (len(result.entities), len(result.relations)),
     }, indent=2))  # fmt: skip
     return 0
+
+
+def _communities(args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.communities import (
+        detect,
+        read_communities,
+        read_entity_graph,
+        summary,
+        verify_hierarchy,
+        write_communities,
+    )
+    from graphlens_pipeline.graphstore import apply_schema
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        apply_schema(driver)
+        entities, edges = read_entity_graph(driver, args.index_version)
+        if not entities:
+            print("The graph is empty; run graph-load first.", file=sys.stderr)
+            return 1
+        ids = [e["id"] for e in entities]
+        found = detect(ids, edges, args.max_cluster_size, args.seed)
+        problems = verify_hierarchy(found, ids)
+        if problems:
+            print("Hierarchy problems, nothing written:", *problems, sep=chr(10), file=sys.stderr)
+            return 1
+        write_communities(driver, found, args.index_version, args.seed, args.max_cluster_size)
+        stored = read_communities(driver, args.index_version)
+    stored_problems = verify_hierarchy(stored, ids)
+    print(json.dumps({
+        **summary(found), "seed": args.seed, "max_cluster_size": args.max_cluster_size,
+        "stored_matches": [(c.id, c.members) for c in stored]
+        == [(c.id, c.members) for c in found],
+        "problems_after_write": stored_problems,
+    }, indent=2))  # fmt: skip
+    return 1 if stored_problems else 0
 
 
 def _labels(engine, args) -> int:
