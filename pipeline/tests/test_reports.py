@@ -225,3 +225,90 @@ def test_the_estimate_counts_calls_without_calling_the_model(engine, empty_cache
 
 def test_the_hash_depends_on_model_and_prompt():
     assert input_hash("m1", "x") != input_hash("m2", "x") != input_hash("m2", "y")
+
+
+# --- embeddings and the Phase 3 gate checks ----------------------------------------------------
+
+
+def fake_embed(texts):
+    """MOCK embedder: a 768-number vector per text, different for different texts."""
+    return [[1.0, float(len(t) % 7)] + [0.0] * 766 for t in texts]  # never the zero vector
+
+
+@pytest.fixture
+def neo4j_driver():
+    import os
+
+    from neo4j import GraphDatabase
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        pytest.skip("NEO4J_* is not set")
+    from graphlens_pipeline.graphstore import apply_schema
+
+    with GraphDatabase.driver(uri, auth=(user, password)) as drv:
+        apply_schema(drv)
+        yield drv
+
+
+@pytest.mark.integration
+def test_embeddings_are_made_once_and_remade_only_when_the_report_changes(neo4j_driver):
+    import uuid
+
+    from graphlens_pipeline.reports import embed_reports
+
+    version = f"test-{uuid.uuid4().hex[:8]}"
+    try:
+        with neo4j_driver.session() as session:
+            session.run(
+                "CREATE (:Community {id: $a, index_version: $v, report_text: 'one'}),"
+                " (:Community {id: $b, index_version: $v, report_text: 'two two'}),"
+                " (:Community {id: $c, index_version: $v})",
+                a=f"{version}-a", b=f"{version}-b", c=f"{version}-c", v=version,
+            ).consume()  # fmt: skip
+        first = embed_reports(neo4j_driver, fake_embed, version)
+        assert first == {"with_report_text": 2, "embedded_now": 2, "already_current": 0}
+        assert embed_reports(neo4j_driver, fake_embed, version)["embedded_now"] == 0
+        with neo4j_driver.session() as session:
+            session.run(
+                "MATCH (c:Community {id: $a}) SET c.report_text = 'one changed'", a=f"{version}-a"
+            ).consume()
+        assert embed_reports(neo4j_driver, fake_embed, version)["embedded_now"] == 1
+        with neo4j_driver.session() as session:
+            rows = session.run(
+                "CALL db.index.vector.queryNodes('community_report_embedding', 300, $q)"
+                " YIELD node WHERE node.index_version = $v RETURN count(node) AS n",
+                q=[1.0] + [0.0] * 767, v=version,
+            ).single()["n"]  # fmt: skip
+        assert rows == 2
+    finally:
+        with neo4j_driver.session() as session:
+            session.run(
+                "MATCH (c:Community {index_version: $v}) DETACH DELETE c", v=version
+            ).consume()
+
+
+def test_the_gate_checks_find_broken_chains_missing_reports_and_unknown_citations(monkeypatch):
+    from graphlens_pipeline import quality
+
+    monkeypatch.setattr(quality, "_existing_units", lambda engine, ids: {"u1"} & set(ids))
+    finding = json.dumps([{"cited_unit_ids": ["u1"]}])
+    bad_finding = json.dumps([{"cited_unit_ids": ["u1", "ghost"]}])
+    entities = [
+        {"id": "ok", "levels": [0, 1], "leaves": [False, True], "community_levels": [0, 1]},
+        {"id": "no_leaf", "levels": [0], "leaves": [False], "community_levels": [0]},
+        {"id": "gap", "levels": [0, 2], "leaves": [False, True], "community_levels": [0, 2]},
+        {"id": "none", "levels": [], "leaves": [], "community_levels": []},
+    ]
+    communities = [
+        {"id": "a", "is_stub": False, "has_report": True, "embedded": True, "findings": finding},
+        {"id": "b", "is_stub": False, "has_report": True, "embedded": False,
+         "findings": bad_finding},
+        {"id": "c", "is_stub": True, "has_report": False, "embedded": False, "findings": None},
+    ]  # fmt: skip
+    checks = {c.name: c for c in quality.community_checks(entities, communities, None)}
+    assert checks["community_assignment"].value == 0.25
+    assert round(checks["communities_with_report"].value, 3) == round(2 / 3, 3)
+    assert round(checks["report_citations_valid"].value, 3) == round(2 / 3, 3)
+    assert checks["report_embedding_coverage"].value == 0.5
+    assert not any(c.passed for c in checks.values())

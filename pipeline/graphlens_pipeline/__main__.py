@@ -106,6 +106,15 @@ def main(argv: list[str] | None = None) -> int:
     rep.add_argument(
         "--smoke", type=int, default=0, help="only N leaf communities, print them, store nothing"
     )
+    cembed = sub.add_parser(
+        "community-embed", help="embed the community reports into Neo4j (local model, no cost)"
+    )
+    cembed.add_argument("--index-version", default="idx2-full-g0")
+    cquality = sub.add_parser(
+        "community-quality", help="measure the Phase 3 gate checks (no model, no cost)"
+    )
+    cquality.add_argument("--index-version", default="idx2-full-g0")
+    cquality.add_argument("--run-version", default="idx2-full-g0-reports")
     for name, helptext in (
         ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
         ("labels-render", "write the review pages from the label files"),
@@ -182,6 +191,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "community-reports":
         return _community_reports(engine, args)
+
+    if args.command == "community-embed":
+        return _community_embed(args)
+
+    if args.command == "community-quality":
+        return _community_quality(engine, args)
 
     if args.command.startswith("labels-"):
         return _labels(engine, args)
@@ -501,6 +516,60 @@ def _community_reports(engine, args) -> int:
                result.tokens_in, result.tokens_out, stats)  # fmt: skip
     print(json.dumps({**stats, "cost_usd": result.cost_usd}, indent=2))
     return 0 if complete else 1
+
+
+def _community_embed(args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.graphstore import apply_schema
+    from graphlens_pipeline.reports import embed_reports
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        apply_schema(driver)
+        print(json.dumps(embed_reports(driver, FastEmbedder().dense, args.index_version)))
+    return 0
+
+
+def _community_quality(engine, args) -> int:
+    from neo4j import GraphDatabase
+    from sqlalchemy import text
+
+    from graphlens_pipeline.quality import (
+        community_checks,
+        read_community_state,
+        save_checks,
+    )
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.run_version}
+        ).first()
+    if not run:
+        print(
+            f"No run record for {args.run_version}; run community-reports first.", file=sys.stderr
+        )
+        return 1
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        entities, communities = read_community_state(driver, args.index_version)
+    if not communities:
+        print("No communities; run the communities command first.", file=sys.stderr)
+        return 1
+    checks = community_checks(entities, communities, engine)
+    save_checks(engine, str(run[0]), checks)
+    for check in checks:
+        print(f"{'PASS' if check.passed else 'MISS'}  {check.name}: {check.value:.1%}")
+    return 0 if all(c.passed for c in checks) else 1
 
 
 def _labels(engine, args) -> int:

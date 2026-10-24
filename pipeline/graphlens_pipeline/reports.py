@@ -511,3 +511,48 @@ def store_reports(
                 " c.report_is_stub = row.is_stub, c.report_text = row.text",
                 rows=rows[start : start + 200], v=index_version,
             ).consume()  # fmt: skip
+
+
+EMBEDDING_DIMENSIONS = 768
+
+
+def embed_reports(driver, embed, index_version: str, database: str = "neo4j") -> dict:
+    """Put a vector on every community that has a report text and no up-to-date vector.
+
+    `embed(texts)` returns one 768-number vector per text (the local bge model). A vector is
+    recomputed only when the report text changed since the last time (its hash is stored).
+    """
+    with driver.session(database=database) as session:
+        rows = [
+            dict(r)
+            for r in session.run(
+                "MATCH (c:Community {index_version: $v}) WHERE c.report_text IS NOT NULL"
+                " RETURN c.id AS id, c.report_text AS text, c.embedding_hash AS done ORDER BY c.id",
+                v=index_version,
+            )
+        ]  # fmt: skip
+        todo = []
+        for row in rows:
+            digest = hashlib.sha256(row["text"].encode()).hexdigest()[:16]
+            if row["done"] != digest:
+                todo.append({**row, "digest": digest})
+        vectors = embed([row["text"] for row in todo]) if todo else []
+        for row, vector in zip(todo, vectors, strict=True):
+            if len(vector) != EMBEDDING_DIMENSIONS:
+                raise ValueError(f"expected {EMBEDDING_DIMENSIONS} numbers, got {len(vector)}")
+            row["vector"] = [float(x) for x in vector]
+        for start in range(0, len(todo), 100):
+            session.run(
+                "UNWIND $rows AS row MATCH (c:Community {id: row.id})"
+                " SET c.embedding_hash = row.digest"
+                " WITH c, row CALL db.create.setNodeVectorProperty(c, 'embedding', row.vector)",
+                rows=[
+                    {k: r[k] for k in ("id", "digest", "vector")}
+                    for r in todo[start : start + 100]
+                ],
+            ).consume()  # fmt: skip
+    return {
+        "with_report_text": len(rows),
+        "embedded_now": len(todo),
+        "already_current": len(rows) - len(todo),
+    }
