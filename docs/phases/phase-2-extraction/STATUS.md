@@ -119,6 +119,19 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
 - Money spent in Phase 2 so far: about **$2.40** of the $3 cap (extraction $2.24, resolution
   runs $0.16). The guard cost nothing.
 
+## After the guard was loosened for symbols (D26, 2026-10-24)
+
+Current numbers, which replace the ones in the older sections below where they differ:
+**1,842 entities** after resolution (80 automatic merges, 58 model merges), **1,545 entities and
+2,694 relations in Neo4j** (297 lonely single-mention entities left out), orphan rate 1.6%,
+duplicate proxy 2.7%, 250 tests pass. Entity-resolution scores on the 110 labeled pairs:
+precision **1.00**, recall **0.65**, **F1 0.79** (before: recall 0.60, F1 0.75; target 0.85, still
+a miss). The change recovered 3 of the 14 labeled pairs that were wrongly kept apart; the other
+11 differ by numbers (`GPT3` and `GPT-3`, `1.1`), by content words (`training process`,
+`action sequence`) or were never merged by the model. The 7 new merges were read: 6 right, and
+`Natural Questions` with `Natural Questions-OPEN (NQ-OPEN)` was wrong, so the bracket rule was
+limited to extra words of 3 letters or fewer. No model cost.
+
 ## Step 7: Neo4j load (2026-10-24, Claude, built and run for real)
 
 - Code: `pipeline/graphlens_pipeline/graphstore.py`, schema scripts in `graph_schema/`
@@ -205,7 +218,7 @@ None.
 
 ## Exact next action
 
-Wait for the owner's decisions: the ER guard (loosen or accept the F1 miss), D5/D6, and then
+Wait for the owner's decisions: accept the ER F1 miss (0.79 against 0.85) or loosen further, D5/D6, and then
 "Phase 2 approved". Only then push, open the PR, check CI, merge and tag `phase-2`. Nothing from
 Phase 2 is pushed.
 

@@ -285,6 +285,13 @@ def test_a_model_merge_is_overruled_when_the_names_really_differ():
         ("Transformer encoder-decoder model", "encoder-decoder Transformer", True),
         ("Wikipedia passages", "passages from Wikipedia", True),
         ("Lexical Match", "lexical matching", True),
+        ("Step Verifier (Vs)", "step verifier Vs", True),  # the extra word is the bracket
+        ("cross-entropy loss", "cross-entropy loss Lce", True),  # a symbol suffix
+        ("claude", "claude-v1", True),  # a version tag
+        ("Natural Questions", "Natural Questions-OPEN (NQ-OPEN)", False),  # a different variant
+        ("Training Set", "Training", False),  # "Set" is a word here, not a symbol
+        ("SQuAD v1.0", "SQuAD v1.1", False),
+        ("BERT", "BERT Large", False),
         ("ROUGE", "Rouge-X", False),
         ("Step Verifier", "verifier", False),
         ("bandit feedback", "simulated bandit feedback", False),

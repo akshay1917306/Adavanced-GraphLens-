@@ -128,7 +128,7 @@ queried with a 768-number list, as in `tests/test_graphstore.py`.
 
 ```bash
 docker compose up -d postgres qdrant neo4j
-docker compose run --rm --entrypoint pytest pipeline -q -m "not model"     # 242 tests
+docker compose run --rm --entrypoint pytest pipeline -q -m "not model"     # 250 tests
 docker compose run --rm --no-deps --entrypoint ruff pipeline check .
 ```
 
@@ -141,19 +141,19 @@ Integration tests use their own temporary database, Qdrant collections and a thr
 - Extraction, 751 units, ontology v2, `gpt-4.1-mini`, no gleaning: **4,591 entity mentions and
   3,611 relations**, cost $0.77. The second check dropped 573 proposed relations (196 with an
   end that was not an extracted entity, 377 whose types the relation does not allow).
-- Resolution: 4,591 mentions became **1,848 entities** (80 automatic merges, 52 model merges that
-  passed the guard). The first model pass said "same" 164 times; I read the first 100 and about 15
+- Resolution: 4,591 mentions became **1,842 entities** (80 automatic merges, 58 model merges that
+  passed the guard, which was loosened for symbols in D26). The first model pass said "same" 164 times; I read the first 100 and about 15
   to 20 were wrong, so the guard was added. The merges that remain were all read by me.
-- Neo4j: **1,550 entities and 2,695 relations**, all embedded. 298 entities with no relation that
+- Neo4j: **1,545 entities and 2,694 relations**, all embedded. 297 entities with no relation that
   were mentioned once were left out (D25).
 - Total OpenAI spend in Phase 2: about **$2.40** of the $3 cap.
 - Quality checks (`QUALITY.md`): schema validity 100%, node provenance 100%, edge evidence 100%,
-  ontology conformance 100%, embedding coverage 100%, duplicate proxy 2.6%, orphan rate 1.6%
+  ontology conformance 100%, embedding coverage 100%, duplicate proxy 2.7%, orphan rate 1.6%
   (**17.5% before** the lonely entities were left out, a miss against the 10% target).
 - Accuracy from the labeled samples (I drafted the labels, the owner confirmed all of them):
   relation precision **0.81** (target 0.80, narrow; 0.72 to 0.83 depending on the 20 unsure
-  items); entity-resolution precision 1.00, recall 0.60, **F1 0.75** (target 0.85, a miss).
-- Tests: 242 pass; `ruff` clean. CI for this branch has **not run on GitHub yet**.
+  items); entity-resolution precision 1.00, recall 0.65, **F1 0.79** (target 0.85, a miss).
+- Tests: 250 pass; `ruff` clean. CI for this branch has **not run on GitHub yet**.
 
 ## 8. Limitations and open issues
 

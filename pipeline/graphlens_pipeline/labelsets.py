@@ -203,6 +203,27 @@ def er_scores(data: dict) -> dict[str, Score]:
     }
 
 
+def refresh_decisions(engine: Engine, run_id: str, data: dict) -> int:
+    """Point each labeled pair at the resolver's current decision for it, to re-score after a
+    change to the resolver. The labels and the sampling weights stay as drawn. The decision at
+    draw time is kept once in `decision_at_draw`. Returns how many decisions changed."""
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text("SELECT entity_a, entity_b, decision FROM resolution_decisions WHERE run_id = :r"),
+            {"r": run_id},
+        ).all()
+    current = {}
+    for a, b, decision in rows:
+        current[(a, b)] = current[(b, a)] = decision
+    changed = 0
+    for pair in data["pairs"]:
+        new = current.get((pair["a"], pair["b"]), pair["decision"])
+        pair.setdefault("decision_at_draw", pair["decision"])
+        changed += new != pair["decision"]
+        pair["decision"] = new
+    return changed
+
+
 def render_relation_review(data: dict) -> str:
     lines = [
         "# Relation labels: review",

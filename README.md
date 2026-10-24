@@ -6,7 +6,7 @@ by following the graph, showing the evidence for every answer. It is built from 
 
 > **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is built on a branch and waits for the owner's approval.**
 > The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
-> used for answers, and its relation precision is 0.81 and entity-resolution F1 0.75, below the target). There is no web interface for
+> used for answers, and its relation precision is 0.81 and entity-resolution F1 0.79, below the target). There is no web interface for
 > questions (Phase 5). Development data: 25 open-licensed research papers.
 
 ## Status
@@ -35,9 +35,9 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Baseline results: 93% correct on local, 0% on global questions | **Measured** (LLM judge, see limits) |
 | Ontology-based extraction of entities and relations (751 units, cached, cost-capped) | Implemented |
 | Entity resolution with stored decisions and a merge guard | Implemented |
-| Neo4j graph: 1,550 entities, 2,695 relations, with source and evidence passages, vector index | Implemented |
+| Neo4j graph: 1,545 entities, 2,694 relations, with source and evidence passages, vector index | Implemented |
 | Quality report on the graph | Implemented, see [QUALITY.md](docs/phases/phase-2-extraction/QUALITY.md) |
-| Relation precision 0.81 (target 0.80) and entity-resolution F1 0.75 (target 0.85) | **Measured** on 182 relations and 110 pairs |
+| Relation precision 0.81 (target 0.80) and entity-resolution F1 0.79 (target 0.85) | **Measured** on 182 relations and 110 pairs |
 | Communities, global search, router, relate, citation support check | Planned (Phases 3 and 4) |
 | Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |
 | CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
@@ -90,7 +90,7 @@ Names only; real values live in your git-ignored `.env`. See `.env.example`.
 
 ```bash
 docker compose up -d postgres qdrant
-docker compose run --rm --entrypoint pytest pipeline -q                  # 242 tests
+docker compose run --rm --entrypoint pytest pipeline -q                  # 250 tests
 docker compose run --rm --no-deps --entrypoint ruff pipeline check .
 docker compose run --rm pipeline eval-verify                             # evidence quotes exist
 ```
@@ -104,7 +104,7 @@ database and Qdrant collections.
 - [Phases](docs/phases/README.md): [Phase 0](docs/phases/phase-0-setup/),
   [Phase 1](docs/phases/phase-1-baseline/) ([walkthrough](docs/phases/phase-1-baseline/WALKTHROUGH.md)) and
   [Phase 2](docs/phases/phase-2-extraction/) ([walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md))
-- [Decision log](docs/DECISIONS.md) (D1 to D25), [ADRs and change requests](docs/adr/), [Backlog](docs/BACKLOG.md)
+- [Decision log](docs/DECISIONS.md) (D1 to D26), [ADRs and change requests](docs/adr/), [Backlog](docs/BACKLOG.md)
 - [Baseline results](data/eval/v0/results/baseline-2026-10-23.md), [wireframes](docs/design/WIREFRAMES.md)
 
 ## Known limitations
@@ -112,7 +112,7 @@ database and Qdrant collections.
 - Only 25 development papers; the real corpus (200 to 300) is not loaded.
 - The evaluation questions come from abstracts, so the local score (93%) is probably too easy.
   The judge is the same model as the answerer and was too strict in 2 of 4 spot-checks.
-- Entity-resolution F1 is 0.75 against a 0.85 target: the resolver is strict, so many true duplicates stay separate. Claude drafted the labels and the owner confirmed them without changes.
+- Entity-resolution F1 is 0.79 against a 0.85 target: the resolver is strict, so many true duplicates stay separate. Claude drafted the labels and the owner confirmed them without changes.
 - About 17.5% of extracted entities had no relation; lonely single-mention ones are left out of the graph.
 - Citation checking only proves a cited number exists, not that the passage supports the claim.
 - Text cleaning is heuristic (footnotes, equations and tables can be messy).

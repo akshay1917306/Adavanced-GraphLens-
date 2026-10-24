@@ -19,8 +19,8 @@ the phase exit is "measured", so a missed target is reported, not hidden.
       (**0.81** on 182 relations, 20 unsure excluded (0.72 to 0.83 if they all went one way);
       owner confirmed all labels 2026-10-24)
 - [x] Entity resolution precision, recall and F1 measured on labeled pairs (target F1 0.85)
-      (measured, **F1 0.75 is a miss**: precision 1.00, recall 0.60; owner confirmed all labels
-      2026-10-24; decision on the guard is open)
+      (measured, **F1 0.79 is a miss**: precision 1.00, recall 0.65 (0.75 and 0.60 before the
+      symbol loosening, D26); owner confirmed all labels 2026-10-24)
 - [ ] Duplicate entities in a sample audit (target at most 5%); orphan entities (at most 10%)
       (orphans were **17.5%** (a miss), then 1.6% after D25 left 298 lonely single-mention
       entities out; both numbers are in `QUALITY.md`; automatic duplicate proxy 2.6%, the

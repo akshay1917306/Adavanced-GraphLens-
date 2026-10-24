@@ -121,3 +121,26 @@ def test_the_review_pages_show_text_labels_and_ids():
         "owner": None, "reason": "acronym",
     }]}  # fmt: skip
     assert "P001" in render_pair_review(pairs) and "acronym" in render_pair_review(pairs)
+
+
+@pytest.mark.integration
+def test_refreshing_decisions_keeps_labels_and_the_first_decision(engine, tmp_path):
+    from graphlens_pipeline.labelsets import refresh_decisions
+    from graphlens_pipeline.resolve import Decision, save_decisions
+    from graphlens_pipeline.runs import start_run
+    from tests.test_embed import prepare
+
+    prepare(engine, tmp_path)
+    run = start_run(engine, "embed corpus", "idx-refresh-test", {}, 1.0, sample=True)
+    save_decisions(
+        engine, str(run.id), [Decision("Method:a", "Method:b", 0.9, "llm", "merge", "x")]
+    )
+    data = {"pairs": [
+        {"a": "Method:b", "b": "Method:a", "decision": "keep_separate", "owner": "same"},
+        {"a": "Method:c", "b": "Method:d", "decision": "merge", "owner": "different"},
+    ]}  # fmt: skip
+    assert refresh_decisions(engine, str(run.id), data) == 1
+    first, second = data["pairs"]
+    assert first["decision"] == "merge" and first["decision_at_draw"] == "keep_separate"
+    assert second["decision"] == "merge" and first["owner"] == "same"  # unknown pair untouched
+    assert refresh_decisions(engine, str(run.id), data) == 0

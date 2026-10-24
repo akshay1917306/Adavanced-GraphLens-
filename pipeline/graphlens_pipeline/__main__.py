@@ -99,6 +99,10 @@ def main(argv: list[str] | None = None) -> int:
         labels.add_argument("--index-version", default="idx2-full-g0")
         labels.add_argument("--gleaning", type=int, default=0)
         labels.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+        labels.add_argument(
+            "--refresh-decisions", action="store_true",
+            help="before scoring, use the resolver's current decision for each labeled pair",
+        )  # fmt: skip
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
@@ -398,6 +402,10 @@ def _labels(engine, args) -> int:
         return 0
 
     # labels-score
+    if args.refresh_decisions:
+        changed = ls.refresh_decisions(engine, str(run[0]), pairs)
+        ls.write_json(pairs_file, pairs)
+        print(f"{changed} labeled pairs now have a different resolver decision")
     precision = ls.relation_precision(relations)
     er = ls.er_scores(pairs)
     checks = []

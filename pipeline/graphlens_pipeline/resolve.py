@@ -209,12 +209,29 @@ HARMLESS_WORDS = GENERIC_TAILS | EMPTY_WORDS | {
 }  # fmt: skip
 
 
+def _without_symbol_suffix(name: str) -> str:
+    """Drop a last word that is a symbol, not a word: "cross-entropy loss Lce" -> "... loss".
+
+    A symbol is a capital plus one or two lower-case letters ("Lce", "Vs", "Dtr") after words
+    that all start in lower case. "Training Set" keeps its "Set" (its other words are capitalised).
+    """
+    words = name.split()
+    if (
+        len(words) >= 2
+        and re.fullmatch(r"[A-Z][a-z]{1,2}", words[-1])
+        and all(not w[0].isupper() for w in words[:-1])
+    ):
+        return " ".join(words[:-1])
+    return name
+
+
 def _core_tokens(name: str) -> frozenset[str]:
     """The words that make a name different: no generic words, one-letter variables or plurals."""
     core = set()
     # a lone letter between spaces is a variable ("state verifier V"); "Rouge-X" is a name
-    for token in tokens(re.sub(r"(?<![\w-])[A-Za-z](?![\w-])", " ", name)):
-        if token in HARMLESS_WORDS:
+    stripped = re.sub(r"(?<![\w-])[A-Za-z](?![\w-])", " ", _without_symbol_suffix(name))
+    for token in tokens(stripped):
+        if token in HARMLESS_WORDS or re.fullmatch(r"v\d+", token):  # "claude-v1": a version tag
             continue
         if len(token) > 5 and token.endswith("ing"):
             token = token[:-3]
@@ -243,6 +260,14 @@ def merge_veto(a: str, b: str) -> str | None:
         return None
     core_a, core_b = _core_tokens(a), _core_tokens(b)
     if core_a and core_a == core_b:
+        return None
+    # "Step Verifier (Vs)" and "step verifier Vs": a short extra word that is the other name's
+    # bracket. "Natural Questions" and "Natural Questions-OPEN (NQ-OPEN)" stay apart.
+    bracketed = {
+        token for name in (a, b) for inside in PARENTHESIS.findall(name) for token in tokens(inside)
+    }
+    extra = core_a ^ core_b
+    if core_a & core_b and extra and extra <= bracketed and all(len(w) <= 3 for w in extra):
         return None
     return "names differ by more than a generic word, plural, word order or acronym"
 

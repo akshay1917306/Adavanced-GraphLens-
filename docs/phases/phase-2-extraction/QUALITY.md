@@ -9,7 +9,7 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 | edge_evidence | 100.0% | >= 100% | PASS |
 | ontology_conformance | 100.0% | >= 100% | PASS |
 | embedding_coverage | 100.0% | >= 100% | PASS |
-| duplicate_rate_proxy | 2.6% | <= 5% | PASS |
+| duplicate_rate_proxy | 2.7% | <= 5% | PASS |
 | orphan_rate | 1.6% | <= 10% | PASS |
 | orphan_rate_before_pruning | 17.5% | <= 10% | **MISS** |
 
@@ -40,8 +40,8 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 
 ```json
 {
-  "entities": 1550,
-  "with_existing_source_units": 1550
+  "entities": 1545,
+  "with_existing_source_units": 1545
 }
 ```
 
@@ -49,8 +49,8 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 
 ```json
 {
-  "edges": 2695,
-  "with_existing_evidence_units": 2695
+  "edges": 2694,
+  "with_existing_evidence_units": 2694
 }
 ```
 
@@ -58,8 +58,8 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 
 ```json
 {
-  "edges": 2695,
-  "allowed_by_ontology": 2695
+  "edges": 2694,
+  "allowed_by_ontology": 2694
 }
 ```
 
@@ -67,7 +67,7 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 
 ```json
 {
-  "entities": 1550
+  "entities": 1545
 }
 ```
 
@@ -79,14 +79,6 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
   "pairs": 21,
   "entities_involved": 41,
   "examples": [
-    [
-      "ComplexWebQuestions (CWQ)",
-      "CWQ"
-    ],
-    [
-      "w/ head",
-      "w/o head"
-    ],
     [
       "adaptation tuning",
       "adaptation tuning strategy"
@@ -138,6 +130,14 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
     [
       "parametric models",
       "Pm"
+    ],
+    [
+      "RAG",
+      "Retrieve and Generate (RAG)"
+    ],
+    [
+      "Transformer",
+      "transformer architecture"
     ]
   ]
 }
@@ -148,7 +148,7 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 ```json
 {
   "isolated": 25,
-  "entities": 1550,
+  "entities": 1545,
   "by_type": {
     "Dataset": 6,
     "Method": 1,
@@ -168,12 +168,12 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
     "Task": 91,
     "Paper": 76,
     "Author": 9,
-    "Method": 69,
+    "Method": 68,
     "Dataset": 57,
     "Organization": 21
   },
-  "entities": 1848,
-  "isolated": 323,
+  "entities": 1842,
+  "isolated": 322,
   "examples_left_out": [
     "Author: Aaron Chan",
     "Author: Allen",
@@ -206,6 +206,6 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
     "Dataset: Human",
     "Dataset: John_Lennon"
   ],
-  "left_out_of_the_graph": 298
+  "left_out_of_the_graph": 297
 }
 ```
