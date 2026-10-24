@@ -83,9 +83,10 @@ def test_a_load_without_a_vector_is_refused_before_touching_the_database():
 def test_relation_keys_and_embedding_text():
     assert relation_key("a", "USES", "b") == "a|USES|b"
     assert embedding_text("DPR", "") == "DPR"
-    assert embedding_text("DPR", "x" * 1000).startswith("DPR: x") and len(
-        embedding_text("DPR", "x" * 1000)
-    ) == 400
+    assert (
+        embedding_text("DPR", "x" * 1000).startswith("DPR: x")
+        and len(embedding_text("DPR", "x" * 1000)) == 400
+    )
 
 
 # --- the real Neo4j -----------------------------------------------------------------------

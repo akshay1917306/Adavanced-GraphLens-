@@ -135,6 +135,21 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
   allows at most 10%, so this will fail unless the cause is fixed or the gate result is
   reported as a miss. I have not looked at which types they are yet.
 
+## Step 8: quality report (2026-10-24, Claude, measured on the real graph)
+
+- Code: `quality.py`, CLI `quality-report` (no model, no cost), results stored in
+  `quality_checks`, report in `QUALITY.md`. 7 tests in `tests/test_quality.py`.
+- PASS: schema validity 100%, node provenance 100%, edge evidence 100%, ontology conformance
+  100%, embedding coverage 100%, duplicate proxy 2.9% (automatic, not the owner's audit).
+- **MISS: orphan entities 17.5%** (323 of 1,848; target at most 10%).
+- **Cause (checked on the raw extraction):** the model proposes entities that have no relation in
+  the same text unit. 805 of 4,591 mentions (17.5%) are like that: cited papers (25% of Paper
+  mentions), generic tasks and metrics such as "F1 score" (34% of Task mentions) and
+  organizations (34%). 298 of the 323 isolated entities were mentioned only once. The load did
+  not create them. The second check also dropped 573 of 4,184 proposed relations (13.7%).
+- Not measured yet (need the labeled sets of step 9): relation precision, entity-resolution F1,
+  and the owner's duplicate audit.
+
 ## Things that went wrong and were fixed (so the next session knows)
 
 - `uv sync` in the image build failed because the connection dropped. The Dockerfile now has a
@@ -156,13 +171,18 @@ None.
 ## Decisions waiting for the owner
 
 - OpenAI monthly limit of about $5 or more in the OpenAI dashboard (PREREQUISITES item 3).
+- **Orphan entities (17.5%, target 10%).** Options: (A, my recommendation) keep them and report the
+  miss, because an isolated entity still links a name to its text units for entity search, and
+  the lever is a better extraction prompt in Phase 3; (B) leave isolated single-mention
+  entities out of the graph, which would show about 1% but loses those links; (C) re-extract
+  with a prompt that asks for a relation for every entity, which costs about $0.8 or more and
+  would pass the $3 cap (about $2.40 is spent).
 
 ## Exact next action
 
-Build step 8 (quality report with the gate checks written to `quality_checks`): schema
-validity, edges with evidence, duplicates, orphans (look at the 323 isolated entities first),
-then 9 (labeled sets, owner review) and 10 (tests, docs, README, CI). Nothing from Phase 2 is
-pushed.
+Build step 9: the labeled sets (30 text units for relation precision and candidate pairs for
+entity resolution, AI draft, then the owner reviews, about 2 hours), then step 10 (tests, docs,
+README, CI, WALKTHROUGH). Nothing from Phase 2 is pushed.
 
 ## Notes for the next session
 

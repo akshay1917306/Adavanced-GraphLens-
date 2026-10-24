@@ -78,6 +78,12 @@ def main(argv: list[str] | None = None) -> int:
     graph.add_argument("--max-cost-usd", type=float, default=0.25)
     graph.add_argument("--no-llm", action="store_true", help="never ask the model")
     graph.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    quality = sub.add_parser(
+        "quality-report", help="measure the graph quality checks (no model, no cost)"
+    )
+    quality.add_argument("--index-version", default="idx2-full-g0")
+    quality.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    quality.add_argument("--out", type=Path, default=None, help="write the report here")
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
@@ -130,6 +136,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "graph-load":
         return _graph_load(engine, args)
+
+    if args.command == "quality-report":
+        return _quality_report(engine, args)
 
     if args.command == "extract-estimate":
         return _extract_estimate(engine, args)
@@ -294,6 +303,40 @@ def _graph_load(engine, args) -> int:
         "counts_match": (counts.entities, counts.relations)
         == (len(result.entities), len(result.relations)),
     }, indent=2))  # fmt: skip
+    return 0
+
+
+def _quality_report(engine, args) -> int:
+    from neo4j import GraphDatabase
+    from sqlalchemy import text
+
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.quality import compute_checks, read_graph, render_report, save_checks
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id, stats FROM index_runs WHERE index_version = :v"),
+            {"v": args.index_version},
+        ).first()
+    if not run:
+        print(f"No run record for {args.index_version}.", file=sys.stderr)
+        return 1
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        entities, edges = read_graph(driver, args.index_version)
+    if not entities:
+        print("The graph is empty; run graph-load first.", file=sys.stderr)
+        return 1
+    checks = compute_checks(entities, edges, run.stats or {}, load_ontology(args.ontology), engine)
+    save_checks(engine, str(run.id), checks)
+    report = render_report(checks, args.index_version)
+    if args.out:
+        args.out.write_text(report, encoding="utf-8")
+    for check in checks:
+        print(f"{'PASS' if check.passed else 'MISS'}  {check.name}: {check.value:.1%}")
     return 0
 
 

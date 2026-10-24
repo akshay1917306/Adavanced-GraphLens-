@@ -9,11 +9,17 @@ the phase exit is "measured", so a missed target is reported, not hidden.
       (751 units, 25 front-matter units, none with an email or web address; collection
       `units_qa_v0_baseline_2`; `eval-verify` 0 problems; evaluation sets version 2 loaded;
       111 tests pass; run 2026-10-24 on the owner's machine)
-- [ ] Extraction output is schema-valid: at least 99% (3 retries per unit)
-- [ ] Every edge has at least one evidence unit; every node has `source_unit_ids` (100%)
+- [x] Extraction output is schema-valid: at least 99% (3 retries per unit)
+      (100%: 0 of 751 units failed; but the second check dropped 573 of 4,184 proposed relations,
+      13.7%, mostly types the predicate does not allow; see `QUALITY.md`)
+- [x] Every edge has at least one evidence unit; every node has `source_unit_ids` (100%)
+      (2,695 of 2,695 edges and 1,848 of 1,848 nodes, and the ids exist in `text_units`;
+      measured by `quality-report` on the real Neo4j graph)
 - [ ] Relation precision measured on 30 labeled text units (target 0.80)
 - [ ] Entity resolution precision, recall and F1 measured on labeled pairs (target F1 0.85)
 - [ ] Duplicate entities in a sample audit (target at most 5%); orphan entities (at most 10%)
+      (**orphans MISS: 17.5%**, 323 of 1,848; automatic duplicate proxy 2.9%, the owner's audit
+      is still to do; see `QUALITY.md`)
 - [ ] Second run makes zero model calls (cache) and the graph is unchanged
       (extraction part done: the repeated `idx2-full-g0` run took 750 units from the cache and
       called the model only for the one unit that had failed; the graph part waits for step 7)
