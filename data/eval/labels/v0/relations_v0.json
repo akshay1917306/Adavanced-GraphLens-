@@ -1,0 +1,2066 @@
+{
+ "version": 0,
+ "seed": "labels-v0",
+ "units": [
+  {
+   "unit_id": "u_e4de0d926563_0017",
+   "paper": "Simulating Bandit Learning from User Feedback for Extractive Question Answering",
+   "section": "5 Online Learning",
+   "text": "When online perturbation-free simulation fails, online learning with noisy feedback fails too. Sensitivity Analysis Training Transformerbased models has been shown to have stability issues, especially when training with limited amount of data (Zhang et al., 2021). Our nonstandard training procedure (i.e., one epoch with a fixed learning rate) may further increase instability. We study the stability of the learning process using initial models trained on only 64 in-domain supervised examples on HotpotQA and TriviaQA: the former shows significant performance gain while the latter shows the opposite. We experiment with five initial models trained on different sets of 64 supervised examples, each used to initiate a separate simulation experiment. Four out of five experiments on HotpotQA show performance gains similar to what we observed so far, except one experiment that starts with very low initialization performance. In contrast, nearly all experiments on TriviaQA collapse (mean F1 of 7.3). We also conduct sensitivity analysis with stronger initial models trained with 1,024 examples, and observe that the final performance is stable across runs on both HotpotQA and TriviaQA (standard deviations are 0.5 and 2.6). Table 5 in Appendix B provides detailed performance numbers.",
+   "relations": [
+    {
+     "id": "R01.1",
+     "source": "Simulating Bandit Learning from User Feedback for Extractive Question Answering",
+     "predicate": "USES",
+     "target": "Transformerbased models",
+     "description": "The paper studies training Transformerbased models with limited data and sensitivity analysis.",
+     "draft": "unsure",
+     "reason": "models are studied for stability; 'uses' is weak",
+     "owner": null
+    },
+    {
+     "id": "R01.2",
+     "source": "Simulating Bandit Learning from User Feedback for Extractive Question Answering",
+     "predicate": "USES",
+     "target": "HotpotQA",
+     "description": "The paper uses HotpotQA dataset for training initial models and simulation experiments.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R01.3",
+     "source": "Simulating Bandit Learning from User Feedback for Extractive Question Answering",
+     "predicate": "USES",
+     "target": "TriviaQA",
+     "description": "The paper uses TriviaQA dataset for training initial models and simulation experiments.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_d352bfc2d1e1_0025",
+   "paper": "A Question Answering Framework for Decontextualizing User-facing Snippets from Scientific Documents",
+   "section": "6 Analyzing Performance Bottlenecks",
+   "text": "Within-document passage retrieval is not a major source of error. How much better is QADECONTEXT if we used gold answers? We ablate the full document approach by replacing generated answers with gold QG QA Rewrite Question Evidence Answer DQAE SARI-add BERTScore gold gold gold ✗✓✓✗ 0.527 0.625 ✓✓✓✓ 0.427 0.580 gpt-4 ✗✓✓✗ 0.274 0.541 ✓✓✓✓ 0.256 0.523 retrieve gpt-4 ✗✓✓✗ 0.240 0.530 ✓✓✓✓ 0.217 0.515 full doc gpt-4 ✗✓✓✗ 0.209 0.525 davinci retrieve gpt-4 ✗✓✓✗ 0.139 0.481 ✓✓✓✓ 0.146 0.472 full doc gpt-4 ✗✓✓✗ 0.141 0.495 Table 3: Ablating modules in our decontextualization pipeline that affect the input to the final Rewriter module. We ablate (1) source of question and (2) use of the full document vs retrieving passages as evidence. We investigate including the evidence (E) and source document information (D) in the Rewriter prompt in addition to the questions (Q) and answers (A). Last three rows are fully predictive, while others use gold data. ones, and see the largest relative improvement: 66.8% to 92.3% (see rows 1 vs 3, 2 vs 4). Question answering is a major source of error. Overall. While the relative performance improvement from using gold data is large in both the question generation and question answering modules, the absolute values of the scores are quite different.",
+   "relations": [
+    {
+     "id": "R02.1",
+     "source": "A Question Answering Framework for Decontextualizing User-facing Snippets from Scientific Documents",
+     "predicate": "PROPOSES",
+     "target": "QADECONTEXT",
+     "description": "The paper proposes the QADECONTEXT method for decontextualizing user-facing snippets.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R02.2",
+     "source": "QADECONTEXT",
+     "predicate": "USES",
+     "target": "Rewriter module",
+     "description": "QADECONTEXT uses the Rewriter module as the final step in its decontextualization pipeline.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R02.3",
+     "source": "QADECONTEXT",
+     "predicate": "USES",
+     "target": "question generation",
+     "description": "QADECONTEXT uses a question generation module as part of its pipeline.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R02.4",
+     "source": "QADECONTEXT",
+     "predicate": "USES",
+     "target": "question answering",
+     "description": "QADECONTEXT uses a question answering module as part of its pipeline, which is a major source of error.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_61676b02aa27_0011",
+   "paper": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+   "section": "4.1 Supervised Evaluation via Semantic Similarity",
+   "text": "A common paradigm to evaluate QA systems is to cast evaluation as a classification task where the goal is to decide whether gold answers and candidate answers are semantically equivalent or not (Risch et al., 2021; Bulian et al., 2022). To this end, we use a recent BERT-based model, namely BEM (Bulian et al., 2022), that is trained on a human-annotated collection of answer pairs given a question, derived from SQuAD (Rajpurkar et al., 2016). For evaluation, we feed a question along with a gold answer and a candidate answer to BEM and take its prediction. For questions with multiple gold answers, each gold answer is independently tested with a candidate answer. Once matched with either of the gold answers, a candidate answer is deemed correct.",
+   "relations": [
+    {
+     "id": "R03.1",
+     "source": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+     "predicate": "USES",
+     "target": "BEM",
+     "description": "The paper uses the BEM model for evaluation of QA systems via semantic similarity.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R03.2",
+     "source": "BEM",
+     "predicate": "EVALUATED_ON",
+     "target": "SQuAD",
+     "description": "BEM is trained on a human-annotated collection of answer pairs derived from SQuAD.",
+     "draft": "incorrect",
+     "reason": "BEM was trained on SQuAD-derived data, not evaluated on it",
+     "owner": null
+    },
+    {
+     "id": "R03.3",
+     "source": "BEM",
+     "predicate": "ADDRESSES",
+     "target": "Semantic Similarity",
+     "description": "BEM is used to decide whether gold answers and candidate answers are semantically equivalent or not.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_039c611d6451_0007",
+   "paper": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+   "section": "3 Problem statement",
+   "text": "Figure 1: The typical encoder-decoder architecture of a quantitative QA generator. We introduce the compositional attention component (middle, enclosed in dotted line) to enhance the alignments between natural language input and program output. Table 1 illustrates this phenomenon with four examples from a QA task. Each row displays a natural language question, the set of facts that can be used as evidence to answer the question, and the program to arrive at the correct answer. Presented with the first three examples, it is conceivable that a human would be able to extrapolate that “percent change” is calculated by first measuring the net change (i.e. subtraction) and then scaling the number as a percentage. Humans are able to do this by recognizing components in the question that have been previously encountered (e.g. “percent change” and “expenses”) even if they were not encountered in this particular arrangement. Many neural models struggle to exhibit the same behavior, due to overfitting to spurious patterns in natural language, or in the output. As we will later discuss in Section 5.1, quantitative reasoning datasets can exhibit a long-tail distribution, biased towards simpler patterns. Figure 2 illustrates how this phenomenon takes place in the training split of one such dataset. The figure shows the prominence of the most common sequences of arithmetic operators in the FinQA training set (Chen et al., 2021). As the number of steps grows, the tail grows longer and the sample size smaller, thus providing less information to the model and forcing it to rely on repetitively encountered patterns in the past. Figure 2: The long-tail effect in multi-step programs in the FinQA training set (Chen et al., 2021). Our goal is to encourage the model to focus its attention on relevant components of the input during generation. Figure 3 illustrates the expected attention patterns for the fourth example from Table 1. The figure illustrates two key points: 1) During program generation, the terms that overlap between the question and the evidence do not matter as much as non-overlapping terms. 2) When generating operators (such assubtract or divide) attention should be focused on terms that are exclusive to the question.",
+   "relations": [
+    {
+     "id": "R04.1",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "PROPOSES",
+     "target": "compositional attention component",
+     "description": "The paper introduces the compositional attention component to enhance alignments between natural language input and program output in quantitative QA.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R04.2",
+     "source": "compositional attention component",
+     "predicate": "ADDRESSES",
+     "target": "multi-step quantitative reasoning",
+     "description": "The compositional attention component targets the task of multi-step quantitative reasoning in question answering.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R04.3",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "USES",
+     "target": "FinQA",
+     "description": "The paper discusses the FinQA dataset to illustrate the long-tail distribution challenge in multi-step quantitative reasoning.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_2dae343019ba_0007",
+   "paper": "Uncertainty Guided Global Memory Improves Multi-Hop Question Answering",
+   "section": "3 Global Explicit Memory",
+   "text": "Global memory is then collected from the remaining tokens from the document based on the chosen Model HotpotQA, ˆθ = 0.3 2WikiMHQA, ˆθ = 0.45 MuSiQue, ˆθ = 0.2 Ans±std| Supp±std | Joint±std Ans±std| Supp±std Ans±std| Supp±std Task-tuned RoBERTa 73.8 ± 0.44| 82.86± 0.09| 63.16± 0.37 65.55± 0.37| 95.09± 0.02 31.46± 0.48| 62.6 ± 0.25 Y AKE! keywords memory 72.9 ± 0.29| 81.67± 0.17| 61.44± 0.33 63.98± 1.01| 63.13± 0.27 30.30± 0.6 | 63.43± 0.64 GEMFormer HighestH 73.87± 0.26| 82.61± 0.42| 62.85± 0.51 64.88± 0.4 | 94.4 ± 0.06 29.18± 2.39| 59.7 ± 0.38 GEMFormer Low (H <ˆθ) 75.13± 0.5 | 83.8 ± 0.43| 64.77± 0.66 67.14± 0.46| 95.67± 0.36 31.56± 0.41| 63.85± 0.71 GEMFormer Low (H <5th%) 74.19± 0.27| 83.13± 0.07| 63.59± 0.14 66.08± 0.39| 95.15± 0.07 32.22± 0.37| 62.54± 0.09",
+   "relations": [
+    {
+     "id": "R05.1",
+     "source": "Uncertainty Guided Global Memory Improves Multi-Hop Question Answering",
+     "predicate": "PROPOSES",
+     "target": "Global Explicit Memory",
+     "description": "The paper proposes the Global Explicit Memory method involving collecting global memory from remaining tokens in the document.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.2",
+     "source": "Global Explicit Memory",
+     "predicate": "USES",
+     "target": "HotpotQA",
+     "description": "Global Explicit Memory uses the HotpotQA dataset with threshold 0.3 for evaluation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.3",
+     "source": "Global Explicit Memory",
+     "predicate": "USES",
+     "target": "2WikiMHQA",
+     "description": "Global Explicit Memory uses the 2WikiMHQA dataset with threshold 0.45 for evaluation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.4",
+     "source": "Global Explicit Memory",
+     "predicate": "USES",
+     "target": "MuSiQue",
+     "description": "Global Explicit Memory uses the MuSiQue dataset with threshold 0.2 for evaluation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.5",
+     "source": "Task-tuned RoBERTa",
+     "predicate": "EVALUATED_ON",
+     "target": "HotpotQA",
+     "description": "Task-tuned RoBERTa is evaluated on HotpotQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.6",
+     "source": "Task-tuned RoBERTa",
+     "predicate": "EVALUATED_ON",
+     "target": "2WikiMHQA",
+     "description": "Task-tuned RoBERTa is evaluated on 2WikiMHQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.7",
+     "source": "Task-tuned RoBERTa",
+     "predicate": "EVALUATED_ON",
+     "target": "MuSiQue",
+     "description": "Task-tuned RoBERTa is evaluated on MuSiQue dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.8",
+     "source": "YAKE! keywords memory",
+     "predicate": "EVALUATED_ON",
+     "target": "HotpotQA",
+     "description": "YAKE! keywords memory is evaluated on HotpotQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.9",
+     "source": "YAKE! keywords memory",
+     "predicate": "EVALUATED_ON",
+     "target": "2WikiMHQA",
+     "description": "YAKE! keywords memory is evaluated on 2WikiMHQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.10",
+     "source": "YAKE! keywords memory",
+     "predicate": "EVALUATED_ON",
+     "target": "MuSiQue",
+     "description": "YAKE! keywords memory is evaluated on MuSiQue dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.11",
+     "source": "GEMFormer HighestH",
+     "predicate": "EVALUATED_ON",
+     "target": "HotpotQA",
+     "description": "GEMFormer HighestH is evaluated on HotpotQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.12",
+     "source": "GEMFormer HighestH",
+     "predicate": "EVALUATED_ON",
+     "target": "2WikiMHQA",
+     "description": "GEMFormer HighestH is evaluated on 2WikiMHQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.13",
+     "source": "GEMFormer HighestH",
+     "predicate": "EVALUATED_ON",
+     "target": "MuSiQue",
+     "description": "GEMFormer HighestH is evaluated on MuSiQue dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.14",
+     "source": "GEMFormer Low (H <ˆθ)",
+     "predicate": "EVALUATED_ON",
+     "target": "HotpotQA",
+     "description": "GEMFormer Low (H <ˆθ) is evaluated on HotpotQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.15",
+     "source": "GEMFormer Low (H <ˆθ)",
+     "predicate": "EVALUATED_ON",
+     "target": "2WikiMHQA",
+     "description": "GEMFormer Low (H <ˆθ) is evaluated on 2WikiMHQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.16",
+     "source": "GEMFormer Low (H <ˆθ)",
+     "predicate": "EVALUATED_ON",
+     "target": "MuSiQue",
+     "description": "GEMFormer Low (H <ˆθ) is evaluated on MuSiQue dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.17",
+     "source": "GEMFormer Low (H <5th%)",
+     "predicate": "EVALUATED_ON",
+     "target": "HotpotQA",
+     "description": "GEMFormer Low (H <5th%) is evaluated on HotpotQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.18",
+     "source": "GEMFormer Low (H <5th%)",
+     "predicate": "EVALUATED_ON",
+     "target": "2WikiMHQA",
+     "description": "GEMFormer Low (H <5th%) is evaluated on 2WikiMHQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R05.19",
+     "source": "GEMFormer Low (H <5th%)",
+     "predicate": "EVALUATED_ON",
+     "target": "MuSiQue",
+     "description": "GEMFormer Low (H <5th%) is evaluated on MuSiQue dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_61676b02aa27_0025",
+   "paper": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+   "section": "6 Regex Matching on CuratedTREC",
+   "text": "Similarly, BEM rejects only 1 exactly matched correct answer, i.e., “P-A-D-A-W-A-N.” while the gold answer is “Padawan”. 39.2 44.8 47.347.3 52.3 57.2 54.054.0 54.3 59.9 57.9 63.5 61.3 66.7 62.462.4 71.0 83.3 73.4 80.0 88.188.1 DPR uwmtB3RocketQA v2 & FiD exactanswerFiD Contriever & FiDANCE+ & FiDpris2002InstructGPT (zero-shot)InstructGPT (few-shot)LCCmain2002 (a) BEM 39.2 43.2 47.347.3 52.3 55.4 54.054.0 54.3 59.0 57.9 61.7 61.3 65.1 62.462.4 71.0 86.5 73.4 83.3 88.188.1 DPR uwmtB3RocketQA v2 & FiD exactanswerFiD Contriever & FiDANCE+ & FiDpris2002InstructGPT (zero-shot)InstructGPT (few-shot)LCCmain2002 90 (b) InstructGPT-eval 39.2 44.8 47.347.3 52.3 58.1 54.054.0 54.3 60.8 57.9 64.0 61.3 68.0 62.462.4 71.0 91.0 73.4 92.0 88.188.1 DPR uwmtB3RocketQA v2 & FiD exactanswerFiD Contriever & FiDANCE+ & FiDpris2002InstructGPT (zero-shot)InstructGPT (few-shot)LCCmain2002 90 (c) Human Figure 5: Accuracy of several open-domain QA models on Curated",
+   "relations": [
+    {
+     "id": "R06.1",
+     "source": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+     "predicate": "PROPOSES",
+     "target": "BEM",
+     "description": "The paper discusses the BEM method which rejects only 1 exactly matched correct answer.",
+     "draft": "incorrect",
+     "reason": "BEM comes from Bulian et al. 2022; this paper does not propose it",
+     "owner": null
+    },
+    {
+     "id": "R06.2",
+     "source": "BEM",
+     "predicate": "EVALUATED_ON",
+     "target": "CuratedTREC",
+     "description": "BEM's accuracy is evaluated on the CuratedTREC dataset.",
+     "draft": "unsure",
+     "reason": "BEM is the evaluator; the figure evaluates QA models on CuratedTREC",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_732906872c61_0010",
+   "paper": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+   "section": "3.2 Passage Retrieving & Stage-1 Reranking",
+   "text": "New York Yankees Yankee Stadium Staten Island Yankees New York Yankees Operator Yankee Stadium New York Yankees Parent Club Staten Island Yankees ...... N Passages N Passages N Passages Stage-2 Reranking Figure 1: Overall Model Framework. Pi indicates the node of the passage originally ranked thei-th by the DPR retriever, with the article title below it. The left part shows passage retrieval by DPR, passage graph construction based on KG (Section 3.1) and stage-1 reranking (Section 3.2). The right part shows joint stage-2 reranking and answer generation in the reading module (Section 3.3 and 3.4). We aim to rerank the retrieved passages based on both the structural information and the textual semantic information of them. To represent the semantic information of passages, one can use another pre-trained language model to encode the passage texts, but this will not only include lots of additional model parameters, but also incur heavy computational cost asN0 can be large. To avoid both additional memory and computation cost, we propose to reuse the offline passage embeddingsM generated from the DPR retriever in Equation 1 as the initial node representation: E(0) i = Mri where{ri|i∈{ 1, 2,··· ,N 0}} is the set of retrieved passage indices. Then we employ a graph attention network (GAT) (Velickovic et al., 2018) with Lg layers as GNN model to update representations for each node based on the passage graph and initial representation. Thel-th layer of the GNN model updates the embedding of nodei as follows: E(l) i =h(E(l−1) i ,{E(l−1) j }(i,j)∈G0) (2) whereh is usually a non-linear learnable function which aggregates the embeddings of the node itself and its neighbor nodes. The reranking score for each passage pri is calculated by sstage-1 i = QTE(Lg) i , whereQ is the question embedding also generated by the DPR retriever.",
+   "relations": [
+    {
+     "id": "R07.1",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "PROPOSES",
+     "target": "passage graph",
+     "description": "The paper proposes passage graph construction based on knowledge graph for reranking retrieved passages.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R07.2",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "USES",
+     "target": "DPR retriever",
+     "description": "The paper uses the DPR retriever for passage retrieval and to generate offline passage embeddings reused as initial node representations.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R07.3",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "USES",
+     "target": "graph attention network (GAT)",
+     "description": "The paper employs a graph attention network with Lg layers as the graph neural network model to update node representations for reranking.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R07.4",
+     "source": "graph attention network (GAT)",
+     "predicate": "USES",
+     "target": "passage graph",
+     "description": "The graph attention network updates node embeddings based on the passage graph structure.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R07.5",
+     "source": "graph attention network (GAT)",
+     "predicate": "USES",
+     "target": "DPR retriever",
+     "description": "The graph attention network uses initial node representations generated from the DPR retriever's offline passage embeddings.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_732906872c61_0027",
+   "paper": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+   "section": "5 Conclusion",
+   "text": "This work tackles the task of Open-Domain Question Answering. We focus on the current best performed framework FiD and propose a novel KG-based reranking method to enhance the crossmodeling between passages and improve computation efficiency. Our two-stage reranking methods reuses the passage representation generated by DPR retriver and the reader encoder and apply graph neural networks to compute reranking scores. We further propose to use the intermediate layer of encoder to reduce computation cost while still maintaining good performance. Experiments on Natural Questions and TriviaQA show that our model can significantly improve original FiD by 1.5% exact match score and achieve on-par performance with FiD but reducing over 60% of computation cost.",
+   "relations": [
+    {
+     "id": "R08.1",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "PROPOSES",
+     "target": "KG-based reranking method",
+     "description": "The paper proposes a novel KG-based reranking method to enhance FiD for Open-Domain Question Answering.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R08.2",
+     "source": "KG-based reranking method",
+     "predicate": "ADDRESSES",
+     "target": "Open-Domain Question Answering",
+     "description": "The KG-based reranking method targets the task of Open-Domain Question Answering.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R08.3",
+     "source": "KG-based reranking method",
+     "predicate": "USES",
+     "target": "DPR retriever",
+     "description": "The reranking method reuses the passage representation generated by DPR retriever.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R08.4",
+     "source": "KG-based reranking method",
+     "predicate": "USES",
+     "target": "reader encoder",
+     "description": "The reranking method reuses the passage representation generated by the reader encoder.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R08.5",
+     "source": "KG-based reranking method",
+     "predicate": "USES",
+     "target": "graph neural networks",
+     "description": "The reranking method applies graph neural networks to compute reranking scores.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R08.6",
+     "source": "KG-based reranking method",
+     "predicate": "IMPROVES_ON",
+     "target": "FiD",
+     "description": "The proposed model significantly improves original FiD by 1.5% exact match score.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R08.7",
+     "source": "KG-based reranking method",
+     "predicate": "EVALUATED_ON",
+     "target": "Natural Questions",
+     "description": "Experiments on Natural Questions show the model's performance improvements.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R08.8",
+     "source": "KG-based reranking method",
+     "predicate": "EVALUATED_ON",
+     "target": "TriviaQA",
+     "description": "Experiments on TriviaQA show the model's performance improvements.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_039c611d6451_0025",
+   "paper": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+   "section": "6.4 Ablation study",
+   "text": "As the table shows, additional parameters are not always helpful and can undermine the performance of the model, especially for multi-step programs. This may also indicate that the regularizing effect of CompAQT can be counteracted by larger parameters, leading to overfitting over smaller datasets. 6.5 Pre-training across datasets Since the combined dataset uses the same format for all constituent datasets, it is easy to investigate the impact of pre-training on larger and more diverse data. Figure 4 shows how Fin- QANet+CompAQT performs on the combined test set, as more collections are added to its training set. As the Figure illustrates, despite providing a sizeable number of single-step programs, TAT-QA fails to improve the performance substantially on multi-step programs. This is likely due to the fact that all TAT-QA programs fall into seven categories, which allows the model to memorize them. In contrast, despite its small size, adding MULTIHIERTT improves performance on 1 step and 2 step programs. 3+ step programs remain a challenge across all datasets, but the model shows steady progress as the dataset size grows. Figure 4: Program accuracy on the combined dataset as training datasets are added iteratively. # heads # layers # params # Program accuracy (improvement over baseline) 1 step 2 steps 3+ steps 1 1 4.2M +3.05 +9.25 +5.49 4 1 4.3M +3.97 +7.30 +5.31 1 2 8.4M +4.22 +6.76 +3.12 4 2 8.6M +4.26 +5.99 +2.86 Table 7: The performance of FinQANet+CompAQT on the FinQA dataset. As additional parameters are added in the form of multiple heads or more layers, the model’s performance does not increase.",
+   "relations": [
+    {
+     "id": "R09.1",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "PROPOSES",
+     "target": "CompAQT",
+     "description": "The paper proposes the CompAQT method which has a regularizing effect on the model.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R09.2",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "PROPOSES",
+     "target": "FinQANet+CompAQT",
+     "description": "The paper proposes the FinQANet+CompAQT model evaluated in the study.",
+     "draft": "unsure",
+     "reason": "FinQANet is prior work; the combination is a configuration",
+     "owner": null
+    },
+    {
+     "id": "R09.3",
+     "source": "FinQANet+CompAQT",
+     "predicate": "USES",
+     "target": "CompAQT",
+     "description": "FinQANet+CompAQT incorporates the CompAQT method as part of its model.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R09.4",
+     "source": "FinQANet+CompAQT",
+     "predicate": "EVALUATED_ON",
+     "target": "FinQA",
+     "description": "FinQANet+CompAQT's performance is reported on the FinQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R09.5",
+     "source": "FinQANet+CompAQT",
+     "predicate": "EVALUATED_ON",
+     "target": "TAT-QA",
+     "description": "FinQANet+CompAQT is evaluated on the TAT-QA dataset as part of the combined dataset.",
+     "draft": "unsure",
+     "reason": "TAT-QA is added to the training data; not clearly an evaluation set",
+     "owner": null
+    },
+    {
+     "id": "R09.6",
+     "source": "FinQANet+CompAQT",
+     "predicate": "EVALUATED_ON",
+     "target": "MULTIHIERTT",
+     "description": "FinQANet+CompAQT is evaluated on the MULTIHIERTT dataset as part of the combined dataset.",
+     "draft": "unsure",
+     "reason": "MULTIHIERTT is added to the training data; not clearly an evaluation set",
+     "owner": null
+    },
+    {
+     "id": "R09.7",
+     "source": "CompAQT",
+     "predicate": "ADDRESSES",
+     "target": "multi-step quantitative reasoning",
+     "description": "CompAQT targets the task of multi-step quantitative reasoning in question answering.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R09.8",
+     "source": "FinQANet+CompAQT",
+     "predicate": "ADDRESSES",
+     "target": "multi-step quantitative reasoning",
+     "description": "FinQANet+CompAQT addresses multi-step quantitative reasoning in question answering.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_56d31becd18d_0002",
+   "paper": "QA Domain Adaptation using Hidden Space Augmentation and Self-Supervised Contrastive Adaptation",
+   "section": "1 Introduction",
+   "text": "Question answering (QA) is the task of finding answers for a given context and a given question. QA models are typically trained using data triplets consisting of context, question and answer. In the case of extractive QA, answers are represented as subspans in the context defined by a start position and an end position, while question and context are ∗Both authors contributed equally to this research. given as running text (e.g., Seo et al., 2016; Chen et al., 2017; Devlin et al., 2019; Kratzwald et al., 2019). A common challenge in extractive QA is that QA models often suffer from performance deterioration upon deployment and thus make mistakes for usergenerated inputs. The underlying reason for such deterioration can be traced back to the domain shift between training data (from the source domain) and test data (from the target domain) (Fisch et al., 2019; Miller et al., 2020; Zeng et al., 2022b). Existing approaches to address domain shifts in extractive QA can be grouped as follows. One approach is to include labeled target examples or user feedback during training (Daumé III, 2007; Kratzwald and Feuerriegel, 2019a; Kratzwald et al., 2020; Kamath et al., 2020). Another approach is to generate labeled QA samples in the target domain for training (Lee et al., 2020; Yue et al., 2021a, 2022a). However, these approaches typically require large amounts of annotated data or extensive computational resources. As such, they tend to be ineffective in adapting existing QA models to an unseen target domain (Fisch et al., 2019). Only recently, a contrastive loss has been proposed to handle domain adaptation in QA (Yue et al., 2021b). Several approaches have been used to address issues related to insufficient data and generalization in NLP tasks, yet outside of QA. For example, augmentation in the hidden space encourages more generalizable features for training (Verma et al., 2019; Chen et al., 2020, 2021).",
+   "relations": [
+    {
+     "id": "R10.1",
+     "source": "contrastive loss",
+     "predicate": "ADDRESSES",
+     "target": "extractive QA",
+     "description": "Contrastive loss has been proposed to handle domain adaptation in extractive QA.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R10.2",
+     "source": "augmentation in the hidden space",
+     "predicate": "ADDRESSES",
+     "target": "extractive QA",
+     "description": "Augmentation in the hidden space encourages more generalizable features for training in NLP tasks, relevant to QA.",
+     "draft": "incorrect",
+     "reason": "hidden-space augmentation is described as used outside QA",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_039c611d6451_0018",
+   "paper": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+   "section": "6 Results and discussion",
+   "text": "Additional performance gain/loss is indicated after CompAQT is added to each model. Bold numbers indicate that a gain/loss is significant at p < 0.005, based on the paired-bootstrap test proposed by Berg-Kirkpatrick et al. (2012), withb = 10 3.",
+   "relations": [
+    {
+     "id": "R11.1",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "USES",
+     "target": "CompAQT",
+     "description": "The paper adds CompAQT to each model to indicate additional performance gain/loss.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R11.2",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "USES",
+     "target": "paired-bootstrap test",
+     "description": "The paper uses the paired-bootstrap test proposed by Berg-Kirkpatrick et al. (2012) to determine significance of gain/loss.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_a97dfd913ccf_0004",
+   "paper": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+   "section": "1 Introduction",
+   "text": "In the question rewriting stage, we utilize a question rewriting model to explicitly transform a query into a set of utterances, each corresponding to a single action, thus reducing the complexity of the question. We propose a two-phase training method to train the rewriting model on the lack of training pairs. In the candidates generation stage, we build a seq2seq model to generate logical forms with beam search algorithm and consider KG artifacts like entities as candidate vocabularies in the decoding stage. To further align the question and action sequence, we concatenate a question and a KG artifact as input and encode it using a pretrained language model (PLM) like BERT ( Devlin et al., 2018). The cross attention mechanism of PLM can effectively align between the question and KG artifacts implicitly, which makes decoding easier. Moreover, we innovatively propose to improve complex knowledge base question answering via question-to-question alignment. Motivated by the phenomenon that the more similar two questions are, the more similar their corresponding action sequences will be, we build a memory consisting of question-answer pairs and retrieve a set of question-answer pairs as the support set based on the similarity with the current question during action sequence selection phase. We then propose a reward-guided selection strategy that scores each candidate action sequence according to the support set. Our main contributions are as follow: • We propose a novel framework that mitigates the gap between natural language questions and structural logical forms through questionto-action alignment and question-to-question alignment. • We propose a novel question rewriting mechanism that rewrites a question into a more structured form without requiring a dataset or adding any constraints, and employ a rewardguided action sequence selection strategy that utilizes similar question-answer pairs to score candidate action sequences. • We conduct experiments on several datasets, and experimental results show that our approach is comparable to the state-of-the-art on WQSP dataset and obtains a 9.88% improvements in the F1 metric on CQA dataset.",
+   "relations": [
+    {
+     "id": "R12.1",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "PROPOSES",
+     "target": "question rewriting model",
+     "description": "The paper proposes a question rewriting model to transform queries into utterances corresponding to single actions.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R12.2",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "PROPOSES",
+     "target": "two-phase training method",
+     "description": "The paper proposes a two-phase training method to train the rewriting model on the lack of training pairs.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R12.3",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "PROPOSES",
+     "target": "seq2seq model",
+     "description": "The paper builds a seq2seq model to generate logical forms with beam search algorithm.",
+     "draft": "unsure",
+     "reason": "'we build' a seq2seq model; not clearly proposed",
+     "owner": null
+    },
+    {
+     "id": "R12.4",
+     "source": "seq2seq model",
+     "predicate": "USES",
+     "target": "beam search algorithm",
+     "description": "The seq2seq model uses beam search algorithm in the decoding stage to generate logical forms.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R12.5",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "pretrained language model (PLM)",
+     "description": "The paper uses a pretrained language model like BERT to encode concatenated question and KG artifact input for alignment.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R12.6",
+     "source": "pretrained language model (PLM)",
+     "predicate": "IMPROVES_ON",
+     "target": "BERT",
+     "description": "The pretrained language model is exemplified by BERT used for encoding input for alignment.",
+     "draft": "incorrect",
+     "reason": "'PLM like BERT': BERT is an example, the PLM does not improve on it",
+     "owner": null
+    },
+    {
+     "id": "R12.7",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "PROPOSES",
+     "target": "question-to-action alignment",
+     "description": "The paper proposes a framework mitigating the gap between natural language questions and structural logical forms through question-to-action alignment.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R12.8",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "PROPOSES",
+     "target": "question-to-question alignment",
+     "description": "The paper proposes to improve complex knowledge base question answering via question-to-question alignment.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R12.9",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "PROPOSES",
+     "target": "reward-guided selection strategy",
+     "description": "The paper proposes a reward-guided selection strategy that scores candidate action sequences using similar question-answer pairs.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_533dbf92ffe5_0023",
+   "paper": "Long-Tailed Question Answering in an Open World",
+   "section": "4.6 Ablation Studies",
+   "text": "Data Methods Tail@16 Aunseen w/o head tasks w/oPm 59.00 50.55 Ours 59.54 (+0.54) 51.05(+0.50) w/ head tasks w/oPm 59.56 52.09 Ours 61.32 (+1.76) 54.42( +2.33) Table 4: Effect ofPm in different data distributions. pervised retriever BM25 (Robertson et al., 2009) to replace retrieverR1. 2. EPR Retriever trains R1 by using a pre-trained LM as the scoring function (Rubin et al., 2022). 3. w/o Re-ranker removes the re-ranker R2, and directly uses R1 to select examples and generate hints. 4. w/o MKD removes the adaptive mutual KD loss Lmkd. 5. Static MKD removesLmkd, and performs mutual KD based on the performance of R1,R2, and F evaluated at the very beginning of training stage two. 6. Back KD removesLmkd, and train R1 andR2 using knowledge distilled fromF (Izacard et al., 2022). Results in Table 3 show that the knowledge mining approach used in our model performs better than all other variants. We can further observe that: 1. Retrieving in-context examples using other approaches (i.e., BM25 Retriever and EPR Retriever) degenerates the model performance by a large margin. This shows the effectiveness of the two-stage training ofR1 in our model. 2. Re-ranking hints generated by an LM help to improve the QA performance (see w/o Re-ranker). 3. Removing the adaptive mutual KD loss (i.e., w/o MKD) degenerates the QA performance. This proves the effectiveness of information exchange between the two branches of our model. 4. Variants ofLmkd lead to limited QA performance (see Static MKD and Back KD).",
+   "relations": [
+    {
+     "id": "R13.1",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "PROPOSES",
+     "target": "R1",
+     "description": "The paper proposes the retriever R1 as part of the model.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R13.2",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "PROPOSES",
+     "target": "R2",
+     "description": "The paper proposes the re-ranker R2 as part of the model.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R13.3",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "PROPOSES",
+     "target": "F",
+     "description": "The paper proposes the component F used for knowledge distillation.",
+     "draft": "unsure",
+     "reason": "F is the QA model (a variable name)",
+     "owner": null
+    },
+    {
+     "id": "R13.4",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "USES",
+     "target": "BM25 Retriever",
+     "description": "The paper uses BM25 Retriever as a baseline to replace retriever R1.",
+     "draft": "unsure",
+     "reason": "BM25 replaces R1 in an ablation",
+     "owner": null
+    },
+    {
+     "id": "R13.5",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "USES",
+     "target": "EPR Retriever",
+     "description": "The paper uses EPR Retriever as a baseline to train R1 using a pre-trained LM scoring function.",
+     "draft": "unsure",
+     "reason": "EPR replaces R1 in an ablation",
+     "owner": null
+    },
+    {
+     "id": "R13.6",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "USES",
+     "target": "w/o Re-ranker",
+     "description": "The paper uses the w/o Re-ranker variant to evaluate the effect of removing R2.",
+     "draft": "incorrect",
+     "reason": "ablation variant, not something the paper uses",
+     "owner": null
+    },
+    {
+     "id": "R13.7",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "USES",
+     "target": "w/o MKD",
+     "description": "The paper uses the w/o MKD variant to evaluate the effect of removing the adaptive mutual KD loss Lmkd.",
+     "draft": "incorrect",
+     "reason": "ablation variant, not something the paper uses",
+     "owner": null
+    },
+    {
+     "id": "R13.8",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "USES",
+     "target": "Static MKD",
+     "description": "The paper uses the Static MKD variant to evaluate the effect of removing Lmkd and performing mutual KD based on initial performance.",
+     "draft": "incorrect",
+     "reason": "ablation variant, not something the paper uses",
+     "owner": null
+    },
+    {
+     "id": "R13.9",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "USES",
+     "target": "Back KD",
+     "description": "The paper uses the Back KD variant to evaluate the effect of removing Lmkd and training R1 and R2 using knowledge distilled from F.",
+     "draft": "incorrect",
+     "reason": "ablation variant, not something the paper uses",
+     "owner": null
+    },
+    {
+     "id": "R13.10",
+     "source": "R1",
+     "predicate": "IMPROVES_ON",
+     "target": "BM25 Retriever",
+     "description": "The two-stage training of R1 in the model performs better than BM25 Retriever.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R13.11",
+     "source": "R1",
+     "predicate": "IMPROVES_ON",
+     "target": "EPR Retriever",
+     "description": "The two-stage training of R1 in the model performs better than EPR Retriever.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R13.12",
+     "source": "R2",
+     "predicate": "IMPROVES_ON",
+     "target": "w/o Re-ranker",
+     "description": "Re-ranking hints by R2 improves QA performance compared to removing R2.",
+     "draft": "unsure",
+     "reason": "compares with removing the re-ranker",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_be1f94442adf_0001",
+   "paper": "You Only Need One Model for Open-domain Question Answering",
+   "section": "Abstract",
+   "text": "Recent approaches to Open-domain Question Answering refer to an external knowledge base using a retriever model, optionally rerank passages with a separate reranker model and generate an answer using another reader model. Despite performing related tasks, the models have separate parameters and are weaklycoupled during training. We propose casting the retriever and the reranker as internal passage-wise attention mechanisms applied sequentially within the transformer architecture and feeding computed representations to the reader, with the hidden representations progressively refined at each stage. This allows us to use a single question answering model trained end-to-end, which is a more efficient use of model capacity and also leads to better gradient flow. We present a pre-training method to effectively train this architecture and evaluate our model on the Natural Questions and TriviaQA open datasets. For a fixed parameter budget, our model outperforms the previous state-of-the-art model by 1.0 and 0.7 exact match scores.",
+   "relations": [
+    {
+     "id": "R14.1",
+     "source": "You Only Need One Model for Open-domain Question Answering",
+     "predicate": "PROPOSES",
+     "target": "transformer architecture",
+     "description": "The paper proposes casting the retriever and reranker as internal passage-wise attention mechanisms within the transformer architecture to create a single question answering model.",
+     "draft": "incorrect",
+     "reason": "the paper builds on the transformer; it does not propose it",
+     "owner": null
+    },
+    {
+     "id": "R14.2",
+     "source": "You Only Need One Model for Open-domain Question Answering",
+     "predicate": "USES",
+     "target": "Natural Questions",
+     "description": "The paper evaluates the proposed model on the Natural Questions dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R14.3",
+     "source": "You Only Need One Model for Open-domain Question Answering",
+     "predicate": "USES",
+     "target": "TriviaQA",
+     "description": "The paper evaluates the proposed model on the TriviaQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_61676b02aa27_0007",
+   "paper": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+   "section": "3 Open-domain QA Evaluation",
+   "text": "The task of open-domain QA is referred to finding answers for information-seeking questions given a massive knowledge source such as Wikipedia (V oorhees and Tice, 2000). The questions are typically factoid with short answers and acontextual (Rogers et al., 2022). Open-domain QA datasets encompass questions with their annotated gold answers that serve as a reference for evaluation. Following reading comprehension (Rajpurkar et al., 2016), evaluation is carried out via lexical matching using the following two widely used metrics to measure the performance of models: • Exact-Match accuracy (EM): A candidate answer is deemed correct iff it can be found in the set of gold answers. The ratio of correct answers in the test collection is reported as EM accuracy. • F1 score: Considering answers as bags of tokens, a candidate answer receives a partial score (F 1) iff its tokens overlap with those of a gold answer. The maximum F 1 score over a set of gold answers is assigned to the candidate answer. The final metric at corpuslevel is measured via averaging F1 scores over the test collection. Based on the implementation of Rajpurkar et al. (2016), answers are normalized (i.e., case-folded, and punctuation and articles are discarded) to compute these metrics.",
+   "relations": [
+    {
+     "id": "R15.1",
+     "source": "Exact-Match accuracy (EM)",
+     "predicate": "ADDRESSES",
+     "target": "open-domain QA",
+     "description": "Exact-Match accuracy is used to measure the performance of models on open-domain QA tasks by checking exact matches with gold answers.",
+     "draft": "unsure",
+     "reason": "EM is a metric for the task; 'addresses' is loose",
+     "owner": null
+    },
+    {
+     "id": "R15.2",
+     "source": "F1 score",
+     "predicate": "ADDRESSES",
+     "target": "open-domain QA",
+     "description": "F1 score is used to evaluate open-domain QA by measuring token overlap between candidate and gold answers.",
+     "draft": "unsure",
+     "reason": "F1 is a metric for the task; 'addresses' is loose",
+     "owner": null
+    },
+    {
+     "id": "R15.3",
+     "source": "Exact-Match accuracy (EM)",
+     "predicate": "EVALUATED_ON",
+     "target": "Wikipedia",
+     "description": "Exact-Match accuracy is computed using answers derived from a knowledge source such as Wikipedia.",
+     "draft": "incorrect",
+     "reason": "Wikipedia is the knowledge source, not an evaluation set",
+     "owner": null
+    },
+    {
+     "id": "R15.4",
+     "source": "F1 score",
+     "predicate": "EVALUATED_ON",
+     "target": "Wikipedia",
+     "description": "F1 score is computed using answers derived from a knowledge source such as Wikipedia.",
+     "draft": "incorrect",
+     "reason": "Wikipedia is the knowledge source, not an evaluation set",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_56d31becd18d_0022",
+   "paper": "QA Domain Adaptation using Hidden Space Augmentation and Self-Supervised Contrastive Adaptation",
+   "section": "5 Experiments",
+   "text": "Implementation details are in Appendix C. 3For CAQA*, we exclude question generation and adopt the same process of pseudo labeling and self-supervised adaptation as QADA. Different from QADA, hidden space augmentation is not applied and we use the same objective function as in the original CAQA paper. Model HotpotQA NaturalQ. NewsQA SearchQA TriviaQA EM / F1 EM / F1 EM / F1 EM / F1 EM / F1 QADA (ours) 50.80/65.75 52.13/65.00 45.64/61.84 40.47/48.76 56.92/65.86 w/o Dirichlet sampling 49.57/64.71 51.15/64.24 45.27/61.44 35.90/44.28 56.83/65.51 w/o context cutoff 50.36/65.71 50.30/62.98 45.39/61.47 33.94/42.43 56.04/64.87 w/o contrastive adaptation 48.21/64.54 48.35/61.76 44.35/60.66 30.85/39.42 55.42/64.38 Table 2: Ablation study on different components of QADA.",
+   "relations": [
+    {
+     "id": "R16.1",
+     "source": "QA Domain Adaptation using Hidden Space Augmentation and Self-Supervised Contrastive Adaptation",
+     "predicate": "PROPOSES",
+     "target": "QADA",
+     "description": "The paper proposes the QADA method for QA domain adaptation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R16.2",
+     "source": "QADA",
+     "predicate": "EVALUATED_ON",
+     "target": "HotpotQA",
+     "description": "QADA was evaluated on the HotpotQA dataset as shown in the ablation study table.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R16.3",
+     "source": "QADA",
+     "predicate": "EVALUATED_ON",
+     "target": "NaturalQ",
+     "description": "QADA was evaluated on the NaturalQ dataset as shown in the ablation study table.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R16.4",
+     "source": "QADA",
+     "predicate": "EVALUATED_ON",
+     "target": "NewsQA",
+     "description": "QADA was evaluated on the NewsQA dataset as shown in the ablation study table.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R16.5",
+     "source": "QADA",
+     "predicate": "EVALUATED_ON",
+     "target": "SearchQA",
+     "description": "QADA was evaluated on the SearchQA dataset as shown in the ablation study table.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R16.6",
+     "source": "QADA",
+     "predicate": "EVALUATED_ON",
+     "target": "TriviaQA",
+     "description": "QADA was evaluated on the TriviaQA dataset as shown in the ablation study table.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R16.7",
+     "source": "CAQA*",
+     "predicate": "USES",
+     "target": "QADA",
+     "description": "CAQA* adopts the same process of pseudo labeling and self-supervised adaptation as QADA but excludes question generation and hidden space augmentation.",
+     "draft": "unsure",
+     "reason": "CAQA* adopts QADA's process; direction unclear",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_732906872c61_0007",
+   "paper": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+   "section": "3 Method",
+   "text": "In the following sections, we first introduce how to apply KG to build a graph structure among the retrieved passages (Section 3.1). Then we show how we adopt the graph-based stage-1 reranking with DPR retriever to improve passage retrieval (Section 3.2). Next we introduce joint stage-2 reranking and answer generation in the reading module (Section 3.3). Finally we illustrate the improvement of efficiency by using intermediate layer representation for stage-2 reranking (Section 3.4). The overview of our framework is illustrated in Figure 1.",
+   "relations": [
+    {
+     "id": "R17.1",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "PROPOSES",
+     "target": "KG",
+     "description": "The paper introduces how to apply KG to build a graph structure among retrieved passages.",
+     "draft": "incorrect",
+     "reason": "KG is background, not proposed",
+     "owner": null
+    },
+    {
+     "id": "R17.2",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "PROPOSES",
+     "target": "graph-based stage-1 reranking",
+     "description": "The paper proposes graph-based stage-1 reranking with DPR retriever to improve passage retrieval.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R17.3",
+     "source": "graph-based stage-1 reranking",
+     "predicate": "USES",
+     "target": "DPR retriever",
+     "description": "Graph-based stage-1 reranking is adopted with DPR retriever to improve passage retrieval.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R17.4",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "PROPOSES",
+     "target": "joint stage-2 reranking and answer generation",
+     "description": "The paper introduces joint stage-2 reranking and answer generation in the reading module.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R17.5",
+     "source": "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+     "predicate": "PROPOSES",
+     "target": "intermediate layer representation for stage-2 reranking",
+     "description": "The paper illustrates improvement of efficiency by using intermediate layer representation for stage-2 reranking.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_a97dfd913ccf_0017",
+   "paper": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+   "section": "3.2 Baselines",
+   "text": "Best results are bolded for each category and second-best results are underlined. all question categories, denoted by CIP-ALL, and the other training a separate model for each category, denoted by CIP-SEP . NSM ( Liang et al. , 2017) utilizes a key-variable memory to handle compositionality and helps find good programs by pruning the search space. MRL-CQA ( Hua et al. , 2020a) and MARL ( Hua et al. , 2020b) propose meta-reinforcement learning approaches that effectively adapts the meta-learned programmer to new questions to tackle potential distributional biases, where the former uses an unsupervised retrieval model and the latter learns it alternately with the programmer from weak supervision. NS- CQA (Hua et al. , 2020c) presents a memory buffer that stores high-reward programs and proposes an adaptive reward function to improve training performance. SSRP ( Ansari et al. , 2019) presents a noise-resilient model that is distant-supervised by the final answer. CBR-KBQA ( Das et al. , 2021) generates complex logical forms conditioned on similar retrieved questions and their logical forms to generalize to unseen relations. We also compare our method with graph-based methods on WQSP dataset. STAGG ( Y i he ta l ., 2015) proposes a staged query graph generation framework and leverages the knowledge base in an early stage to prune the search space. TEX- TRA Y (Bhutani et al. , 2019) answers complex questions using a novel decompose-execute-join approach. QGG ( Lan and Jiang , 2020) modifies STAGG with more flexible ways to handle constraints and multi-hop relations. OQGG ( Qin et al. , 2021) starts with the entire knowledge base and gradually shrinks it to the desired query graph.",
+   "relations": [
+    {
+     "id": "R18.1",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "NSM",
+     "description": "The paper uses NSM as a baseline method that utilizes a key-variable memory to handle compositionality and helps find good programs by pruning the search space.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.2",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "MRL-CQA",
+     "description": "The paper uses MRL-CQA as a baseline method that proposes a meta-reinforcement learning approach adapting the meta-learned programmer to new questions using an unsupervised retrieval model.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.3",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "MARL",
+     "description": "The paper uses MARL as a baseline method that proposes a meta-reinforcement learning approach learning alternately with the programmer from weak supervision.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.4",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "NS-CQA",
+     "description": "The paper uses NS-CQA as a baseline method that presents a memory buffer storing high-reward programs and proposes an adaptive reward function to improve training performance.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.5",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "SSRP",
+     "description": "The paper uses SSRP as a baseline method that presents a noise-resilient model distant-supervised by the final answer.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.6",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "CBR-KBQA",
+     "description": "The paper uses CBR-KBQA as a baseline method that generates complex logical forms conditioned on similar retrieved questions and their logical forms to generalize to unseen relations.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.7",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "STAGG",
+     "description": "The paper compares its method with graph-based methods on the WQSP dataset including STAGG which proposes a staged query graph generation framework and leverages the knowledge base early to prune the search space.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.8",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "TEXTRAY",
+     "description": "The paper compares its method with graph-based methods on the WQSP dataset including TEXTRAY which answers complex questions using a novel decompose-execute-join approach.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.9",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "QGG",
+     "description": "The paper compares its method with graph-based methods on the WQSP dataset including QGG which modifies STAGG with more flexible ways to handle constraints and multi-hop relations.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R18.10",
+     "source": "Improving Complex Knowledge Base Question Answering via Question-to-Action and Question-to-Question Alignment",
+     "predicate": "USES",
+     "target": "OQGG",
+     "description": "The paper compares its method with graph-based methods on the WQSP dataset including OQGG which starts with the entire knowledge base and gradually shrinks it to the desired query graph.",
+     "draft": "incorrect",
+     "reason": "baseline compared against, not used by the paper",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_533dbf92ffe5_0009",
+   "paper": "Long-Tailed Question Answering in an Open World",
+   "section": "3.2 Overview",
+   "text": "Pm can be determined by retrieving the most similar key vectorski m using x. Note thatPm is a soft prompt, i.e., a sequence of trainable embeddings that is randomly initialized and optimized when training QA modelF (Liu et al., 2021). We also mine knowledge from a large pre-trained LM g to construct knowledge prompt Pk. Liu et al. (2022a) showed that the efficacy of output generated by an LM could vary widely depending on the choice of in-context examples. In this study, we introduce a retrieve-then-rerank framework⟨R1,R 2⟩ (Ren et al., 2021) to select incontext examples from a training setDtr, consisting of a retrieverR1 and a re-rankerR2 (Zamani et al., 2022). The retrieverR1 is implemented as an efficient dual-encoder (Xiong et al., 2021). The re-ranker R2 is built as a more effective crossencoder (Luan et al., 2021). For a test instance ⟨c, q⟩, we mine knowledge following three steps: 1. R1 retrieves a subset of l candidate examples {ei = ⟨ci, qi, ai⟩}l i=1 from training set Dtr; 2. LMg produces a text hi for each example ei by conditional generationpg(hi|[ei; c; q]), which can serve as a hint for the test instance; 3. R2 further select top ~l hints{hi}~l i=1 to obtain the knowledge promptPk (~l≪l), in which the scoring function measures the similarity between⟨c, q⟩ and⟨ei, hi⟩. Note thatPk is a hard prompt (Jiang et al., 2020), which is a concatenation of texts in{hi}~l i=1.",
+   "relations": [
+    {
+     "id": "R19.1",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "PROPOSES",
+     "target": "Pm",
+     "description": "The paper introduces Pm as a soft prompt optimized during QA model training.",
+     "draft": "unsure",
+     "reason": "Pm may be this paper's soft prompt; the passage cites Liu et al. 2021",
+     "owner": null
+    },
+    {
+     "id": "R19.2",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "PROPOSES",
+     "target": "retrieve-then-rerank framework ⟨R1,R2⟩",
+     "description": "The paper introduces a retrieve-then-rerank framework to select in-context examples.",
+     "draft": "unsure",
+     "reason": "framework is cited (Ren et al. 2021) though 'introduced' here",
+     "owner": null
+    },
+    {
+     "id": "R19.3",
+     "source": "Pm",
+     "predicate": "USES",
+     "target": "QA model F",
+     "description": "Pm is optimized when training the QA model F.",
+     "draft": "unsure",
+     "reason": "Pm is a prompt for F; direction unclear",
+     "owner": null
+    },
+    {
+     "id": "R19.4",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "USES",
+     "target": "LM g",
+     "description": "The paper mines knowledge from a large pre-trained LM g to construct knowledge prompt Pk.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R19.5",
+     "source": "retrieve-then-rerank framework ⟨R1,R2⟩",
+     "predicate": "USES",
+     "target": "retriever R1",
+     "description": "The framework includes retriever R1 to retrieve candidate examples.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R19.6",
+     "source": "retrieve-then-rerank framework ⟨R1,R2⟩",
+     "predicate": "USES",
+     "target": "re-ranker R2",
+     "description": "The framework includes re-ranker R2 to select top hints for knowledge prompt Pk.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R19.7",
+     "source": "retriever R1",
+     "predicate": "EVALUATED_ON",
+     "target": "training set Dtr",
+     "description": "Retriever R1 retrieves candidate examples from training set Dtr.",
+     "draft": "incorrect",
+     "reason": "R1 retrieves from Dtr; it is not evaluated on it",
+     "owner": null
+    },
+    {
+     "id": "R19.8",
+     "source": "re-ranker R2",
+     "predicate": "EVALUATED_ON",
+     "target": "training set Dtr",
+     "description": "Re-ranker R2 selects top hints from examples retrieved from training set Dtr.",
+     "draft": "incorrect",
+     "reason": "R2 selects among hints from Dtr examples; it is not evaluated on it",
+     "owner": null
+    },
+    {
+     "id": "R19.9",
+     "source": "knowledge prompt Pk",
+     "predicate": "USES",
+     "target": "LM g",
+     "description": "Knowledge prompt Pk is constructed using text generated by LM g.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R19.10",
+     "source": "knowledge prompt Pk",
+     "predicate": "USES",
+     "target": "re-ranker R2",
+     "description": "Re-ranker R2 selects top hints to form knowledge prompt Pk.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_51284ef6b044_0008",
+   "paper": "WikiHowQA: A Comprehensive Benchmark for Multi-Document Non-Factoid Question Answering",
+   "section": "2 Related Work",
+   "text": "Long answers from Natural Questions and the Common Crawl corpus are encoded into sentence embeddings. Then a similarity search is performed over the corpus and long answers to find candidate documents from the corpus for QF-MDS tasks (similar to ELI5). Boni et al. (2021) proposed HowSumm, a QF- MDS dataset automatically constructed from Wiki- How content by utilizing the referenced articles as the summarization source, the corresponding elements of WikiHow articles as the target summaries, and titles used as the queries. There are two types Table 1: Comparison of WikiHowQA with other QF-MDS and LFQA datasets Dataset # questions Splits Reference sources Answer train (#clusterised/#clusters) valid test # docs # words # sents # words # sents WIKI HOWQA 11,746 8,235 (2,449/7,272) 1,178 2,333 6.3 1,053.6 65.2 113.05 4.9 AQUAMUSE (Kulkarni et al., 2020) 5,519 4,555 440 524 6 1,597.1 66.4 105.9 3.8 ELI5 (Fan et al., 2019) 272,000 237,000 10,000 25,000 – 857.6 – 130.6 – HOWSUMM -METHOD (Boni et al., 2021) 11,121 8,856 1,122 1,143 11.19 1,455.52 71 539.11 31.33 HOWSUMM -STEP (Boni et al., 2021) 84,348 67,403 8,248 8,697 9.98 1,357.37 66.47 98.98 5.23 of QF-MDS tasks, one for methods (HOWSUMM - METHOD ) and one for steps (HOWSUMM -STEP).",
+   "relations": [
+    {
+     "id": "R20.1",
+     "source": "WikiHowQA: A Comprehensive Benchmark for Multi-Document Non-Factoid Question Answering",
+     "predicate": "USES",
+     "target": "Natural Questions",
+     "description": "The paper uses long answers from Natural Questions encoded into sentence embeddings for similarity search.",
+     "draft": "incorrect",
+     "reason": "describes other datasets in related work, not WikiHowQA",
+     "owner": null
+    },
+    {
+     "id": "R20.2",
+     "source": "WikiHowQA: A Comprehensive Benchmark for Multi-Document Non-Factoid Question Answering",
+     "predicate": "USES",
+     "target": "Common Crawl corpus",
+     "description": "The paper uses the Common Crawl corpus for similarity search for QF-MDS tasks.",
+     "draft": "incorrect",
+     "reason": "describes other datasets in related work, not WikiHowQA",
+     "owner": null
+    },
+    {
+     "id": "R20.3",
+     "source": "WikiHowQA: A Comprehensive Benchmark for Multi-Document Non-Factoid Question Answering",
+     "predicate": "USES",
+     "target": "ELI5",
+     "description": "The paper performs similarity search over the corpus for QF-MDS tasks similar to ELI5.",
+     "draft": "incorrect",
+     "reason": "describes other datasets in related work, not WikiHowQA",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_61676b02aa27_0000",
+   "paper": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+   "section": "Front matter",
+   "text": "Evaluating Open-Domain Question Answering in the Era of Large Language Models Ehsan Kamalloo ♢ ♣ Nouha Dziri ♠ Charles L. A. Clarke ♣ Davood Rafiei ♢ ♢ University of Alberta ♣ University of Waterloo ♠ Allen Institute for Artificial Intelligence",
+   "relations": [
+    {
+     "id": "R21.1",
+     "source": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+     "predicate": "AUTHORED_BY",
+     "target": "Ehsan Kamalloo",
+     "description": "Ehsan Kamalloo is an author of the paper.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R21.2",
+     "source": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+     "predicate": "AUTHORED_BY",
+     "target": "Nouha Dziri",
+     "description": "Nouha Dziri is an author of the paper.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R21.3",
+     "source": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+     "predicate": "AUTHORED_BY",
+     "target": "Charles L. A. Clarke",
+     "description": "Charles L. A. Clarke is an author of the paper.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R21.4",
+     "source": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+     "predicate": "AUTHORED_BY",
+     "target": "Davood Rafiei",
+     "description": "Davood Rafiei is an author of the paper.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R21.5",
+     "source": "Ehsan Kamalloo",
+     "predicate": "AFFILIATED_WITH",
+     "target": "University of Alberta",
+     "description": "Ehsan Kamalloo is affiliated with University of Alberta.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R21.6",
+     "source": "Davood Rafiei",
+     "predicate": "AFFILIATED_WITH",
+     "target": "University of Alberta",
+     "description": "Davood Rafiei is affiliated with University of Alberta.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R21.7",
+     "source": "Charles L. A. Clarke",
+     "predicate": "AFFILIATED_WITH",
+     "target": "University of Waterloo",
+     "description": "Charles L. A. Clarke is affiliated with University of Waterloo.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R21.8",
+     "source": "Nouha Dziri",
+     "predicate": "AFFILIATED_WITH",
+     "target": "Allen Institute for Artificial Intelligence",
+     "description": "Nouha Dziri is affiliated with Allen Institute for Artificial Intelligence.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_381134ba1f9c_0003",
+   "paper": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+   "section": "1 Introduction",
+   "text": "Traditional KGE models fulfill quality and simplicity. They build upon a simple architecture and reach a high quality in terms of KGC. However, as they create a unique embedding per entity/relation, they scale linearly with the number of entities in the graph, both in model size and inference time, and offer limited versatility. Methods such as DKRL (Xie et al., 2016a) and KEPLER (Wang et al., 2021) attempt to tackle the scalability issue using compositional embeddings. However, they fail to achieve quality comparable to conventional KGEs. KG-BERT (Yao et al., 2019) utilizes pretrained BERT for link prediction and holds po- 2We use the term KGC for the task of KG link prediction. predict tail: john o'connor | position held predict head: blondeliini | parent taxon predict answer: what do jamaican people speak archbishop euhalidaya jamaican english Figure 1: Overview of our method KGT5 . KGT5 is first trained on the link prediction task (predicting head/tail entities, given tail/head and relation). For question answering, the same model is further finetuned using QA pairs. tential in terms of versatility as it is applicable to downstream NLP tasks. However, it is not scalable due to its underlying cross-encoder. 3 QA methods which leverage KGEs outperform traditional KGQA approaches on incomplete KGs, but combining KGEs with the QA pipeline is a non-trivial task; models that attempt to do this often work on only limited query types (Huang et al. 2019; Sun et al. 2021; Saxena et al. 2020) or require multistage training and inference pipelines (Ren et al., 2021). Here, in order to achieve quality, these models have sacrificed versatility and simplicity. A comparison of approaches in terms of desiderata is summarized in Tab. 9 in the appendix. Our paper shows that all of these desiderata can be fulfilled by a simple sequence-to-sequence (seq2seq) model.",
+   "relations": [
+    {
+     "id": "R22.1",
+     "source": "Traditional KGE models",
+     "predicate": "ADDRESSES",
+     "target": "Knowledge Graph Completion (KGC)",
+     "description": "Traditional KGE models address the task of knowledge graph completion by creating unique embeddings per entity/relation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R22.2",
+     "source": "DKRL",
+     "predicate": "IMPROVES_ON",
+     "target": "Traditional KGE models",
+     "description": "DKRL attempts to tackle scalability issues of traditional KGE models using compositional embeddings.",
+     "draft": "unsure",
+     "reason": "DKRL improves scalability, not quality",
+     "owner": null
+    },
+    {
+     "id": "R22.3",
+     "source": "KEPLER",
+     "predicate": "IMPROVES_ON",
+     "target": "Traditional KGE models",
+     "description": "KEPLER attempts to tackle scalability issues of traditional KGE models using compositional embeddings.",
+     "draft": "unsure",
+     "reason": "KEPLER improves scalability, not quality",
+     "owner": null
+    },
+    {
+     "id": "R22.4",
+     "source": "KG-BERT",
+     "predicate": "ADDRESSES",
+     "target": "Knowledge Graph Completion (KGC)",
+     "description": "KG-BERT utilizes pretrained BERT for link prediction, addressing knowledge graph completion with potential versatility.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R22.5",
+     "source": "QA methods leveraging KGEs",
+     "predicate": "ADDRESSES",
+     "target": "Knowledge Graph Completion (KGC)",
+     "description": "QA methods leveraging KGEs address question answering on incomplete knowledge graphs.",
+     "draft": "incorrect",
+     "reason": "these QA methods address KGQA, not KGC",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_b8cfb9072b0d_0010",
+   "paper": "Open Domain Question Answering with A Unified Knowledge Interface",
+   "section": "3.2 Improved Data-to-Text Model Training",
+   "text": "A known problem in data-to-text generation is that the model tends to hallucinate or neglect information in the input (Wang et al., 2020; Agarwal et al., 2021). Faithfulness and information coverage is especially important when we apply the verbalized output to knowledge-intensive downstream tasks like ODQA. To address this, we subsample training data T such that the instances are filtered out if they are likely to steer model towards missing information. In particular, we compute ROUGE-1 (Lin, 2004) scores between the input and target of training instances and filter out those whose scores are below a certain threshold. We denote the filtered version as T-F. Examples of the filtered instances can be found in Table 11, as we discuss more in Appendix F, these instances may bias the model towards unwanted behaviors. Another challenge we face is that most data-totext training examples have succinct structured inputs. In other words, the cells in the structured input are usually single words or short phrases with corresponding short target sentences as well. In our case, a number of tables contain large cells with dozens of words. Models trained with existing data likely have a hard time verbalizing such inputs faithfully. To alleviate this domain-mismatch issue, we propose an iterative training set-up. In the first iteration, we train a generator on T-F. Then we apply the generator to our data. We then find high quality verbalized outputs based on the ROUGE-1 score between the model inputs and model outputs, and sample instances with score higher than a threshold for the next-round training. We sample instances up to the same size of T-F, and denote this set as ID-T (examples shown in Table 11). Finally, we mix the ID-T with T-F and train a second generator for verbalization. Following recent work (Nan et al., 2021), we use the pretrained T5-Large (Raffel et al., 2020) model as our generator. Given paired training examples consisting of a structured data input and a target sentence, we finetune the T5 model to maximize the log-likelihood of generating the corresponding target sentences.",
+   "relations": [
+    {
+     "id": "R23.1",
+     "source": "Open Domain Question Answering with A Unified Knowledge Interface",
+     "predicate": "USES",
+     "target": "ROUGE-1",
+     "description": "The paper uses ROUGE-1 scores to filter training instances for data-to-text model training.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R23.2",
+     "source": "Open Domain Question Answering with A Unified Knowledge Interface",
+     "predicate": "USES",
+     "target": "T-F",
+     "description": "The paper uses the filtered training data T-F for training the generator in the first iteration.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R23.3",
+     "source": "Open Domain Question Answering with A Unified Knowledge Interface",
+     "predicate": "USES",
+     "target": "ID-T",
+     "description": "The paper uses the ID-T dataset, sampled based on ROUGE-1 scores, for next-round training of the generator.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R23.4",
+     "source": "Open Domain Question Answering with A Unified Knowledge Interface",
+     "predicate": "USES",
+     "target": "T5-Large",
+     "description": "The paper uses the pretrained T5-Large model as the generator for verbalization.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R23.5",
+     "source": "T5-Large",
+     "predicate": "ADDRESSES",
+     "target": "data-to-text generation",
+     "description": "The T5-Large model is fine-tuned to generate target sentences from structured data inputs, addressing data-to-text generation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_08db683fca63_0017",
+   "paper": "Hop, Union, Generate: Explainable Multi-hop Reasoning without Rationale Supervision",
+   "section": "5 Results",
+   "text": "HotpotQA. We summarize the results on HotpotQA in Table 2. HUG -Small outperforms the best unsupervised approach RAG-Small by 18 sentence F1 points, demonstrating superior multi-hop reasoning abilities. HUG -Small, despite having fewer parameters, outperforms the semi-supervised CHAIN on predicting rationales and is comparable to CHAIN on predicting answers. While CHAIN explicitly exploits the heuristics used in the data collection process for HotpotQA, HUG -Small is able to learn such heuristics in a fully automatic way. Finally, the gap between HUG and SAE, a fully supervised method that is given both rationale and answer annotations, remains large. MuSiQue. Table 2 shows that HUG -Small is better at both identifying rationales and predicting answers than RAG-Small, the best-performing unsupervised baseline. Due to the difficulty of MuSiQue, it is harder for an unsupervised method to learn to select rationales – the gap between the supervised method and the best unsupervised method on this dataset is greater than the gap on HotpotQA. FEVER We summarize the results on FEVER in Table 3. In terms of selecting rationales in an unsupervised manner, HUG -Small outperforms RU-DIAGNOSTICS , performs similarly to RAG- Small, and underperforms RU-FAITHFUL by a small margin. Because FEVER mostly only requires single-hop reasoning, HUG-Small does not improve over the previous methods. On predicting answers, HUG-Small outperforms RU-FAITHFUL but underperforms RAG-Small. Compared to the supervised versions of RS-DIAGNOSTICS and RS- FAITHFUL , which have access to both the answers and rationales during training, the gap between HUG -Small’s and their rationale scores (sentence F1) understandably remains large.",
+   "relations": [
+    {
+     "id": "R24.1",
+     "source": "Hop, Union, Generate: Explainable Multi-hop Reasoning without Rationale Supervision",
+     "predicate": "PROPOSES",
+     "target": "HUG-Small",
+     "description": "The paper proposes the HUG-Small method for multi-hop reasoning without rationale supervision.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.2",
+     "source": "Hop, Union, Generate: Explainable Multi-hop Reasoning without Rationale Supervision",
+     "predicate": "USES",
+     "target": "HotpotQA",
+     "description": "The paper evaluates HUG-Small on the HotpotQA dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.3",
+     "source": "Hop, Union, Generate: Explainable Multi-hop Reasoning without Rationale Supervision",
+     "predicate": "USES",
+     "target": "MuSiQue",
+     "description": "The paper evaluates HUG-Small on the MuSiQue dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.4",
+     "source": "Hop, Union, Generate: Explainable Multi-hop Reasoning without Rationale Supervision",
+     "predicate": "USES",
+     "target": "FEVER",
+     "description": "The paper evaluates HUG-Small on the FEVER dataset.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.5",
+     "source": "HUG-Small",
+     "predicate": "EVALUATED_ON",
+     "target": "HotpotQA",
+     "description": "HUG-Small is evaluated on the HotpotQA dataset, outperforming RAG-Small and CHAIN on rationale prediction and answer prediction.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.6",
+     "source": "HUG-Small",
+     "predicate": "EVALUATED_ON",
+     "target": "MuSiQue",
+     "description": "HUG-Small is evaluated on the MuSiQue dataset, outperforming RAG-Small in rationale identification and answer prediction.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.7",
+     "source": "HUG-Small",
+     "predicate": "EVALUATED_ON",
+     "target": "FEVER",
+     "description": "HUG-Small is evaluated on the FEVER dataset, outperforming RU-DIAGNOSTICS and RU-FAITHFUL in rationale selection and answer prediction.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.8",
+     "source": "HUG-Small",
+     "predicate": "IMPROVES_ON",
+     "target": "RAG-Small",
+     "description": "HUG-Small outperforms RAG-Small on HotpotQA and MuSiQue datasets in rationale and answer prediction.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R24.9",
+     "source": "HUG-Small",
+     "predicate": "IMPROVES_ON",
+     "target": "CHAIN",
+     "description": "HUG-Small outperforms the semi-supervised CHAIN method on predicting rationales on HotpotQA.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_51284ef6b044_0020",
+   "paper": "WikiHowQA: A Comprehensive Benchmark for Multi-Document Non-Factoid Question Answering",
+   "section": "5 How To Evaluate How-To Answers",
+   "text": "To further ensure the reliability of MD-NFQA evaluation, we introduce a simple human evaluation framework, which we then employ to assess the performance of baselines in our benchmark.",
+   "relations": [
+    {
+     "id": "R25.1",
+     "source": "WikiHowQA: A Comprehensive Benchmark for Multi-Document Non-Factoid Question Answering",
+     "predicate": "PROPOSES",
+     "target": "human evaluation framework",
+     "description": "The paper introduces a simple human evaluation framework to ensure the reliability of MD-NFQA evaluation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R25.2",
+     "source": "human evaluation framework",
+     "predicate": "ADDRESSES",
+     "target": "MD-NFQA evaluation",
+     "description": "The human evaluation framework is introduced to ensure the reliability of MD-NFQA evaluation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R25.3",
+     "source": "human evaluation framework",
+     "predicate": "USES",
+     "target": "baselines",
+     "description": "The human evaluation framework is employed to assess the performance of baselines in the benchmark.",
+     "draft": "unsure",
+     "reason": "the framework is used to assess baselines; 'uses' is loose",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_533dbf92ffe5_0004",
+   "paper": "Long-Tailed Question Answering in an Open World",
+   "section": "1 Introduction",
+   "text": "This scheme tackles unseen tasks, since the learned knowledge is distributed into different model components (Trauble et al., 2022). We further mine knowledge from a large pretrained LM. Concretely, we employ a retrieve-thenrerank frame (Ren et al., 2021) to select demonstrative in-context examples for a test instance, which guide the LM to decode the output (Brown et al., 2020). The LM outputs are viewed as hints for QA tasks (Zhang and Wan, 2022) and leveraged for improving QA performance. The retrieve-thenrerank frame consists of an efficient retriever and an effective re-ranker (Zamani et al., 2022), which is optimized by a two-stage training approach. The first stage pre-trains the retrieve-then-rerank framework by knowledge distillation from a pre-trained LM (Izacard et al., 2022). The second stage jointly train the above framework and an encoder-decoder QA model through adaptive mutual knowledge distillation (Xie and Du, 2022) to allow information exchange between each other. Our key contributions are summarized as follows: • We formally define the OLTQA task, which learns from natural long-tail distributed data and optimizes the performance over seen and unseen tasks. We curate a large OLTQA dataset according to a long-tail distribution from 43 existing representative QA datasets. • We propose an OLTQA model, consisting of knowledge sharing and knowledge mining components to address challenges of OLTQA. An instance-level knowledge sharing mechanism is introduced, and a retrieve-then-rerank frame is employed to mine knowledge from a large pre-trained LM through a novel twostage knowledge distillation training process. • Our extensive experimentation on the OLTQA dataset demonstrates that our model consistently outperforms the state-of-the-art.",
+   "relations": [
+    {
+     "id": "R26.1",
+     "source": "Long-Tailed Question Answering in an Open World",
+     "predicate": "PROPOSES",
+     "target": "OLTQA model",
+     "description": "The paper proposes the OLTQA model with knowledge sharing and mining components.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R26.2",
+     "source": "OLTQA model",
+     "predicate": "USES",
+     "target": "retrieve-then-rerank frame",
+     "description": "The OLTQA model employs a retrieve-then-rerank frame to mine knowledge from a large pretrained LM.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R26.3",
+     "source": "OLTQA model",
+     "predicate": "USES",
+     "target": "two-stage knowledge distillation training process",
+     "description": "The OLTQA model uses a novel two-stage knowledge distillation training process.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R26.4",
+     "source": "retrieve-then-rerank frame",
+     "predicate": "USES",
+     "target": "large pretrained LM",
+     "description": "The retrieve-then-rerank frame mines knowledge from a large pretrained LM.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R26.5",
+     "source": "two-stage knowledge distillation training process",
+     "predicate": "USES",
+     "target": "encoder-decoder QA model",
+     "description": "The second stage jointly trains the retrieve-then-rerank framework and an encoder-decoder QA model through adaptive mutual knowledge distillation.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R26.6",
+     "source": "OLTQA model",
+     "predicate": "ADDRESSES",
+     "target": "OLTQA",
+     "description": "The OLTQA model addresses the challenges of the OLTQA task.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_381134ba1f9c_0006",
+   "paper": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+   "section": "2.1 Knowledge Graph Embeddings",
+   "text": "Atomic KGE models. Multiple KGE models have been proposed in the literature, mainly differing in the form of their scoring functionf (es,e p,e o). A comprehensive survey of these models, their scoring functions, training regime and link prediction performance can be found in Wang et al. (2017) and Ruffinelli et al. (2020). It is important to note that although these models obtain superior performance in the link prediction task, they suffer from a linear scaling in model size with the number of entities in the KG, and applying them to question answering necessitates separate KGE and QA modules. Compositional KGE models. To combat the linear scaling of the model size with the number of entities in a KG, entity embeddings can be composed of token embeddings. DKRL (Xie et al., 2016b) embeds entities by combining word embeddings of entity descriptions with a CNN encoder, followed by the TransE scoring function. KEPLER (Wang et al., 2021) uses a Transformer-based encoder and combines the typical KGE training objective with a masked language modeling objective. Both of these approaches encode entities and relations separately which limits the transferability of these models to downstream tasks such as question answering. MLMLM (Clouatre et al., 2021) encodes the whole query with a RoBERTa-based model and uses [MASK] tokens to generate predictions. However, it performs significantly worse than atomic KGE models on link prediction on large KGs, and is yet to be applied to downstream text-based tasks.",
+   "relations": [
+    {
+     "id": "R27.1",
+     "source": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+     "predicate": "USES",
+     "target": "Atomic KGE models",
+     "description": "The paper discusses atomic KGE models as part of knowledge graph embeddings.",
+     "draft": "incorrect",
+     "reason": "related work, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R27.2",
+     "source": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+     "predicate": "USES",
+     "target": "Compositional KGE models",
+     "description": "The paper discusses compositional KGE models as part of knowledge graph embeddings.",
+     "draft": "incorrect",
+     "reason": "related work, not used by the paper",
+     "owner": null
+    },
+    {
+     "id": "R27.3",
+     "source": "Atomic KGE models",
+     "predicate": "ADDRESSES",
+     "target": "link prediction",
+     "description": "Atomic KGE models obtain superior performance in the link prediction task.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R27.4",
+     "source": "Atomic KGE models",
+     "predicate": "ADDRESSES",
+     "target": "question answering",
+     "description": "Applying atomic KGE models to question answering requires separate KGE and QA modules.",
+     "draft": "unsure",
+     "reason": "applicable to QA only with a separate QA module",
+     "owner": null
+    },
+    {
+     "id": "R27.5",
+     "source": "Compositional KGE models",
+     "predicate": "IMPROVES_ON",
+     "target": "Atomic KGE models",
+     "description": "Compositional KGE models combat the linear scaling problem of atomic KGE models with the number of entities.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R27.6",
+     "source": "DKRL",
+     "predicate": "USES",
+     "target": "TransE",
+     "description": "DKRL uses the TransE scoring function after encoding entity descriptions with a CNN encoder.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R27.7",
+     "source": "DKRL",
+     "predicate": "ADDRESSES",
+     "target": "link prediction",
+     "description": "DKRL is a compositional KGE model designed for link prediction.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R27.8",
+     "source": "KEPLER",
+     "predicate": "ADDRESSES",
+     "target": "link prediction",
+     "description": "KEPLER combines KGE training with masked language modeling for link prediction.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R27.9",
+     "source": "MLMLM",
+     "predicate": "ADDRESSES",
+     "target": "link prediction",
+     "description": "MLMLM performs worse than atomic KGE models on link prediction on large KGs.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R27.10",
+     "source": "MLMLM",
+     "predicate": "ADDRESSES",
+     "target": "question answering",
+     "description": "MLMLM is yet to be applied to downstream text-based tasks such as question answering.",
+     "draft": "incorrect",
+     "reason": "MLMLM is 'yet to be applied' to downstream tasks",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_039c611d6451_0002",
+   "paper": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+   "section": "1 Introduction",
+   "text": "Any natural language system that processes or interacts with numeric data requires quantitative reasoning to function. This has inspired research in several NLP domains, including reading comprehension (Andor et al., 2019; Mishra et al., 2022), textual entailment (Roy et al., 2015; Ravichander et al., 2019), data-to-text generation (Parikh et al., 2020; Suadaa et al., 2021), and question answering (Chen et al., 2020; Zhang et al., 2021). A major challenge in quantitative reasoning is the interplay between numeric expressions and natural language (Roy et al., 2015). Standard neural approaches rely heavily on lexical matching, leading to overfitting over spurious verbal patterns. In contrast, a purely 1The dataset and code are available at https://github. com/ArmiNouri/CompAQT symbolic approach excels at numerical reasoning, but struggles when sophisticated verbal reasoning is required (Ravichander et al., 2019). In this paper we introduce a novel attention strategy that captures the interplay between numeric and verbal modalities, which improves program accuracy and renders models more robust to overfitting. Focusing on the question answering task, we show how our proposed method, named CompAQT (COMP ositional Attention for QuanTitative reasoning), enables the model to attend to relevant parts of text at each reasoning step. CompAQT enhances the performance of state of the art models on several recently released QA datasets, especially for multi-step programs. It is implemented as a plug-and-play module that can be added to existing models with minimal effort and without the need for any additional supervision. Concretely, we offer the following contributions: • We propose a compositional attention module equipped with an alignment loss that improves SOTA performance on numeric QA tasks. • We demonstrate how the proposed approach improves the models’ program accuracy and renders them more robust in multi-step reasoning tasks. • We combine and refine four recently released datasets on QA over tabular data. We unify their annotation schema so that they can be used interchangeably.",
+   "relations": [
+    {
+     "id": "R28.1",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "PROPOSES",
+     "target": "CompAQT",
+     "description": "The paper introduces CompAQT, a compositional attention module for quantitative reasoning in question answering.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R28.2",
+     "source": "CompAQT",
+     "predicate": "ADDRESSES",
+     "target": "question answering",
+     "description": "CompAQT targets the question answering task by enabling the model to attend to relevant parts of text at each reasoning step.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R28.3",
+     "source": "CompAQT",
+     "predicate": "ADDRESSES",
+     "target": "numeric QA tasks",
+     "description": "CompAQT improves state-of-the-art performance on numeric question answering tasks.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R28.4",
+     "source": "CompAQT",
+     "predicate": "ADDRESSES",
+     "target": "multi-step reasoning tasks",
+     "description": "CompAQT enhances model robustness and program accuracy in multi-step reasoning tasks.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R28.5",
+     "source": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+     "predicate": "USES",
+     "target": "four recently released datasets on QA over tabular data",
+     "description": "The paper combines and refines four QA datasets over tabular data and unifies their annotation schema for use in experiments.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_85db020b91cb_0021",
+   "paper": "ConditionalQA: A Complex Reading Comprehension Dataset with Conditional Answers",
+   "section": "5.1 Baselines",
+   "text": "Since ETC cannot fit the entire document (with up to 16154 tokens) into its memory, we cannot let ETC to jointly predict answers and conditions, we designed a two stage Yes / No Extractive Conditional Overall answer w/ conds answer w/ conds answer w/ conds* answer w/ conds majority 62.2 / 62.2 42.8 / 42.8 – / – – / – – / – – / – – / – – / – ETC 63.1 / 63.1 47.5 / 47.5 8.9 / 17.3 6.9 / 14.6 39.4 / 41.8 2.5 / 3.4 35.6 / 39.8 26.9 / 30.8 DocHopper 64.9 / 64.9 49.1 / 49.1 17.8 / 26.7 15.5 / 23.6 42.0 / 46.4 3.1 / 3.8 40.6 / 45.2 31.9 / 36.0 FiD 64.2 / 64.2 48.0 / 48.0 25.2 / 37.8 22.5 / 33.4 45.2 / 49.7 4.7 / 5.8 44.4 / 50.8 35.0 / 40.6 human 91.4 / 91.4 82.3 / 82.3 72.6 / 84.9 62.8 / 69.1 74.7 / 86.9 48.3 / 56.6 82.6 / 88.4 73.3 / 76.2 Table 2: Experiment results on ConditionalQA (EM / F1).",
+   "relations": [
+    {
+     "id": "R29.1",
+     "source": "ConditionalQA: A Complex Reading Comprehension Dataset with Conditional Answers",
+     "predicate": "USES",
+     "target": "ETC",
+     "description": "The paper uses ETC as a baseline method for evaluation on ConditionalQA.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R29.2",
+     "source": "ConditionalQA: A Complex Reading Comprehension Dataset with Conditional Answers",
+     "predicate": "USES",
+     "target": "DocHopper",
+     "description": "The paper uses DocHopper as a baseline method for evaluation on ConditionalQA.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R29.3",
+     "source": "ConditionalQA: A Complex Reading Comprehension Dataset with Conditional Answers",
+     "predicate": "USES",
+     "target": "FiD",
+     "description": "The paper uses FiD as a baseline method for evaluation on ConditionalQA.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R29.4",
+     "source": "ETC",
+     "predicate": "EVALUATED_ON",
+     "target": "ConditionalQA",
+     "description": "ETC is evaluated on the ConditionalQA dataset as a baseline method.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R29.5",
+     "source": "DocHopper",
+     "predicate": "EVALUATED_ON",
+     "target": "ConditionalQA",
+     "description": "DocHopper is evaluated on the ConditionalQA dataset as a baseline method.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R29.6",
+     "source": "FiD",
+     "predicate": "EVALUATED_ON",
+     "target": "ConditionalQA",
+     "description": "FiD is evaluated on the ConditionalQA dataset as a baseline method.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  },
+  {
+   "unit_id": "u_60ab7f2e85b3_0007",
+   "paper": "Evaluating and Modeling Attribution for Cross-Lingual Question Answering",
+   "section": "2.2 Attributed Question Answering",
+   "text": "The need for attribution is particularly vivid for information-seeking use cases. To address this need, Bohnet et al. (2022) defined the Attributed Question Answering (AQA) task. Given a query q and a large corpus of textC (e.g. Wikipedia), AQA consists of predicting an answer a and a passage p∈C to attribute the predicted answer. (AQA) (q,C)− →(a, p) (1) Bohnet et al. (2022) experimented with the AQA task where the questions, answers, and passages were in English. Our work is the first to study this task in a cross-lingual framework. We build upon previous work that showed that for many languages (e.g., Japanese), crosslingual QA systems outperform monolingual systems (Asai et al., 2021b; Muller et al., 2022). In this setting, given a query in a language L, the goal is to generate an answer a using evidence passages from a multilingual corpusC.",
+   "relations": [
+    {
+     "id": "R30.1",
+     "source": "Evaluating and Modeling Attribution for Cross-Lingual Question Answering",
+     "predicate": "CITES",
+     "target": "Bohnet et al. (2022)",
+     "description": "The paper cites Bohnet et al. (2022) for defining the AQA task.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R30.2",
+     "source": "Evaluating and Modeling Attribution for Cross-Lingual Question Answering",
+     "predicate": "CITES",
+     "target": "Asai et al. (2021b)",
+     "description": "The paper cites Asai et al. (2021b) for showing that crosslingual QA systems outperform monolingual systems for many languages.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    },
+    {
+     "id": "R30.3",
+     "source": "Evaluating and Modeling Attribution for Cross-Lingual Question Answering",
+     "predicate": "CITES",
+     "target": "Muller et al. (2022)",
+     "description": "The paper cites Muller et al. (2022) for showing that crosslingual QA systems outperform monolingual systems for many languages.",
+     "draft": "correct",
+     "reason": "",
+     "owner": null
+    }
+   ]
+  }
+ ]
+}

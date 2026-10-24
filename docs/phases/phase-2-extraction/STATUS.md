@@ -155,6 +155,28 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
 - Not measured yet (need the labeled sets of step 9): relation precision, entity-resolution F1,
   and the owner's duplicate audit.
 
+## Step 9: labeled sets (2026-10-24, Claude drafted, owner review still to do)
+
+- Code: `labelsets.py`, CLI `labels-draw`, `labels-render`, `labels-score`; 14 tests. Data in
+  `data/eval/labels/v0/`: `relations_v0.json` (30 text units, 182 relations), `pairs_v0.json`
+  (110 entity pairs in 5 strata, with weights), and the review pages `RELATIONS_REVIEW.md` and
+  `PAIRS_REVIEW.md`. The draw is seeded and repeatable; `labels-draw` refuses to overwrite.
+- I (Claude, not the extraction model) read every passage and drafted every label. **No label
+  is owner-reviewed yet**, so the scores below are drafts, and `quality_checks` says
+  `owner_reviewed: 0, draft_only: N` next to them.
+- Draft relation precision: **0.81** (131 correct, 31 incorrect, 20 unsure; target 0.80, so a
+  narrow pass that the review can flip). The wrong ones fall into patterns: baselines or related
+  work recorded as "USES" (all 10 in one baselines unit), ablation variants recorded as used,
+  cited tools recorded as "PROPOSES", and datasets given as the knowledge source recorded as
+  "EVALUATED_ON".
+- Draft entity-resolution scores (weighted by stratum size): precision **1.00**, recall **0.60**,
+  F1 **0.75** (target 0.85, a miss). Every merge I sampled was right, but many pairs the
+  guard (or the rules) kept apart are the same thing (`Step Verifier (Vs)` and `step verifier
+  Vs`, `GPT3 curie` and `GPT-3 text-curie-001`, `cross-entropy loss` and `cross-entropy loss
+  Lce`). Recall only covers pairs the resolver looked at. Options after the owner's review:
+  loosen the guard for symbol or version-like extra tokens, or accept the miss and report it.
+  I did not tune the guard on these labels, to avoid fitting it to my own drafts.
+
 ## Things that went wrong and were fixed (so the next session knows)
 
 - `uv sync` in the image build failed because the connection dropped. The Dockerfile now has a
@@ -180,9 +202,10 @@ None.
 
 ## Exact next action
 
-Build step 9: the labeled sets (30 text units for relation precision and candidate pairs for
-entity resolution, AI draft, then the owner reviews, about 2 hours), then step 10 (tests, docs,
-README, CI, WALKTHROUGH). Nothing from Phase 2 is pushed.
+The owner reviews `data/eval/labels/v0/RELATIONS_REVIEW.md` and `PAIRS_REVIEW.md` (about 2
+hours) and replies with the IDs they disagree with and the right label. Then apply the
+corrections to the two JSON files (`owner` field), run `labels-score`, and decide on the ER
+guard. Meanwhile step 10 (README, WALKTHROUGH, CI) can proceed. Nothing from Phase 2 is pushed.
 
 ## Notes for the next session
 

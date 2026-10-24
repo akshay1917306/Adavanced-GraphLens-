@@ -88,6 +88,17 @@ def main(argv: list[str] | None = None) -> int:
     quality.add_argument("--index-version", default="idx2-full-g0")
     quality.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     quality.add_argument("--out", type=Path, default=None, help="write the report here")
+    for name, helptext in (
+        ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
+        ("labels-render", "write the review pages from the label files"),
+        ("labels-score", "score relation precision and entity-resolution F1 from the labels"),
+    ):
+        labels = sub.add_parser(name, help=helptext)
+        labels.add_argument("--dir", type=Path, default=Path("/labels"))
+        labels.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+        labels.add_argument("--index-version", default="idx2-full-g0")
+        labels.add_argument("--gleaning", type=int, default=0)
+        labels.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
@@ -143,6 +154,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "quality-report":
         return _quality_report(engine, args)
+
+    if args.command.startswith("labels-"):
+        return _labels(engine, args)
 
     if args.command == "extract-estimate":
         return _extract_estimate(engine, args)
@@ -333,6 +347,78 @@ def _graph_load(engine, args) -> int:
         "counts_match": (counts.entities, counts.relations)
         == (len(result.entities), len(result.relations)),
     }, indent=2))  # fmt: skip
+    return 0
+
+
+def _labels(engine, args) -> int:
+    from sqlalchemy import text
+
+    from graphlens_pipeline import labelsets as ls
+    from graphlens_pipeline.extract import load_cached_results, load_units
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.quality import Check, save_checks
+
+    relations_file, pairs_file = args.dir / "relations_v0.json", args.dir / "pairs_v0.json"
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.index_version}
+        ).first()
+    if not run:
+        print(f"No run record for {args.index_version}.", file=sys.stderr)
+        return 1
+
+    if args.command == "labels-draw":
+        if relations_file.exists() or pairs_file.exists():
+            print("Label files already exist; not overwriting them.", file=sys.stderr)
+            return 1
+        model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
+        ontology = load_ontology(args.ontology)
+        units = load_units(engine, args.corpus_name)
+        results = load_cached_results(engine, units, model, ontology, args.gleaning)
+        chosen = ls.draw_units(units, results)
+        ls.write_json(relations_file, ls.relation_items(chosen, results))
+        ls.write_json(pairs_file, ls.pair_items(engine, str(run[0]), results))
+        args.command = "labels-render"
+
+    relations, pairs = ls.read_json(relations_file), ls.read_json(pairs_file)
+    problems = ls.validate(relations, pairs)
+    if problems:
+        print("\n".join(problems), file=sys.stderr)
+        return 1
+
+    if args.command == "labels-render":
+        (args.dir / "RELATIONS_REVIEW.md").write_text(
+            ls.render_relation_review(relations), encoding="utf-8"
+        )
+        (args.dir / "PAIRS_REVIEW.md").write_text(ls.render_pair_review(pairs), encoding="utf-8")
+        n_rel = sum(len(u["relations"]) for u in relations["units"])
+        print(
+            f"{len(relations['units'])} units with {n_rel} relations, {len(pairs['pairs'])} pairs"
+        )
+        return 0
+
+    # labels-score
+    precision = ls.relation_precision(relations)
+    er = ls.er_scores(pairs)
+    checks = []
+    for name, score, target in (
+        ("relation_precision", precision, 0.80),
+        ("entity_resolution_f1", er["f1"], 0.85),
+    ):
+        if score.value is None:
+            print(f"{name}: no labels yet")
+            continue
+        checks.append(Check(name, score.value, target, True, {
+            "counted": score.counted, "unsure": score.unsure,
+            "owner_reviewed": score.owner_reviewed, "draft_only": score.draft_only,
+            "unlabeled": score.unlabeled, **score.details,
+            "precision": er["precision"].value if name.startswith("entity") else None,
+            "recall": er["recall"].value if name.startswith("entity") else None,
+        }))  # fmt: skip
+        reviewed = f"owner-reviewed {score.owner_reviewed}, draft-only {score.draft_only}"
+        print(f"{name}: {score.value:.3f} (target {target}; {reviewed}; unsure {score.unsure})")
+    if checks:
+        save_checks(engine, str(run[0]), checks)
     return 0
 
 
