@@ -1,7 +1,7 @@
 {
   "version": 0,
   "corpus": "qa_v0",
-  "status": "DRAFT by Claude, waiting for the owner's review (10 extra global questions)",
+  "status": "APPROVED by the owner on 2026-10-24 (message: all OK as drafted; no per-question edits)",
   "drafted_by": "Claude (from the abstracts of the 25 papers)",
   "note": "Extra global questions G11 to G20, added for the Phase 3 win-rate measurement because 10 questions are too few. Every quote is an exact substring of the cited text unit; this is checked by a script.",
   "questions": [
@@ -38,7 +38,7 @@
           "quote": "attribute the answer to a retrieved source"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G12",
@@ -63,7 +63,7 @@
           "quote": "simulating feedback using supervised data"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G13",
@@ -88,7 +88,7 @@
           "quote": "many questions require reasoning across multiple documents"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G14",
@@ -113,7 +113,7 @@
           "quote": "candidate answers become longer"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G15",
@@ -148,7 +148,7 @@
           "quote": "utilize a pretrained language model to implicitly align the question and KG artifacts"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G16",
@@ -173,7 +173,7 @@
           "quote": "the answers are only applicable when certain conditions apply"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G17",
@@ -198,7 +198,7 @@
           "quote": "retrieverreader framework"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G18",
@@ -223,7 +223,7 @@
           "quote": "use the data-to-text method as a means for encoding structured knowledge"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G19",
@@ -253,7 +253,7 @@
           "quote": "their raw generations often fall short in factuality"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     },
     {
       "id": "G20",
@@ -283,7 +283,7 @@
           "quote": "building a unified QA model supporting various tasks is vital"
         }
       ],
-      "review": "draft"
+      "review": "approved"
     }
   ]
 }

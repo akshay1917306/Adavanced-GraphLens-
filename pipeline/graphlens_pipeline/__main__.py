@@ -144,6 +144,21 @@ def main(argv: list[str] | None = None) -> int:
     geval.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
     geval.add_argument("--out-dir", type=Path, default=Path("/out"))
     geval.add_argument("--label", default="")
+    bench = sub.add_parser(
+        "global-bench", help="time and price fresh global searches, no cache (costs money)"
+    )
+    bench.add_argument("--index-version", default="idx2-full-g0")
+    bench.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    bench.add_argument("--n", type=int, default=10)
+    bench.add_argument("--no-dynamic", action="store_true", help="use every report of the level")
+    bench.add_argument("--max-cost-usd", type=float, default=0.5)
+    bench.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
+    sheets = sub.add_parser(
+        "review-sheets", help="write the Phase 3 review pages for the owner (no model, no cost)"
+    )
+    sheets.add_argument("--index-version", default="idx2-full-g0")
+    sheets.add_argument("--results", type=Path, default=eval_dir / "results/global-phase3.json")
+    sheets.add_argument("--out-dir", type=Path, default=Path("/out"))
     for name, helptext in (
         ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
         ("labels-render", "write the review pages from the label files"),
@@ -229,6 +244,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "global-eval":
         return _global_eval(engine, args)
+
+    if args.command == "review-sheets":
+        return _review_sheets(args)
+
+    if args.command == "global-bench":
+        return _global_bench(args)
 
     if args.command == "community-quality":
         return _community_quality(engine, args)
@@ -554,6 +575,129 @@ def _community_reports(engine, args) -> int:
     return 0 if complete else 1
 
 
+def _global_bench(args) -> int:
+    import json
+    import statistics
+
+    import tiktoken
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.globalsearch import answer_from_selection, select_communities
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    asked = [
+        q["question"]
+        for q in json.loads(args.questions.read_text(encoding="utf-8"))["questions"]
+        if q["kind"] == "global"
+    ][: args.n]
+    encoder = tiktoken.get_encoding("o200k_base")
+
+    def count(s: str) -> int:
+        return len(encoder.encode(s))
+
+    embedder = FastEmbedder()
+    dynamic = not args.no_dynamic
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        picks = [
+            select_communities(driver, embedder.dense_query, q, args.index_version, dynamic=dynamic)
+            for q in asked
+        ]
+    if args.dry_run:
+        tokens = sum(count(i.summary) + count(i.title) + 120 for p in picks for i in p)
+        batches = sum(len(p) for p in picks)
+        estimate = (tokens * 0.40 + batches * 12 * 1.60) / 1e6 + len(asked) * 0.003
+        print(json.dumps({"queries": len(asked), "dynamic": dynamic, "reports_read": batches,
+                          "cost_usd_estimate": round(estimate, 3)}))  # fmt: skip
+        print("Nothing was spent.")
+        return 0
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    seconds, costs, partial, spent = [], [], 0, 0.0
+    for question, selected in zip(asked, picks, strict=True):
+        if spent >= args.max_cost_usd:
+            print("cost cap reached, stopping")
+            break
+        answer = answer_from_selection(llm, question, selected, count, dynamic=dynamic)
+        seconds.append(answer.seconds)
+        costs.append(answer.cost_usd)
+        partial += answer.partial
+        spent += answer.cost_usd
+        print(f"  {answer.seconds:6.1f} s  ${answer.cost_usd:.4f}  partial={answer.partial}")
+    ordered = sorted(seconds)
+    p95 = ordered[min(len(ordered) - 1, int(0.95 * len(ordered)))] if ordered else 0
+    print(json.dumps({
+        "queries": len(seconds), "dynamic": dynamic, "partial_answers": partial,
+        "seconds_median": round(statistics.median(seconds), 1) if seconds else None,
+        "seconds_p95_of_this_sample": round(p95, 1), "seconds_max": max(seconds, default=None),
+        "cost_usd_mean": round(statistics.mean(costs), 4) if costs else None,
+        "cost_usd_max": max(costs, default=None), "cost_usd_total": round(spent, 4),
+    }, indent=2))  # fmt: skip
+    return 0
+
+
+def _review_sheets(args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.reports import read_graph_data
+    from graphlens_pipeline.reviewsheets import (
+        render_community_sheet,
+        render_verdict_sheet,
+        sample_communities,
+        sample_verdicts,
+    )
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        graph = read_graph_data(driver, args.index_version)
+        with driver.session() as session:
+            rows = [
+                dict(r)
+                for r in session.run(
+                    "MATCH (c:Community {index_version: $v}) WHERE c.report_title IS NOT NULL"
+                    " OPTIONAL MATCH (e:Entity)-[:IN_COMMUNITY]->(c)"
+                    " RETURN c.id AS id, c.level AS level, c.size AS size, c.is_stub AS is_stub,"
+                    " c.report_title AS title, c.report_summary AS summary,"
+                    " c.report_findings AS findings, collect(e.id) AS member_ids",
+                    v=args.index_version,
+                )
+            ]  # fmt: skip
+    degree: dict[str, int] = {}
+    for relation in graph.relations:
+        for end in (relation["a"], relation["b"]):
+            degree[end] = degree.get(end, 0) + 1
+    for row in rows:
+        ranked = sorted(
+            row["member_ids"], key=lambda m: (-degree.get(m, 0), graph.entities[m]["name"])
+        )
+        row["members"] = [
+            f"{graph.entities[m]['name']} ({graph.entities[m]['type']})" for m in ranked[:12]
+        ]
+    communities = sample_communities(rows)
+    results = json.loads(args.results.read_text(encoding="utf-8"))["dynamic"]["results"]
+    verdicts = sample_verdicts(results)
+    (args.out_dir / "REVIEW_COMMUNITIES.md").write_text(
+        render_community_sheet(communities), encoding="utf-8"
+    )
+    (args.out_dir / "REVIEW_VERDICTS.md").write_text(
+        render_verdict_sheet(verdicts), encoding="utf-8"
+    )
+    print(f"{len(communities)} communities and {len(verdicts)} judged questions written")
+    return 0
+
+
 def _global_eval(engine, args) -> int:
     import json
     import threading
@@ -694,6 +838,35 @@ def _global_eval(engine, args) -> int:
     )  # fmt: skip
     driver.close()
     rates, rates_all = win_rates(main.results), win_rates(ablation.results)
+    from sqlalchemy import text as sql_text
+
+    from graphlens_pipeline.quality import Check, save_checks
+
+    with engine.connect() as conn:
+        report_run = conn.execute(
+            sql_text("SELECT id FROM index_runs WHERE index_version = :v"),
+            {"v": f"{args.index_version}-reports"},
+        ).first()
+    if report_run:
+        targets = {
+            "comprehensiveness": 0.60,
+            "diversity": 0.60,
+            "empowerment": 0.5,
+            "directness": 0.5,
+        }
+        save_checks(
+            engine,
+            str(report_run[0]),
+            [
+                Check(
+                    f"global_win_rate_{name}", r["win_rate"], targets[name], True,
+                    {**r, "blueprint_target": name in ("comprehensiveness", "diversity"),
+                     "judge": llm.model, "order_swapped": True},
+                )
+                for name, r in rates.items()
+                if r["win_rate"] is not None
+            ],
+        )  # fmt: skip
     note = (
         "Judge and answerer are the same model family and the question set is small; read the "
         "interval, not only the rate."

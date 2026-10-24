@@ -4,7 +4,7 @@ GraphLens turns a document collection into a knowledge graph and answers questio
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is planned and waits for the owner's approval.**
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is built on a branch and waits for the owner's review and approval.**
 > The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
 > used for answers, and its relation precision is 0.81 and entity-resolution F1 0.79, below the target). There is no web interface for
 > questions (Phase 5). Development data: 25 open-licensed research papers.
@@ -16,7 +16,7 @@ by following the graph, showing the evidence for every answer. It is built from 
 | 0. Setup and decisions | Approved, merged, tag `phase-0` |
 | 1. Baseline RAG and evaluation set v0 | Approved, merged, tag `phase-1` |
 | 2. Extraction and graph | Approved, merged, tag `phase-2` ([plan](docs/phases/phase-2-extraction/BRIEF.md), [walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md)) |
-| 3. Communities and global search | Plan written, waiting for owner approval ([plan](docs/phases/phase-3-communities/BRIEF.md)) |
+| 3. Communities and global search | Built on branch `phase-3/communities`, **not approved or pushed** ([plan](docs/phases/phase-3-communities/BRIEF.md), [walkthrough](docs/phases/phase-3-communities/WALKTHROUGH.md)) |
 | 4 to 8 | Planned, see [docs/phases](docs/phases/README.md) |
 
 ## What works today
@@ -39,7 +39,11 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Neo4j graph: 1,545 entities, 2,694 relations, with source and evidence passages, vector index | Implemented |
 | Quality report on the graph | Implemented, see [QUALITY.md](docs/phases/phase-2-extraction/QUALITY.md) |
 | Relation precision 0.81 (target 0.80) and entity-resolution F1 0.79 (target 0.85) | **Measured** on 182 relations and 110 pairs |
-| Communities, global search, router, relate, citation support check | Planned (Phases 3 and 4) |
+| 193 hierarchical communities, each with a cited report, embedded in Neo4j | Implemented |
+| Global search (select, map, reduce) with progress and partial-failure handling | Implemented, command `global-ask` |
+| Global win rate against the baseline: 100% on comprehensiveness and diversity (20 questions) | **Measured** with caveats (answers are 3.4 times longer; same-family judge; interval 84% to 100%) |
+| Owner rating of communities and judge spot-check | Pending |
+| Router, local search, relate, citation support check | Planned (Phase 4) |
 | Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |
 | CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
 
@@ -91,7 +95,7 @@ Names only; real values live in your git-ignored `.env`. See `.env.example`.
 
 ```bash
 docker compose up -d postgres qdrant
-docker compose run --rm --entrypoint pytest pipeline -q                  # 250 tests
+docker compose run --rm --entrypoint pytest pipeline -q                  # 305 tests
 docker compose run --rm --no-deps --entrypoint ruff pipeline check .
 docker compose run --rm pipeline eval-verify                             # evidence quotes exist
 ```
@@ -105,7 +109,7 @@ database and Qdrant collections.
 - [Phases](docs/phases/README.md): [Phase 0](docs/phases/phase-0-setup/),
   [Phase 1](docs/phases/phase-1-baseline/) ([walkthrough](docs/phases/phase-1-baseline/WALKTHROUGH.md)) and
   [Phase 2](docs/phases/phase-2-extraction/) ([walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md))
-- [Decision log](docs/DECISIONS.md) (D1 to D26), [ADRs and change requests](docs/adr/), [Backlog](docs/BACKLOG.md)
+- [Decision log](docs/DECISIONS.md) (D1 to D34), [ADRs and change requests](docs/adr/), [Backlog](docs/BACKLOG.md)
 - [Baseline results](data/eval/v0/results/baseline-2026-10-23.md), [wireframes](docs/design/WIREFRAMES.md)
 
 ## Known limitations
@@ -120,4 +124,4 @@ database and Qdrant collections.
 - Licenses come from the ACL Anthology policy page, not from each PDF.
 - Not production-ready and not security-reviewed; do not expose it to the internet.
 
-**Next planned phase:** Phase 3 (communities and global search), waiting for the owner's approval of the plan.
+**Next planned phase:** owner review and approval of Phase 3, then Phase 4 (local search, router, relate, citation check).
