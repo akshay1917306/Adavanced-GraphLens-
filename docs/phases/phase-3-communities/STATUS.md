@@ -1,11 +1,12 @@
 # Phase 3 status
 
-Last updated: 2026-10-24
+Last updated: 2026-10-25
 
 ## State
 
-**Built, waiting for the owner's review.** Everything in the plan is built and run except the
-owner's two review samples (communities and judge verdicts).
+**Approved by the owner on 2026-10-25 and being pushed.** Everything in the plan is built and
+run. The owner approved without doing the two review samples (20 community ratings, 10 judge
+verdict checks); those two checklist items stay open and are carried into Phase 4.
 Local branch `phase-3/communities`, branched from `main` at 6409007 (tagged `phase-2`, merged as
 PR #3). Nothing from Phase 3 is pushed.
 
@@ -45,15 +46,14 @@ None.
 
 ## Decisions waiting for the owner
 
-- Ratings for the 20 communities and a check of 10 judge verdicts (about 30 minutes).
-- Accept the win-rate result with its caveats (answers are 3.4 times longer; the judge is the same
-  model family; 20 questions).
+- (Open, carried over) Ratings for the 20 communities and a check of 10 judge verdicts.
 - OpenAI monthly limit of about $5 or more (open since Phase 2).
 
 ## Exact next action
 
-After the owner's ratings and verdict check: add them to the checklist. Then, on "Phase 3
-approved": push `phase-3/communities`, open the pull request, check CI, merge, tag `phase-3`.
+Push `phase-3/communities`, open the pull request, check CI, merge, tag `phase-3`, verify the
+tag on the remote. Then wait for the owner before Phase 4. When the owner has time, add the
+ratings and verdict check to the checklist.
 
 ## Notes for the next session
 

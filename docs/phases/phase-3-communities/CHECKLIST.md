@@ -42,7 +42,10 @@ the exit is "measured", so a missed target is reported, not hidden.
       106 reports) median 9.4 s and $0.0109. So selection halves the cost and saves about a
       second; it does not change the win rate)
 - [ ] Owner rating of 20 sampled communities, coherence 1 to 5 (proposed bar: average at least 3.5)
-- [ ] Owner spot-check of 10 judge verdicts
+      (**not done**: the owner approved Phase 3 without it, 2026-10-25; page ready in
+      `REVIEW_COMMUNITIES.md`)
+- [ ] Owner spot-check of 10 judge verdicts (**not done**, same reason; page ready in
+      `REVIEW_VERDICTS.md`)
 - [x] Global query cost at most $0.15 and p95 latency at most 30 s with progress (10 queries)
       (with selection: highest cost $0.0058, slowest query 10.7 s, none partial. One query at a
       time on the owner's machine; with 10 queries the p95 is the slowest one. Three queries
@@ -62,4 +65,5 @@ the exit is "measured", so a missed target is reported, not hidden.
 ## Docs and review
 
 - [x] WALKTHROUGH.md, README, STATUS.md, DECISIONS.md updated
-- [ ] Owner reproduced the run steps and reviewed the community and judge samples
+- [ ] Owner reproduced the run steps and reviewed the community and judge samples (**not done**;
+      the owner approved the phase on 2026-10-25 without these)
