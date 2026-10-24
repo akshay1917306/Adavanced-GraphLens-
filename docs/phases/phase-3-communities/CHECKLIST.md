@@ -36,14 +36,18 @@ the exit is "measured", so a missed target is reported, not hidden.
       (answer order swapped; report the number of questions and the confidence honestly)
       (**100% and 100% on 20 questions, interval 84% to 100%**; answers are 3.4 times longer
       and the judge is the same model family; directness 45%)
-- [ ] Ablation: global search with and without dynamic selection (cost, latency, win rate)
-      (win rate measured: 10 of 10 without selection, same as with; **cost and latency not
-      measured yet**, `global-bench` waits for the owner's yes)
+- [x] Ablation: global search with and without dynamic selection (cost, latency, win rate)
+      (win rate: 10 of 10 without selection, same as with. 10 fresh queries each, one after
+      the other: with selection median 8.4 s and $0.0052 per query; without selection (about
+      106 reports) median 9.4 s and $0.0109. So selection halves the cost and saves about a
+      second; it does not change the win rate)
 - [ ] Owner rating of 20 sampled communities, coherence 1 to 5 (proposed bar: average at least 3.5)
 - [ ] Owner spot-check of 10 judge verdicts
-- [ ] Global query cost at most $0.15 and p95 latency at most 30 s with progress (10 queries)
-      (one real query: 11.5 s and $0.006; the 10-query benchmark is not run yet)
-- [x] Total Phase 3 spend within the approved cap (about $0.53 of $2.00)
+- [x] Global query cost at most $0.15 and p95 latency at most 30 s with progress (10 queries)
+      (with selection: highest cost $0.0058, slowest query 10.7 s, none partial. One query at a
+      time on the owner's machine; with 10 queries the p95 is the slowest one. Three queries
+      at once is the Phase 6 load test and was not run)
+- [x] Total Phase 3 spend within the approved cap (about $0.69 of $2.00)
 
 ## Tests
 

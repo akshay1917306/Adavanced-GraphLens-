@@ -42,6 +42,7 @@ by following the graph, showing the evidence for every answer. It is built from 
 | 193 hierarchical communities, each with a cited report, embedded in Neo4j | Implemented |
 | Global search (select, map, reduce) with progress and partial-failure handling | Implemented, command `global-ask` |
 | Global win rate against the baseline: 100% on comprehensiveness and diversity (20 questions) | **Measured** with caveats (answers are 3.4 times longer; same-family judge; interval 84% to 100%) |
+| Global search speed and cost: 8.4 s median and about half a cent per question | **Measured** (one query at a time) |
 | Owner rating of communities and judge spot-check | Pending |
 | Router, local search, relate, citation support check | Planned (Phase 4) |
 | Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |

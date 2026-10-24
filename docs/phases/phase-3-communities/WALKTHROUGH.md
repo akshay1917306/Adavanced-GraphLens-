@@ -154,12 +154,21 @@ Tests that would call OpenAI use labelled mocks (`ScriptedLlm`, `MockLlm`, `Mock
 
   Target: at least 60% on comprehensiveness and diversity (met, with the caveats below).
 - Without dynamic selection (every level-1 report, first 10 questions): 10 of 10 wins on the
-  first three criteria and 40% on directness, the same as with selection. Cost and speed of
-  selection are **not yet measured** (see the next section).
+  first three criteria and 40% on directness, the same as with selection.
+- **Cost and speed per global question** (10 fresh questions each, one at a time, no cache):
+
+| | With selection (40 reports) | Without selection (about 106 reports) |
+|---|---|---|
+| Median time | 8.4 s | 9.4 s |
+| Slowest of 10 | 10.7 s | 12.1 s |
+| Mean cost | $0.0052 | $0.0109 |
+| Highest cost | $0.0058 | $0.0115 |
+
+  Targets (at most $0.15 and p95 at most 30 s) are met by a wide margin. Selection halves the
+  cost and saves about a second; it did not change the win rate.
 - Cost: reports $0.2224, a first report test $0.0062, two test questions $0.0074, evaluation
-  $0.2623 plus $0.0297 to redo five items after internet time-outs. **Phase 3 total about $0.53
-  of the $2.00 cap.**
-- One real question took 11.5 s and cost $0.006.
+  $0.2623 plus $0.0297 to redo five items after internet time-outs, and the speed test
+  $0.0519 plus $0.1093. **Phase 3 total about $0.69 of the $2.00 cap.**
 - Tests: 305 pass; `ruff` clean. CI for this branch has **not run on GitHub yet**.
 
 ## 8. Limitations and open issues
@@ -176,8 +185,8 @@ Tests that would call OpenAI use labelled mocks (`ScriptedLlm`, `MockLlm`, `Mock
 - Selection by similarity ranks well but the scores are bunched (0.79 to 0.82), so the threshold
   does nothing and the top 40 does the work.
 - The 217-entity community at level 0 mixes several papers; its report is a broad summary.
-- Latency and cost per query were measured on one question; the 10-query benchmark (p95 at most
-  30 s, at most $0.15 each) waits for the owner's yes (`global-bench`, about $0.08).
+- Speed was measured one query at a time on this machine, so the p95 of 10 is simply the
+  slowest query. Three queries at once (the blueprint's load test) was not run; it is Phase 6.
 - Reports are only as good as the Phase 2 graph (relation precision 0.81, entity-resolution F1
   0.79); some wrong relations will appear in a report.
 - A failed model call during an evaluation run needs a re-run (cached work is not paid twice).

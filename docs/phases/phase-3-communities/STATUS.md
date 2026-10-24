@@ -5,7 +5,7 @@ Last updated: 2026-10-24
 ## State
 
 **Built, waiting for the owner's review.** Everything in the plan is built and run except the
-10-query cost and latency benchmark (needs the owner's yes) and the owner's two review samples.
+owner's two review samples (communities and judge verdicts).
 Local branch `phase-3/communities`, branched from `main` at 6409007 (tagged `phase-2`, merged as
 PR #3). Nothing from Phase 3 is pushed.
 
@@ -31,10 +31,13 @@ PR #3). Nothing from Phase 3 is pushed.
   time-outs. The win rates are stored in `quality_checks`.
 - Step 9: `reviewsheets.py`, command `review-sheets`: `REVIEW_COMMUNITIES.md` (20 communities to
   rate) and `REVIEW_VERDICTS.md` (10 questions to check).
+- `global-bench` (owner said yes): 10 fresh questions each. With selection: median 8.4 s, slowest
+  10.7 s, mean $0.0052, highest $0.0058. Without selection: median 9.4 s, slowest 12.1 s, mean
+  $0.0109. Targets met. Cost of the test $0.1612.
 - Docs: BRIEF, PREREQUISITES, CHECKLIST, WALKTHROUGH, README, DECISIONS (D27 to D34).
 - Tests: 305 pass, `ruff` clean (locally in Docker). CI has not run on GitHub.
-- **Phase 3 spend: about $0.53 of the $2.00 cap** (reports $0.2224, report test $0.0062, two test
-  questions $0.0074, evaluation $0.2920).
+- **Phase 3 spend: about $0.69 of the $2.00 cap** (reports $0.2224, report test $0.0062, two test
+  questions $0.0074, evaluation $0.2920, speed test $0.1612).
 
 ## Blockers
 
@@ -42,8 +45,6 @@ None.
 
 ## Decisions waiting for the owner
 
-- A yes for `global-bench` (10 fresh global searches with selection, about $0.08, and 10 without,
-  about $0.15) to measure cost and speed per query and the cost of skipping selection.
 - Ratings for the 20 communities and a check of 10 judge verdicts (about 30 minutes).
 - Accept the win-rate result with its caveats (answers are 3.4 times longer; the judge is the same
   model family; 20 questions).
@@ -51,8 +52,7 @@ None.
 
 ## Exact next action
 
-After the owner's yes: `global-bench` (with and without `--no-dynamic`), record the numbers in
-CHECKLIST and WALKTHROUGH. After the owner's ratings: add them to the checklist. Then, on "Phase 3
+After the owner's ratings and verdict check: add them to the checklist. Then, on "Phase 3
 approved": push `phase-3/communities`, open the pull request, check CI, merge, tag `phase-3`.
 
 ## Notes for the next session
