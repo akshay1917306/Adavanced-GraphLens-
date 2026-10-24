@@ -15,7 +15,12 @@ RUN pip install --no-cache-dir uv==0.11.32
 WORKDIR /pipeline
 COPY pyproject.toml uv.lock ./
 # Dev tools (pytest, ruff) are included so tests can run in this container.
-RUN uv sync --frozen --no-install-project
+# The connection can drop, so: system certificates, few parallel downloads, a download cache that
+# survives between tries and builds, and up to 5 tries.
+ENV UV_SYSTEM_CERTS=1 UV_CONCURRENT_DOWNLOADS=2 UV_HTTP_TIMEOUT=180 UV_HTTP_RETRIES=8
+RUN --mount=type=cache,target=/root/.cache/uv \
+    for i in 1 2 3 4 5; do uv sync --frozen --no-install-project && break; \
+    [ "$i" = 5 ] && exit 1; sleep 10; done
 
 # Download the models once at build time (about 300 MB), so runs work offline afterwards:
 # the token vocabulary, the dense and sparse embedding models, and the bge tokenizer.

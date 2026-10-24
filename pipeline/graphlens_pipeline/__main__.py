@@ -14,6 +14,7 @@ from graphlens_pipeline.embed import MAX_INPUT_TOKENS
 from graphlens_pipeline.ingest import ingest_manifest
 
 DEFAULT_CORPUS = "qa_v0 (ACL Anthology QA papers)"
+DEFAULT_ONTOLOGY = Path("/ontology/research_v2.yaml")  # version 2: see decision D24
 DEFAULT_DESCRIPTION = "Question answering papers, ACL and EMNLP 2022-2023, CC BY 4.0"
 
 
@@ -49,8 +50,65 @@ def main(argv: list[str] | None = None) -> int:
     index.add_argument("--corpus-name", default=DEFAULT_CORPUS)
     index.add_argument("--corpus-slug", default="qa_v0")
     index.add_argument("--index-version", default="baseline-1")
+    estimate = sub.add_parser("extract-estimate", help="estimate extraction cost, calls no model")
+    estimate.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    extract = sub.add_parser(
+        "extract", help="extract entities and relations (calls OpenAI, costs money)"
+    )
+    extract.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    extract.add_argument("--sample", type=float, default=0.05, help="share of units, 1 = all")
+    extract.add_argument("--gleaning", type=int, default=0, help="extra passes for missed items")
+    extract.add_argument("--max-cost-usd", type=float, default=0.25, help="stop when spent")
+    extract.add_argument("--workers", type=int, default=4)
+    extract.add_argument("--index-version", default="idx-sample-1")
+    extract.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    resolve = sub.add_parser("resolve", help="merge duplicate entities (small model cost, capped)")
+    resolve.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    resolve.add_argument("--index-version", default="idx2-full-g0")
+    resolve.add_argument("--gleaning", type=int, default=0)
+    resolve.add_argument("--max-cost-usd", type=float, default=0.25)
+    resolve.add_argument("--no-llm", action="store_true", help="never ask the model")
+    resolve.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    graph = sub.add_parser(
+        "graph-load", help="resolve (cached answers) and load the graph into Neo4j"
+    )
+    graph.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    graph.add_argument("--index-version", default="idx2-full-g0")
+    graph.add_argument("--gleaning", type=int, default=0)
+    graph.add_argument("--max-cost-usd", type=float, default=0.25)
+    graph.add_argument("--no-llm", action="store_true", help="never ask the model")
+    graph.add_argument(
+        "--keep-isolated", action="store_true",
+        help="also load entities that have no relation and were mentioned once",
+    )  # fmt: skip
+    graph.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    quality = sub.add_parser(
+        "quality-report", help="measure the graph quality checks (no model, no cost)"
+    )
+    quality.add_argument("--index-version", default="idx2-full-g0")
+    quality.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    quality.add_argument("--out", type=Path, default=None, help="write the report here")
+    for name, helptext in (
+        ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
+        ("labels-render", "write the review pages from the label files"),
+        ("labels-score", "score relation precision and entity-resolution F1 from the labels"),
+    ):
+        labels = sub.add_parser(name, help=helptext)
+        labels.add_argument("--dir", type=Path, default=Path("/labels"))
+        labels.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+        labels.add_argument("--index-version", default="idx2-full-g0")
+        labels.add_argument("--gleaning", type=int, default=0)
+        labels.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+        labels.add_argument(
+            "--refresh-decisions", action="store_true",
+            help="before scoring, use the resolver's current decision for each labeled pair",
+        )  # fmt: skip
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
+    remap = sub.add_parser("eval-remap", help="point evidence at the current text unit IDs")
+    remap.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    remap.add_argument("--out", type=Path, default=Path("/out/questions.json"))
     run = sub.add_parser("eval-run", help="run the baseline on the evaluation set and score it")
     run.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     run.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
@@ -92,12 +150,53 @@ def main(argv: list[str] | None = None) -> int:
             print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
         return 1 if ingest["failures"] else 0
 
+    if args.command == "resolve":
+        return _resolve(engine, args)
+
+    if args.command == "graph-load":
+        return _graph_load(engine, args)
+
+    if args.command == "quality-report":
+        return _quality_report(engine, args)
+
+    if args.command.startswith("labels-"):
+        return _labels(engine, args)
+
+    if args.command == "extract-estimate":
+        return _extract_estimate(engine, args)
+
+    if args.command == "extract":
+        return _extract(engine, args)
+
     if args.command == "eval-load":
         from graphlens_pipeline.evalrun import load_eval_sets
         from graphlens_pipeline.evalset import load_questions
 
-        for name, count in load_eval_sets(engine, load_questions(args.questions)).items():
-            print(f"{name}: {'already present' if count == 0 else f'{count} questions loaded'}")
+        loaded = load_eval_sets(engine, load_questions(args.questions), args.version)
+        for name, count in loaded.items():
+            state = "already present" if count == 0 else f"{count} questions loaded"
+            print(f"{name} v{args.version}: {state}")
+        return 0
+
+    if args.command == "eval-remap":
+        import json
+
+        from graphlens_pipeline.evalset import fetch_units_by_paper, load_questions, remap_evidence
+
+        document = json.loads(args.questions.read_text(encoding="utf-8"))
+        remapped, problems = remap_evidence(
+            load_questions(args.questions), fetch_units_by_paper(engine)
+        )
+        for problem in problems:
+            print(f"PROBLEM {problem.question_id}: {problem.message}", file=sys.stderr)
+        if problems:
+            return 1
+        document["questions"] = remapped
+        document["note"] = (
+            document.get("note", "") + " Unit IDs were remapped by quote after CR-0003."
+        ).strip()
+        args.out.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n", "utf-8")
+        print(f"Remapped {len(remapped)} questions into {args.out}")
         return 0
 
     if args.command == "eval-run":
@@ -153,6 +252,340 @@ def main(argv: list[str] | None = None) -> int:
     for paper_id, reason in report.failures.items():
         print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
     return 1 if report.failures else 0
+
+
+def _compute_resolution(engine, args):
+    """Resolve the cached extraction. Returns (resolution, ontology, embedder) or an exit code."""
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.extract import load_cached_results, load_units
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.resolve import resolve
+
+    ontology = load_ontology(args.ontology)
+    model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
+    units = load_units(engine, args.corpus_name)
+    results = load_cached_results(engine, units, model, ontology, args.gleaning)
+    if len(results) < len(units):
+        print(f"Only {len(results)} of {len(units)} units are extracted; run extract first.",
+              file=sys.stderr)  # fmt: skip
+        return 1
+    llm = None
+    if not args.no_llm:
+        try:
+            llm = OpenAiLlm(model=model)
+        except LlmError as error:
+            print(f"Cannot start: {error}", file=sys.stderr)
+            return 2
+    embedder = FastEmbedder()
+    result = resolve(
+        engine, results, {u["id"]: u["title"] for u in units}, ontology, embedder.dense, llm,
+        args.max_cost_usd,
+    )  # fmt: skip
+    return result, ontology, embedder
+
+
+def _graph_load(engine, args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.graphstore import (
+        GraphLoadError,
+        apply_schema,
+        embedding_text,
+        isolated_entities,
+        load_graph,
+        split_isolated,
+    )
+    from graphlens_pipeline.quality import Check, save_checks
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    computed = _compute_resolution(engine, args)
+    if isinstance(computed, int):
+        return computed
+    result, ontology, embedder = computed
+    full_count = len(result.entities)
+    isolated = isolated_entities(result)
+    left_out = []
+    if not args.keep_isolated:
+        result, left_out = split_isolated(result)
+    texts = [embedding_text(e.name, e.description) for e in result.entities]
+    vectors = dict(zip((e.id for e in result.entities), embedder.dense(texts), strict=True))
+    try:
+        with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+            applied = apply_schema(driver)
+            counts = load_graph(driver, result, ontology, vectors, args.index_version)
+    except GraphLoadError as error:
+        print(f"Graph load refused: {error}", file=sys.stderr)
+        return 1
+    # The orphan rate BEFORE leaving anything out stays on record, so the gate cannot be gamed.
+    from collections import Counter
+
+    from sqlalchemy import text
+
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.index_version}
+        ).first()
+    if run:
+        save_checks(engine, str(run[0]), [Check(
+            "orphan_rate_before_pruning", len(isolated) / max(full_count, 1), 0.10, False,
+            {"isolated": len(isolated), "entities": full_count,
+             "by_type": dict(Counter(e.type for e in isolated)),
+             "left_out_of_the_graph": len(left_out),
+             "examples_left_out": [f"{e.type}: {e.name}" for e in left_out[:30]]},
+        )])  # fmt: skip
+    print(json.dumps({
+        "left_out_isolated_single_mention": len(left_out),
+        "schema_scripts_applied_now": applied,
+        "expected": {"entities": len(result.entities), "relations": len(result.relations)},
+        "in_neo4j": {
+            "entities": counts.entities, "by_type": counts.entities_by_type,
+            "relations": counts.relations, "by_predicate": counts.relations_by_predicate,
+            "with_embedding": counts.with_embedding,
+        },
+        "counts_match": (counts.entities, counts.relations)
+        == (len(result.entities), len(result.relations)),
+    }, indent=2))  # fmt: skip
+    return 0
+
+
+def _labels(engine, args) -> int:
+    from sqlalchemy import text
+
+    from graphlens_pipeline import labelsets as ls
+    from graphlens_pipeline.extract import load_cached_results, load_units
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.quality import Check, save_checks
+
+    relations_file, pairs_file = args.dir / "relations_v0.json", args.dir / "pairs_v0.json"
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.index_version}
+        ).first()
+    if not run:
+        print(f"No run record for {args.index_version}.", file=sys.stderr)
+        return 1
+
+    if args.command == "labels-draw":
+        if relations_file.exists() or pairs_file.exists():
+            print("Label files already exist; not overwriting them.", file=sys.stderr)
+            return 1
+        model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
+        ontology = load_ontology(args.ontology)
+        units = load_units(engine, args.corpus_name)
+        results = load_cached_results(engine, units, model, ontology, args.gleaning)
+        chosen = ls.draw_units(units, results)
+        ls.write_json(relations_file, ls.relation_items(chosen, results))
+        ls.write_json(pairs_file, ls.pair_items(engine, str(run[0]), results))
+        args.command = "labels-render"
+
+    relations, pairs = ls.read_json(relations_file), ls.read_json(pairs_file)
+    problems = ls.validate(relations, pairs)
+    if problems:
+        print("\n".join(problems), file=sys.stderr)
+        return 1
+
+    if args.command == "labels-render":
+        (args.dir / "RELATIONS_REVIEW.md").write_text(
+            ls.render_relation_review(relations), encoding="utf-8"
+        )
+        (args.dir / "PAIRS_REVIEW.md").write_text(ls.render_pair_review(pairs), encoding="utf-8")
+        n_rel = sum(len(u["relations"]) for u in relations["units"])
+        print(
+            f"{len(relations['units'])} units with {n_rel} relations, {len(pairs['pairs'])} pairs"
+        )
+        return 0
+
+    # labels-score
+    if args.refresh_decisions:
+        changed = ls.refresh_decisions(engine, str(run[0]), pairs)
+        ls.write_json(pairs_file, pairs)
+        print(f"{changed} labeled pairs now have a different resolver decision")
+    precision = ls.relation_precision(relations)
+    er = ls.er_scores(pairs)
+    checks = []
+    for name, score, target in (
+        ("relation_precision", precision, 0.80),
+        ("entity_resolution_f1", er["f1"], 0.85),
+    ):
+        if score.value is None:
+            print(f"{name}: no labels yet")
+            continue
+        checks.append(Check(name, score.value, target, True, {
+            "counted": score.counted, "unsure": score.unsure,
+            "owner_reviewed": score.owner_reviewed, "draft_only": score.draft_only,
+            "unlabeled": score.unlabeled, **score.details,
+            "precision": er["precision"].value if name.startswith("entity") else None,
+            "recall": er["recall"].value if name.startswith("entity") else None,
+        }))  # fmt: skip
+        reviewed = f"owner-reviewed {score.owner_reviewed}, draft-only {score.draft_only}"
+        print(f"{name}: {score.value:.3f} (target {target}; {reviewed}; unsure {score.unsure})")
+    if checks:
+        save_checks(engine, str(run[0]), checks)
+    return 0
+
+
+def _quality_report(engine, args) -> int:
+    from neo4j import GraphDatabase
+    from sqlalchemy import text
+
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.quality import (
+        Check,
+        compute_checks,
+        read_graph,
+        render_report,
+        save_checks,
+    )
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id, stats FROM index_runs WHERE index_version = :v"),
+            {"v": args.index_version},
+        ).first()
+    if not run:
+        print(f"No run record for {args.index_version}.", file=sys.stderr)
+        return 1
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        entities, edges = read_graph(driver, args.index_version)
+    if not entities:
+        print("The graph is empty; run graph-load first.", file=sys.stderr)
+        return 1
+    checks = compute_checks(entities, edges, run.stats or {}, load_ontology(args.ontology), engine)
+    save_checks(engine, str(run.id), checks)
+    shown = list(checks)
+    with engine.connect() as conn:  # the rate from before graph-load left lonely entities out
+        before = conn.execute(
+            text(
+                "SELECT value, threshold, details FROM quality_checks"
+                " WHERE run_id = :r AND check_name = 'orphan_rate_before_pruning'"
+            ),
+            {"r": run.id},
+        ).first()
+    if before:
+        shown.append(Check(
+            "orphan_rate_before_pruning", float(before[0]), float(before[1]), False, before[2]
+        ))  # fmt: skip
+    report = render_report(shown, args.index_version)
+    if args.out:
+        args.out.write_text(report, encoding="utf-8")
+    for check in checks:
+        print(f"{'PASS' if check.passed else 'MISS'}  {check.name}: {check.value:.1%}")
+    return 0
+
+
+def _resolve(engine, args) -> int:
+    import json
+    from collections import Counter
+
+    from sqlalchemy import text
+
+    from graphlens_pipeline.resolve import save_decisions
+
+    computed = _compute_resolution(engine, args)
+    if isinstance(computed, int):
+        return computed
+    result, _, _ = computed
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.index_version}
+        ).first()
+    if run:
+        save_decisions(engine, str(run[0]), result.decisions)
+    methods = Counter((d.method, d.decision) for d in result.decisions)
+    print(json.dumps({
+        "mentions": result.mentions, "noise_dropped": result.dropped_noise,
+        "groups_after_exact_merge": result.clusters_before_merging_pairs,
+        "entities_final": len(result.entities), "relations_final": len(result.relations),
+        "aliases_kept": sum(len(e.aliases) for e in result.entities),
+        "by_type": dict(Counter(e.type for e in result.entities)),
+        "decisions": {f"{m}/{d}": n for (m, d), n in sorted(methods.items())},
+        "model_calls": result.model_calls, "model_cost_usd": result.model_cost_usd,
+        "pairs_left_unasked": result.unasked_pairs, "decisions_saved": bool(run),
+    }, indent=2))  # fmt: skip
+    return 0
+
+
+def _extract_estimate(engine, args) -> int:
+    import json
+
+    from graphlens_pipeline.extract import estimate_cost, load_units
+    from graphlens_pipeline.ontology import load_ontology
+
+    model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
+    units = load_units(engine, args.corpus_name)
+    rows = estimate_cost(units, load_ontology(DEFAULT_ONTOLOGY), model)
+    print(json.dumps({"model": model, "estimates": rows}, indent=2))
+    print("Prompt tokens are counted exactly; answer sizes are assumptions. Nothing was spent.")
+    return 0
+
+
+def _extract(engine, args) -> int:
+    import json
+
+    from graphlens_pipeline.extract import load_units, run_extraction
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.runs import begin_stage, end_stage, finish_run, start_run
+
+    ontology = load_ontology(args.ontology)
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    units = load_units(engine, args.corpus_name, args.sample)
+    sample = args.sample < 1
+    config = {
+        "model": llm.model, "ontology": ontology.fingerprint(), "prompt": "extract-v1",
+        "gleaning_passes": args.gleaning, "sample": args.sample, "units": len(units),
+    }  # fmt: skip
+    run = start_run(engine, args.corpus_name, args.index_version, config, args.max_cost_usd, sample)
+    begin_stage(engine, run, "extract", len(units))
+
+    def progress(done: int, total: int, spent: float) -> None:
+        if done % 10 == 0 or done == total:
+            print(f"  {done}/{total} units, ${spent:.4f} spent", flush=True)
+
+    try:
+        report = run_extraction(
+            engine, llm, ontology, units, args.gleaning, args.max_cost_usd, args.workers, progress
+        )
+    except Exception as error:  # record the failure on the run, then stop
+        end_stage(engine, run, "extract", 0, 0.0, error=type(error).__name__)
+        finish_run(engine, run, "failed", 0.0, 0, 0, {"error": type(error).__name__})
+        raise
+    done = report.extracted + report.from_cache
+    end_stage(engine, run, "extract", done, report.cost_usd)
+    capped = report.stopped_by_cap or bool(report.failed)
+    finish_run(
+        engine, run, "cancelled" if sample and not capped else "running", report.cost_usd,
+        report.tokens_in, report.tokens_out,
+        {"units": report.units_total, "from_cache": report.from_cache,
+         "extracted": report.extracted, "failed": len(report.failed),
+         "skipped_by_cap": report.skipped_by_cap,
+         "entities": report.entities, "relations": report.relations, "rejected": report.rejected,
+         "outcome": "sample_completed" if sample and not capped else "in_progress"},
+    )  # fmt: skip
+    new = max(1, report.extracted)
+    print(json.dumps({
+        "model": llm.model, "units": report.units_total, "extracted_now": report.extracted,
+        "from_cache": report.from_cache, "failed": report.failed,
+        "skipped_by_cost_cap": report.skipped_by_cap, "entities": report.entities,
+        "relations": report.relations, "rejected": report.rejected,
+        "tokens_in": report.tokens_in, "tokens_out": report.tokens_out,
+        "cost_usd": report.cost_usd, "cost_per_new_unit_usd": round(report.cost_usd / new, 6),
+    }, indent=2))  # fmt: skip
+    return 1 if capped else 0
 
 
 def _eval_run(engine, args) -> int:

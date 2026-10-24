@@ -31,12 +31,15 @@ class LlmResult:
     model: str
     tokens_in: int
     tokens_out: int
+    finish_reason: str = ""  # "stop" is normal; "length" means the answer was cut off
 
 
 class Llm(Protocol):
     model: str
 
-    def complete(self, system: str, user: str, max_output_tokens: int) -> LlmResult: ...
+    def complete(
+        self, system: str, user: str, max_output_tokens: int, json_schema: dict | None = None
+    ) -> LlmResult: ...
 
 
 def cost_usd(model: str, tokens_in: int, tokens_out: int) -> float | None:
@@ -59,7 +62,16 @@ class OpenAiLlm:
             raise LlmError("LLM_MODEL_MAIN is not set")
         self._client = OpenAI(api_key=api_key, timeout=TIMEOUT_SECONDS, max_retries=MAX_RETRIES)
 
-    def complete(self, system: str, user: str, max_output_tokens: int) -> LlmResult:
+    def complete(
+        self, system: str, user: str, max_output_tokens: int, json_schema: dict | None = None
+    ) -> LlmResult:
+        """One model call. With `json_schema`, the reply must follow that schema exactly."""
+        options: dict = {}
+        if json_schema is not None:
+            options["response_format"] = {
+                "type": "json_schema",
+                "json_schema": {"name": "extraction", "strict": True, "schema": json_schema},
+            }
         try:
             response = self._client.chat.completions.create(
                 model=self.model,
@@ -69,6 +81,7 @@ class OpenAiLlm:
                 ],
                 max_completion_tokens=max_output_tokens,
                 temperature=0,
+                **options,
             )
         except Exception as error:  # the SDK raises many types; report only the type
             raise LlmError(f"model call failed ({type(error).__name__})") from error
@@ -78,4 +91,5 @@ class OpenAiLlm:
             model=response.model,
             tokens_in=usage.prompt_tokens if usage else 0,
             tokens_out=usage.completion_tokens if usage else 0,
+            finish_reason=response.choices[0].finish_reason or "",
         )

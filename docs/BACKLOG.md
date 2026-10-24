@@ -13,3 +13,5 @@ Ideas that are outside the current phase. Nothing here is approved.
 - Add `--replace` to re-ingest a corpus after the chunker changes, instead of deleting rows by hand.
 - Harder evaluation questions from full paper text (not only abstracts) and a second judge or human check.
 - Compare the quantised bge model with the full-precision one on the evaluation set (D19).
+- `CITES` edges: parse the reference list (it is cut today) and link papers inside the corpus.
+- Add `--replace` to ingest so a changed chunker does not need hand-written SQL (done by hand again for CR-0003).

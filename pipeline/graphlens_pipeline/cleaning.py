@@ -20,6 +20,7 @@ BOILERPLATE = (
     re.compile(r"^Association for Computational Linguistics$", re.I),
 )
 PAGE_NUMBER = re.compile(r"\d{1,5}")
+CONTACT_LINE = re.compile(r"@|https?://|www\.", re.I)  # emails and web addresses
 CONTROL_CHARS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")  # keeps tab and newline
 NAMED_HEADING = re.compile(
     r"(abstract|introduction|related work|background|conclusions?|limitations|"
@@ -128,11 +129,9 @@ def clean_pages(pages: list[str]) -> list[Section]:
         sections[-1][1].append(line)
         body_chars += len(line)
 
-    # Drop author names and affiliations before the abstract when an abstract exists.
-    if len(sections) > 1 and sections[1][0].lower() == "abstract":
-        sections = sections[1:]
-    elif len(sections) > 1 and not sections[0][1]:
-        sections = sections[1:]
+    # The front matter (title, authors, affiliations) is kept: it is the evidence for AUTHORED_BY
+    # and AFFILIATED_WITH (CR-0003). Lines with an email or web address are removed from it.
+    sections[0] = (sections[0][0], [ln for ln in sections[0][1] if not CONTACT_LINE.search(ln)])
 
     result: list[Section] = []
     for name, body_lines in sections:

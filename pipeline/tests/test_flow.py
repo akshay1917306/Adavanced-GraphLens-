@@ -23,7 +23,8 @@ pytestmark = pytest.mark.integration
 
 @pytest.fixture(scope="module", autouse=True)
 def prefect_harness():
-    with prefect_test_harness():
+    # The temporary server can need 30 to 40 seconds on a busy machine; the default is 30.
+    with prefect_test_harness(server_startup_timeout=120):
         yield
 
 

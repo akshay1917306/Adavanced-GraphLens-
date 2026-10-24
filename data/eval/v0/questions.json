@@ -3,7 +3,7 @@
   "corpus": "qa_v0",
   "status": "APPROVED by the owner on 2026-10-24 (message: all 40 OK as drafted; no per-question edits)",
   "drafted_by": "Claude (from the abstracts of the 25 papers)",
-  "note": "Every quote is an exact substring of the cited text unit; this is checked by a script.",
+  "note": "Every quote is an exact substring of the cited text unit; this is checked by a script. Unit IDs were remapped by quote after CR-0003.",
   "questions": [
     {
       "id": "L01",
@@ -14,7 +14,7 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.113",
-          "unit_id": "u_b8cfb9072b0d_0000",
+          "unit_id": "u_b8cfb9072b0d_0001",
           "quote": "verbalized tables from Wikipedia and graphs from Wikidata are used as augmented knowledge sources"
         }
       ],
@@ -29,7 +29,7 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.117",
-          "unit_id": "u_6183c13e0bb6_0000",
+          "unit_id": "u_6183c13e0bb6_0001",
           "quote": "technique to create counterfactual evaluation and training data with minimal human supervision"
         }
       ],
@@ -44,7 +44,7 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.201",
-          "unit_id": "u_381134ba1f9c_0000",
+          "unit_id": "u_381134ba1f9c_0001",
           "quote": "reduces the model size up to 98% compared to conventional KGE models"
         }
       ],
@@ -59,7 +59,7 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.253",
-          "unit_id": "u_85db020b91cb_0000",
+          "unit_id": "u_85db020b91cb_0001",
           "quote": "the answers are only applicable when certain conditions apply"
         }
       ],
@@ -74,7 +74,7 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.340",
-          "unit_id": "u_732906872c61_0000",
+          "unit_id": "u_732906872c61_0001",
           "quote": "with less than 40% of the computation cost"
         }
       ],
@@ -89,7 +89,7 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.343",
-          "unit_id": "u_f1e807c70065_0000",
+          "unit_id": "u_f1e807c70065_0001",
           "quote": "we evaluate it on two reading comprehension datasets, namely WikiHop and MedHop"
         }
       ],
@@ -104,7 +104,7 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.355",
-          "unit_id": "u_e4de0d926563_0000",
+          "unit_id": "u_e4de0d926563_0001",
           "quote": "We study learning from user feedback for extractive question answering by simulating feedback using supervised data"
         }
       ],
@@ -119,7 +119,7 @@
       "evidence": [
         {
           "paper_id": "2022.emnlp-main.10",
-          "unit_id": "u_a97dfd913ccf_0000",
+          "unit_id": "u_a97dfd913ccf_0001",
           "quote": "obtains a 9.88% improvements in the F1 metric on CQA dataset"
         }
       ],
@@ -134,7 +134,7 @@
       "evidence": [
         {
           "paper_id": "2022.emnlp-main.107",
-          "unit_id": "u_4724660473c3_0000",
+          "unit_id": "u_4724660473c3_0001",
           "quote": "while converging 4x-7x faster"
         }
       ],
@@ -149,7 +149,7 @@
       "evidence": [
         {
           "paper_id": "2022.emnlp-main.122",
-          "unit_id": "u_af4b5ba47ddd_0000",
+          "unit_id": "u_af4b5ba47ddd_0001",
           "quote": "which generates query graphs by exploring the relevant facts of mentioned entities"
         }
       ],
@@ -164,7 +164,7 @@
       "evidence": [
         {
           "paper_id": "2022.emnlp-main.125",
-          "unit_id": "u_039c611d6451_0000",
+          "unit_id": "u_039c611d6451_0001",
           "quote": "we also create a unified dataset building on four previously released numerical QA datasets over tabular data"
         }
       ],
@@ -179,7 +179,7 @@
       "evidence": [
         {
           "paper_id": "2022.emnlp-main.147",
-          "unit_id": "u_56d31becd18d_0000",
+          "unit_id": "u_56d31becd18d_0001",
           "quote": "we enrich the samples via hidden space augmentation"
         }
       ],
@@ -194,7 +194,7 @@
       "evidence": [
         {
           "paper_id": "2022.emnlp-main.198",
-          "unit_id": "u_be1f94442adf_0000",
+          "unit_id": "u_be1f94442adf_0001",
           "quote": "our model outperforms the previous state-of-the-art model by 1.0 and 0.7 exact match scores"
         }
       ],
@@ -209,7 +209,7 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.181",
-          "unit_id": "u_e84a3c72733d_0000",
+          "unit_id": "u_e84a3c72733d_0001",
           "quote": "We hire domain experts in seven areas to provide preference judgments over pairs of answers"
         }
       ],
@@ -224,7 +224,7 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.218",
-          "unit_id": "u_bd66cdf3c6b3_0000",
+          "unit_id": "u_bd66cdf3c6b3_0001",
           "quote": "The reasoning steps are organized as a structured entailment tree"
         }
       ],
@@ -239,7 +239,7 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.231",
-          "unit_id": "u_d37e80b0a561_0000",
+          "unit_id": "u_d37e80b0a561_0001",
           "quote": "providing the true answer by only one fact, rather than multi-hop reasoning, which is referred to as disconnected reasoning problem"
         }
       ],
@@ -254,7 +254,7 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.290",
-          "unit_id": "u_51284ef6b044_0000",
+          "unit_id": "u_51284ef6b044_0001",
           "quote": "The benchmark includes 11,746 human-written answers along with 74,527 supporting documents"
         }
       ],
@@ -269,7 +269,7 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.307",
-          "unit_id": "u_61676b02aa27_0000",
+          "unit_id": "u_61676b02aa27_0001",
           "quote": "more than 50% of lexical matching failures are attributed to semantically equivalent answers"
         }
       ],
@@ -284,7 +284,7 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.351",
-          "unit_id": "u_533dbf92ffe5_0000",
+          "unit_id": "u_533dbf92ffe5_0001",
           "quote": "a large-scale OLTQA dataset we curate from 43 existing QA datasets"
         }
       ],
@@ -299,7 +299,7 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.10",
-          "unit_id": "u_60ab7f2e85b3_0000",
+          "unit_id": "u_60ab7f2e85b3_0001",
           "quote": "a substantial portion of the answers is not attributable to any retrieved passages (up to 47% of answers exactly matching a gold reference)"
         }
       ],
@@ -314,7 +314,7 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.1001",
-          "unit_id": "u_08db683fca63_0000",
+          "unit_id": "u_08db683fca63_0001",
           "quote": "explicitly modeling rationales as sets"
         }
       ],
@@ -329,7 +329,7 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.193",
-          "unit_id": "u_d352bfc2d1e1_0000",
+          "unit_id": "u_d352bfc2d1e1_0001",
           "quote": "decomposes the task into three stages: question generation, question answering, and rewriting"
         }
       ],
@@ -344,7 +344,7 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.201",
-          "unit_id": "u_71f8f712a4f8_0000",
+          "unit_id": "u_71f8f712a4f8_0001",
           "quote": "Providing the relevant background, however, helps users better catch model errors, reducing over-reliance on incorrect predictions"
         }
       ],
@@ -359,7 +359,7 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.228",
-          "unit_id": "u_4e80cf74d13c_0000",
+          "unit_id": "u_4e80cf74d13c_0001",
           "quote": "20,000 subgraphs with synthesized questions"
         }
       ],
@@ -374,7 +374,7 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.262",
-          "unit_id": "u_2dae343019ba_0000",
+          "unit_id": "u_2dae343019ba_0001",
           "quote": "performance on three MHQA datasets compared to the baseline"
         }
       ],
@@ -389,12 +389,12 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.343",
-          "unit_id": "u_f1e807c70065_0000",
+          "unit_id": "u_f1e807c70065_0001",
           "quote": "namely WikiHop and MedHop"
         },
         {
           "paper_id": "2023.acl-long.231",
-          "unit_id": "u_d37e80b0a561_0000",
+          "unit_id": "u_d37e80b0a561_0001",
           "quote": "Extensive experiments have been conducted on the benchmark HotpotQA dataset"
         }
       ],
@@ -409,12 +409,12 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.201",
-          "unit_id": "u_381134ba1f9c_0000",
+          "unit_id": "u_381134ba1f9c_0001",
           "quote": "an off-the-shelf encoder-decoder Transformer model can serve as a scalable and versatile KGE model"
         },
         {
           "paper_id": "2022.emnlp-main.107",
-          "unit_id": "u_4724660473c3_0000",
+          "unit_id": "u_4724660473c3_0001",
           "quote": "which utilizes an encoder-decoder Transformer structure to translate the query to a path"
         }
       ],
@@ -429,12 +429,12 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.340",
-          "unit_id": "u_732906872c61_0000",
+          "unit_id": "u_732906872c61_0001",
           "quote": "a graph neural network (GNN) to re-rank the passages and select only a top few for further processing"
         },
         {
           "paper_id": "2023.emnlp-main.228",
-          "unit_id": "u_4e80cf74d13c_0000",
+          "unit_id": "u_4e80cf74d13c_0001",
           "quote": "we propose a subgraph-aware self-attention mechanism to imitate the GNN for performing structured reasoning"
         }
       ],
@@ -449,12 +449,12 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.307",
-          "unit_id": "u_61676b02aa27_0000",
+          "unit_id": "u_61676b02aa27_0001",
           "quote": "At this time, there appears to be no substitute for human evaluation"
         },
         {
           "paper_id": "2023.acl-long.181",
-          "unit_id": "u_e84a3c72733d_0000",
+          "unit_id": "u_e84a3c72733d_0001",
           "quote": "finding that no existing metrics are predictive of human preference judgments"
         }
       ],
@@ -469,12 +469,12 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.10",
-          "unit_id": "u_60ab7f2e85b3_0000",
+          "unit_id": "u_60ab7f2e85b3_0001",
           "quote": "Our work is the first to study attribution for cross-lingual question answering"
         },
         {
           "paper_id": "2023.emnlp-main.201",
-          "unit_id": "u_71f8f712a4f8_0000",
+          "unit_id": "u_71f8f712a4f8_0001",
           "quote": "Providing the relevant background, however, helps users better catch model errors"
         }
       ],
@@ -489,32 +489,32 @@
       "evidence": [
         {
           "paper_id": "2023.emnlp-main.228",
-          "unit_id": "u_4e80cf74d13c_0000",
+          "unit_id": "u_4e80cf74d13c_0001",
           "quote": "Question Answering over Knowledge Graph (KGQA) aims to seek answer entities"
         },
         {
           "paper_id": "2023.acl-long.231",
-          "unit_id": "u_d37e80b0a561_0000",
+          "unit_id": "u_d37e80b0a561_0001",
           "quote": "Multi-hop QA requires reasoning over multiple supporting facts to answer the question"
         },
         {
           "paper_id": "2022.emnlp-main.198",
-          "unit_id": "u_be1f94442adf_0000",
+          "unit_id": "u_be1f94442adf_0001",
           "quote": "Recent approaches to Open-domain Question Answering refer to an external knowledge base"
         },
         {
           "paper_id": "2023.acl-long.181",
-          "unit_id": "u_e84a3c72733d_0000",
+          "unit_id": "u_e84a3c72733d_0001",
           "quote": "its flexibility poses enormous challenges for evaluation"
         },
         {
           "paper_id": "2023.emnlp-main.10",
-          "unit_id": "u_60ab7f2e85b3_0000",
+          "unit_id": "u_60ab7f2e85b3_0001",
           "quote": "Our work is the first to study attribution for cross-lingual question answering"
         },
         {
           "paper_id": "2023.acl-long.290",
-          "unit_id": "u_51284ef6b044_0000",
+          "unit_id": "u_51284ef6b044_0001",
           "quote": "a new multi-document NFQA benchmark built on WikiHow"
         }
       ],
@@ -529,32 +529,32 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.201",
-          "unit_id": "u_381134ba1f9c_0000",
+          "unit_id": "u_381134ba1f9c_0001",
           "quote": "state-of-the-art results for KG link prediction and incomplete KG question answering"
         },
         {
           "paper_id": "2022.emnlp-main.107",
-          "unit_id": "u_4724660473c3_0000",
+          "unit_id": "u_4724660473c3_0001",
           "quote": "Multi-hop knowledge graph (KG) reasoning has been widely studied in recent years"
         },
         {
           "paper_id": "2022.emnlp-main.122",
-          "unit_id": "u_af4b5ba47ddd_0000",
+          "unit_id": "u_af4b5ba47ddd_0001",
           "quote": "Answering factual questions with temporal intent over knowledge graphs"
         },
         {
           "paper_id": "2022.emnlp-main.10",
-          "unit_id": "u_a97dfd913ccf_0000",
+          "unit_id": "u_a97dfd913ccf_0001",
           "quote": "Complex knowledge base question answering can be achieved by converting questions into sequences of predefined actions"
         },
         {
           "paper_id": "2023.emnlp-main.228",
-          "unit_id": "u_4e80cf74d13c_0000",
+          "unit_id": "u_4e80cf74d13c_0001",
           "quote": "directly support subgraph reasoning for KGQA, namely ReasoningLM"
         },
         {
           "paper_id": "2022.acl-long.340",
-          "unit_id": "u_732906872c61_0000",
+          "unit_id": "u_732906872c61_0001",
           "quote": "Our new model uses a knowledge graph to establish the structural relationship among the retrieved passages"
         }
       ],
@@ -569,32 +569,32 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.343",
-          "unit_id": "u_f1e807c70065_0000",
+          "unit_id": "u_f1e807c70065_0001",
           "quote": "inducing feasible rules that entail the target relation"
         },
         {
           "paper_id": "2023.acl-long.231",
-          "unit_id": "u_d37e80b0a561_0000",
+          "unit_id": "u_d37e80b0a561_0001",
           "quote": "a counterfactual inference is proposed to disentangle the disconnected reasoning from the total causal effect"
         },
         {
           "paper_id": "2023.emnlp-main.1001",
-          "unit_id": "u_08db683fca63_0000",
+          "unit_id": "u_08db683fca63_0001",
           "quote": "explicitly modeling rationales as sets"
         },
         {
           "paper_id": "2023.emnlp-main.262",
-          "unit_id": "u_2dae343019ba_0000",
+          "unit_id": "u_2dae343019ba_0001",
           "quote": "first collects relevant information over the entire document to the memory"
         },
         {
           "paper_id": "2022.emnlp-main.107",
-          "unit_id": "u_4724660473c3_0000",
+          "unit_id": "u_4724660473c3_0001",
           "quote": "translate the query to a path"
         },
         {
           "paper_id": "2022.acl-long.253",
-          "unit_id": "u_85db020b91cb_0000",
+          "unit_id": "u_85db020b91cb_0001",
           "quote": "Answering the questions requires compositional logical reasoning across complex context"
         }
       ],
@@ -609,32 +609,32 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.253",
-          "unit_id": "u_85db020b91cb_0000",
+          "unit_id": "u_85db020b91cb_0001",
           "quote": "We call this dataset ConditionalQA"
         },
         {
           "paper_id": "2023.acl-long.290",
-          "unit_id": "u_51284ef6b044_0000",
+          "unit_id": "u_51284ef6b044_0001",
           "quote": "we present WIKI HOWQA"
         },
         {
           "paper_id": "2023.emnlp-main.10",
-          "unit_id": "u_60ab7f2e85b3_0000",
+          "unit_id": "u_60ab7f2e85b3_0001",
           "quote": "we introduce the XOR-AttriQA dataset"
         },
         {
           "paper_id": "2023.acl-long.351",
-          "unit_id": "u_533dbf92ffe5_0000",
+          "unit_id": "u_533dbf92ffe5_0001",
           "quote": "a large-scale OLTQA dataset we curate from 43 existing QA datasets"
         },
         {
           "paper_id": "2022.emnlp-main.125",
-          "unit_id": "u_039c611d6451_0000",
+          "unit_id": "u_039c611d6451_0001",
           "quote": "we also create a unified dataset building on four previously released numerical QA datasets"
         },
         {
           "paper_id": "2023.emnlp-main.193",
-          "unit_id": "u_d352bfc2d1e1_0000",
+          "unit_id": "u_d352bfc2d1e1_0001",
           "quote": "we collect gold decontextualizations from experienced scientific article readers"
         }
       ],
@@ -649,22 +649,22 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.181",
-          "unit_id": "u_e84a3c72733d_0000",
+          "unit_id": "u_e84a3c72733d_0001",
           "quote": "We encourage future work to move away from a single"
         },
         {
           "paper_id": "2023.acl-long.307",
-          "unit_id": "u_61676b02aa27_0000",
+          "unit_id": "u_61676b02aa27_0001",
           "quote": "Lexical matching remains the de facto evaluation method for open-domain question answering"
         },
         {
           "paper_id": "2023.acl-long.290",
-          "unit_id": "u_51284ef6b044_0000",
+          "unit_id": "u_51284ef6b044_0001",
           "quote": "propose a novel human evaluation framework that utilizes highlighted relevant supporting passages"
         },
         {
           "paper_id": "2023.emnlp-main.10",
-          "unit_id": "u_60ab7f2e85b3_0000",
+          "unit_id": "u_60ab7f2e85b3_0001",
           "quote": "to assess the attribution level of a state-of-theart cross-lingual question answering (QA) system"
         }
       ],
@@ -679,22 +679,22 @@
       "evidence": [
         {
           "paper_id": "2023.acl-long.218",
-          "unit_id": "u_bd66cdf3c6b3_0000",
+          "unit_id": "u_bd66cdf3c6b3_0001",
           "quote": "revealing the intermediate reasoning steps that the models faithfully follow remains challenging"
         },
         {
           "paper_id": "2023.emnlp-main.10",
-          "unit_id": "u_60ab7f2e85b3_0000",
+          "unit_id": "u_60ab7f2e85b3_0001",
           "quote": "their raw generations often fall short in factuality"
         },
         {
           "paper_id": "2023.acl-long.290",
-          "unit_id": "u_51284ef6b044_0000",
+          "unit_id": "u_51284ef6b044_0001",
           "quote": "evaluate answers’ grounding and factual consistency in relation to supporting documents"
         },
         {
           "paper_id": "2023.acl-long.307",
-          "unit_id": "u_61676b02aa27_0000",
+          "unit_id": "u_61676b02aa27_0001",
           "quote": "The automated models struggle in detecting hallucinations in LLM answers"
         }
       ],
@@ -709,22 +709,22 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.201",
-          "unit_id": "u_381134ba1f9c_0000",
+          "unit_id": "u_381134ba1f9c_0001",
           "quote": "reduces the model size up to 98% compared to conventional KGE models"
         },
         {
           "paper_id": "2022.acl-long.340",
-          "unit_id": "u_732906872c61_0000",
+          "unit_id": "u_732906872c61_0001",
           "quote": "with less than 40% of the computation cost"
         },
         {
           "paper_id": "2022.emnlp-main.198",
-          "unit_id": "u_be1f94442adf_0000",
+          "unit_id": "u_be1f94442adf_0001",
           "quote": "which is a more efficient use of model capacity"
         },
         {
           "paper_id": "2023.emnlp-main.228",
-          "unit_id": "u_4e80cf74d13c_0000",
+          "unit_id": "u_4e80cf74d13c_0001",
           "quote": "even with fewer updated parameters and less training data"
         }
       ],
@@ -739,27 +739,27 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.117",
-          "unit_id": "u_6183c13e0bb6_0000",
+          "unit_id": "u_6183c13e0bb6_0001",
           "quote": "improvements to robustness to local perturbations"
         },
         {
           "paper_id": "2022.emnlp-main.147",
-          "unit_id": "u_56d31becd18d_0000",
+          "unit_id": "u_56d31becd18d_0001",
           "quote": "adapt QA models to an unseen target domain"
         },
         {
           "paper_id": "2023.acl-long.351",
-          "unit_id": "u_533dbf92ffe5_0000",
+          "unit_id": "u_533dbf92ffe5_0001",
           "quote": "optimizing performance over seen and unseen QA tasks"
         },
         {
           "paper_id": "2022.acl-long.355",
-          "unit_id": "u_e4de0d926563_0000",
+          "unit_id": "u_e4de0d926563_0001",
           "quote": "deploy systems in new domains without any annotation"
         },
         {
           "paper_id": "2022.emnlp-main.125",
-          "unit_id": "u_039c611d6451_0000",
+          "unit_id": "u_039c611d6451_0001",
           "quote": "renders the models more robust against overfitting as the number of reasoning steps grows"
         }
       ],
@@ -774,27 +774,27 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.355",
-          "unit_id": "u_e4de0d926563_0000",
+          "unit_id": "u_e4de0d926563_0001",
           "quote": "can dramatically improve given feedback from users"
         },
         {
           "paper_id": "2023.emnlp-main.201",
-          "unit_id": "u_71f8f712a4f8_0000",
+          "unit_id": "u_71f8f712a4f8_0001",
           "quote": "we study how users interact with QA systems in the absence of sufficient information to assess their predictions"
         },
         {
           "paper_id": "2023.acl-long.181",
-          "unit_id": "u_e84a3c72733d_0000",
+          "unit_id": "u_e84a3c72733d_0001",
           "quote": "We hire domain experts in seven areas"
         },
         {
           "paper_id": "2023.acl-long.307",
-          "unit_id": "u_61676b02aa27_0000",
+          "unit_id": "u_61676b02aa27_0001",
           "quote": "by manually evaluating their answers on a subset of NQ-OPEN"
         },
         {
           "paper_id": "2023.emnlp-main.193",
-          "unit_id": "u_d352bfc2d1e1_0000",
+          "unit_id": "u_d352bfc2d1e1_0001",
           "quote": "gold decontextualizations from experienced scientific article readers"
         }
       ],
@@ -809,32 +809,32 @@
       "evidence": [
         {
           "paper_id": "2022.acl-long.113",
-          "unit_id": "u_b8cfb9072b0d_0000",
+          "unit_id": "u_b8cfb9072b0d_0001",
           "quote": "The retriever-reader framework is popular for open-domain question answering"
         },
         {
           "paper_id": "2022.acl-long.340",
-          "unit_id": "u_732906872c61_0000",
+          "unit_id": "u_732906872c61_0001",
           "quote": "built on top of a dense passage retriever and a generative reader"
         },
         {
           "paper_id": "2022.emnlp-main.198",
-          "unit_id": "u_be1f94442adf_0000",
+          "unit_id": "u_be1f94442adf_0001",
           "quote": "casting the retriever and the reranker as internal passage-wise attention mechanisms"
         },
         {
           "paper_id": "2022.acl-long.117",
-          "unit_id": "u_6183c13e0bb6_0000",
+          "unit_id": "u_6183c13e0bb6_0001",
           "quote": "Retrieve-Generate- Filter (RGF) technique"
         },
         {
           "paper_id": "2023.acl-long.351",
-          "unit_id": "u_533dbf92ffe5_0000",
+          "unit_id": "u_533dbf92ffe5_0001",
           "quote": "A retrieve-then-rerank frame is further introduced to select in-context examples"
         },
         {
           "paper_id": "2022.emnlp-main.10",
-          "unit_id": "u_a97dfd913ccf_0000",
+          "unit_id": "u_a97dfd913ccf_0001",
           "quote": "we retrieve top-k similar question-answer pairs at the inference stage"
         }
       ],
