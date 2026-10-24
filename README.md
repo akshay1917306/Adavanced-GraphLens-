@@ -4,9 +4,10 @@ GraphLens turns a document collection into a knowledge graph and answers questio
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is in progress.**
-> The plain vector RAG works and is measured. There is **no graph yet** (Phase 2) and no
-> web interface for questions (Phase 5). Development data: 25 open-licensed research papers.
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is built on a branch and waits for the owner's review.**
+> The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
+> used for answers, and its accuracy numbers are drafts). There is no web interface for
+> questions (Phase 5). Development data: 25 open-licensed research papers.
 
 ## Status
 
@@ -14,7 +15,7 @@ by following the graph, showing the evidence for every answer. It is built from 
 |---|---|
 | 0. Setup and decisions | Approved, merged, tag `phase-0` |
 | 1. Baseline RAG and evaluation set v0 | Approved, merged, tag `phase-1` |
-| 2. Extraction and graph | In progress, branch `phase-2/extraction` ([plan](docs/phases/phase-2-extraction/BRIEF.md)) |
+| 2. Extraction and graph | Built on branch `phase-2/extraction`, **not approved or pushed** ([plan](docs/phases/phase-2-extraction/BRIEF.md), [walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md)) |
 | 3 to 8 | Planned, see [docs/phases](docs/phases/README.md) |
 
 ## What works today
@@ -32,7 +33,12 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Evaluation set v0 (30 local, 10 global) and runner with cost cap | Implemented |
 | Prefect flow: ingest then embed, with retries | Implemented |
 | Baseline results: 93% correct on local, 0% on global questions | **Measured** (LLM judge, see limits) |
-| Graph, communities, global search, router, relate, citation support check | Planned (Phases 2 to 4) |
+| Ontology-based extraction of entities and relations (751 units, cached, cost-capped) | Implemented |
+| Entity resolution with stored decisions and a merge guard | Implemented |
+| Neo4j graph: 1,550 entities, 2,695 relations, with source and evidence passages, vector index | Implemented |
+| Quality report on the graph | Implemented, see [QUALITY.md](docs/phases/phase-2-extraction/QUALITY.md) |
+| Relation precision 0.81 and entity-resolution F1 0.75 | **Draft** (labels not owner-reviewed yet) |
+| Communities, global search, router, relate, citation support check | Planned (Phases 3 and 4) |
 | Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |
 | CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
 
@@ -64,7 +70,7 @@ If `data/corpus/qa_v0/pdfs/` is empty, first run
 | http://localhost:8000/api/v1/health | JSON with `"status":"ok"` and four services |
 | http://localhost:8000/docs | API documentation |
 | http://localhost:6333/dashboard | Qdrant dashboard (collection `units_qa_v0_baseline_2`, 751 points; other collections there, such as `dinosaurs`, are Qdrant sample data) |
-| http://localhost:7474 | Neo4j Browser (empty until Phase 2) |
+| http://localhost:7474 | Neo4j Browser (sign in as `neo4j` with `NEO4J_PASSWORD`; the graph is there once `graph-load` has run) |
 
 Evaluation: `docker compose run --rm pipeline eval-run --dry-run` shows the cost first; the real
 run is in the [Phase 1 walkthrough](docs/phases/phase-1-baseline/WALKTHROUGH.md).
@@ -84,7 +90,7 @@ Names only; real values live in your git-ignored `.env`. See `.env.example`.
 
 ```bash
 docker compose up -d postgres qdrant
-docker compose run --rm --entrypoint pytest pipeline -q                  # 111 tests
+docker compose run --rm --entrypoint pytest pipeline -q                  # 242 tests
 docker compose run --rm --no-deps --entrypoint ruff pipeline check .
 docker compose run --rm pipeline eval-verify                             # evidence quotes exist
 ```
@@ -95,9 +101,10 @@ database and Qdrant collections.
 
 ## Documentation
 
-- [Phases](docs/phases/README.md): [Phase 0](docs/phases/phase-0-setup/) and
-  [Phase 1](docs/phases/phase-1-baseline/) ([walkthrough](docs/phases/phase-1-baseline/WALKTHROUGH.md))
-- [Decision log](docs/DECISIONS.md) (D1 to D21), [ADRs and change requests](docs/adr/), [Backlog](docs/BACKLOG.md)
+- [Phases](docs/phases/README.md): [Phase 0](docs/phases/phase-0-setup/),
+  [Phase 1](docs/phases/phase-1-baseline/) ([walkthrough](docs/phases/phase-1-baseline/WALKTHROUGH.md)) and
+  [Phase 2](docs/phases/phase-2-extraction/) ([walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md))
+- [Decision log](docs/DECISIONS.md) (D1 to D25), [ADRs and change requests](docs/adr/), [Backlog](docs/BACKLOG.md)
 - [Baseline results](data/eval/v0/results/baseline-2026-10-23.md), [wireframes](docs/design/WIREFRAMES.md)
 
 ## Known limitations
@@ -105,9 +112,11 @@ database and Qdrant collections.
 - Only 25 development papers; the real corpus (200 to 300) is not loaded.
 - The evaluation questions come from abstracts, so the local score (93%) is probably too easy.
   The judge is the same model as the answerer and was too strict in 2 of 4 spot-checks.
+- The graph's accuracy numbers (relation precision, entity-resolution F1) are drafts until the owner reviews the labels; the resolver is strict, so many true duplicates stay separate.
+- About 17.5% of extracted entities had no relation; lonely single-mention ones are left out of the graph.
 - Citation checking only proves a cited number exists, not that the passage supports the claim.
 - Text cleaning is heuristic (footnotes, equations and tables can be messy).
 - Licenses come from the ACL Anthology policy page, not from each PDF.
 - Not production-ready and not security-reviewed; do not expose it to the internet.
 
-**Next planned phase:** Phase 2, Extraction and graph.
+**Next planned phase:** owner review and approval of Phase 2, then Phase 3 (communities and global search).
