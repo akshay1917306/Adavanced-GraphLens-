@@ -49,6 +49,18 @@ def main(argv: list[str] | None = None) -> int:
     index.add_argument("--corpus-name", default=DEFAULT_CORPUS)
     index.add_argument("--corpus-slug", default="qa_v0")
     index.add_argument("--index-version", default="baseline-1")
+    estimate = sub.add_parser("extract-estimate", help="estimate extraction cost, calls no model")
+    estimate.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    extract = sub.add_parser(
+        "extract", help="extract entities and relations (calls OpenAI, costs money)"
+    )
+    extract.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    extract.add_argument("--sample", type=float, default=0.05, help="share of units, 1 = all")
+    extract.add_argument("--gleaning", type=int, default=0, help="extra passes for missed items")
+    extract.add_argument("--max-cost-usd", type=float, default=0.25, help="stop when spent")
+    extract.add_argument("--workers", type=int, default=4)
+    extract.add_argument("--index-version", default="idx-sample-1")
+    extract.add_argument("--ontology", type=Path, default=Path("/ontology/research_v1.yaml"))
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
@@ -95,6 +107,12 @@ def main(argv: list[str] | None = None) -> int:
         for paper_id, reason in ingest["failures"].items():
             print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
         return 1 if ingest["failures"] else 0
+
+    if args.command == "extract-estimate":
+        return _extract_estimate(engine, args)
+
+    if args.command == "extract":
+        return _extract(engine, args)
 
     if args.command == "eval-load":
         from graphlens_pipeline.evalrun import load_eval_sets
@@ -180,6 +198,79 @@ def main(argv: list[str] | None = None) -> int:
     for paper_id, reason in report.failures.items():
         print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
     return 1 if report.failures else 0
+
+
+def _extract_estimate(engine, args) -> int:
+    import json
+
+    from graphlens_pipeline.extract import estimate_cost, load_units
+    from graphlens_pipeline.ontology import load_ontology
+
+    model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
+    units = load_units(engine, args.corpus_name)
+    rows = estimate_cost(units, load_ontology(Path("/ontology/research_v1.yaml")), model)
+    print(json.dumps({"model": model, "estimates": rows}, indent=2))
+    print("Prompt tokens are counted exactly; answer sizes are assumptions. Nothing was spent.")
+    return 0
+
+
+def _extract(engine, args) -> int:
+    import json
+
+    from graphlens_pipeline.extract import load_units, run_extraction
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.runs import begin_stage, end_stage, finish_run, start_run
+
+    ontology = load_ontology(args.ontology)
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    units = load_units(engine, args.corpus_name, args.sample)
+    sample = args.sample < 1
+    config = {
+        "model": llm.model, "ontology": ontology.fingerprint(), "prompt": "extract-v1",
+        "gleaning_passes": args.gleaning, "sample": args.sample, "units": len(units),
+    }  # fmt: skip
+    run = start_run(engine, args.corpus_name, args.index_version, config, args.max_cost_usd, sample)
+    begin_stage(engine, run, "extract", len(units))
+
+    def progress(done: int, total: int, spent: float) -> None:
+        if done % 10 == 0 or done == total:
+            print(f"  {done}/{total} units, ${spent:.4f} spent", flush=True)
+
+    try:
+        report = run_extraction(
+            engine, llm, ontology, units, args.gleaning, args.max_cost_usd, args.workers, progress
+        )
+    except Exception as error:  # record the failure on the run, then stop
+        end_stage(engine, run, "extract", 0, 0.0, error=type(error).__name__)
+        finish_run(engine, run, "failed", 0.0, 0, 0, {"error": type(error).__name__})
+        raise
+    done = report.extracted + report.from_cache
+    end_stage(engine, run, "extract", done, report.cost_usd)
+    capped = report.stopped_by_cap or bool(report.failed)
+    finish_run(
+        engine, run, "cancelled" if sample and not capped else "running", report.cost_usd,
+        report.tokens_in, report.tokens_out,
+        {"units": report.units_total, "from_cache": report.from_cache,
+         "extracted": report.extracted, "failed": len(report.failed),
+         "skipped_by_cap": report.skipped_by_cap,
+         "entities": report.entities, "relations": report.relations, "rejected": report.rejected,
+         "outcome": "sample_completed" if sample and not capped else "in_progress"},
+    )  # fmt: skip
+    new = max(1, report.extracted)
+    print(json.dumps({
+        "model": llm.model, "units": report.units_total, "extracted_now": report.extracted,
+        "from_cache": report.from_cache, "failed": report.failed,
+        "skipped_by_cost_cap": report.skipped_by_cap, "entities": report.entities,
+        "relations": report.relations, "rejected": report.rejected,
+        "tokens_in": report.tokens_in, "tokens_out": report.tokens_out,
+        "cost_usd": report.cost_usd, "cost_per_new_unit_usd": round(report.cost_usd / new, 6),
+    }, indent=2))  # fmt: skip
+    return 1 if capped else 0
 
 
 def _eval_run(engine, args) -> int:

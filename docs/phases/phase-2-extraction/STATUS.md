@@ -23,6 +23,24 @@ from Phase 2 is pushed. Local branch `phase-2/extraction`, branched from `main` 
   citations, cost $0.00101.
 - The Phase 1 baseline numbers were measured on the old units and were not re-run (it costs money).
 
+## Steps 2 and 3 (2026-10-24, Claude, nothing paid yet)
+
+- `ontology.py`: ontology checks, a fingerprint for cache keys, and the strict JSON schema for the
+  model's answer. `extract.py`: the prompt (untrusted-text rule, paper title and section given),
+  a second answer check, up to 3 attempts, gleaning passes (relations may end at entities found
+  earlier), cache, cost cap, 4 parallel workers. `runs.py`: `index_runs` and `run_stages` rows.
+- New commands: `extract-estimate` (free), `extract` (paid; `--sample`, `--gleaning`,
+  `--max-cost-usd`, `--index-version`).
+- A test found a real bug before any money was spent: a gleaning relation that ended at an entity
+  from an earlier pass was dropped. Fixed and tested.
+- Tests: 152 pass in Docker (model mocked and labelled). `ruff` clean.
+- **Free cost estimate on the real 751 units** (`gpt-4.1-mini`; prompt tokens counted exactly,
+  answer sizes assumed: 350 tokens first pass, 120 per gleaning pass):
+  gleaning 0: about **$0.64**; gleaning 2: up to about **$1.57** (upper bound, since a pass that
+  finds nothing new stops early). The 5% sample (about 38 units) would cost about $0.03 and $0.08.
+- Cost cap: new units stop being started once the spent amount reaches the cap; units already
+  running finish, so the cap can be passed by up to `workers` units' cost.
+
 ## Things that went wrong and were fixed (so the next session knows)
 
 - Docker's engine was stopped after a reboot. Quitting Docker Desktop, running `wsl --shutdown`
@@ -41,9 +59,14 @@ None.
 
 ## Exact next action
 
-Build step 2: ontology to a strict JSON schema, extraction prompt v1, extraction cache (see
-BRIEF.md). Then step 3 (run records and cost cap) and step 4 (the 5% dry run with a cost estimate
-to show the owner before any paid batch).
+Build step 4: the paid 5% sample runs. **The owner must say yes first.** Plan: two runs on the
+same fixed 5% sample (about 38 units), gleaning 0 then gleaning 2, each with
+`--max-cost-usd 0.25`, expected total about $0.11 (estimate). Then Claude reads the sample output
+against the source text, reports what was missed and what was wrong (a first, informal quality
+look), and compares gleaning 0 and 2 (D6) and the model (D5). After that, the owner decides the
+full run (about $0.64 or $1.57, estimates). Commands:
+`docker compose run --rm pipeline extract --sample 0.05 --gleaning 0 --index-version idx-sample-g0`
+and the same with `--gleaning 2 --index-version idx-sample-g2`.
 
 ## Notes for the next session
 

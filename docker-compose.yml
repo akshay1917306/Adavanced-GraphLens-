@@ -95,6 +95,7 @@ services:
       QDRANT_URL: http://qdrant:6333
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       LLM_MODEL_MAIN: ${LLM_MODEL_MAIN:-}
+      LLM_MODEL_SMALL: ${LLM_MODEL_SMALL:-}
       GIT_SHA: ${GIT_SHA:-unknown}
       SCHEMA_SQL: /schema/0001_initial_schema.sql
     volumes:

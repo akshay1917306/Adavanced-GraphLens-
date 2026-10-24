@@ -305,6 +305,45 @@ def in_sample(unit_id: str, fraction: float) -> bool:
     return value < fraction
 
 
+def estimate_cost(
+    units: list[dict],
+    ontology: Ontology,
+    model: str,
+    gleaning_options: tuple[int, ...] = (0, 2),
+    assumed_first_output: int = 350,
+    assumed_glean_output: int = 120,
+) -> list[dict]:
+    """Count the prompt tokens of every unit (exact) and add assumed answer sizes (a guess).
+
+    The answer sizes are assumptions until a sample run measures them. With gleaning the
+    estimate is an upper bound, because a pass that finds nothing new stops the loop early.
+    """
+    from graphlens_pipeline.chunking import get_encoding
+
+    enc = get_encoding()
+    system_tokens = len(enc.encode(build_system_prompt(ontology)))
+    first_in = sum(
+        system_tokens + len(enc.encode(build_user_message(u["title"], u["section"], u["text"])))
+        for u in units
+    )
+    rows = []
+    for passes in gleaning_options:
+        # a gleaning pass repeats the prompt and adds the list found so far
+        tokens_in = first_in + passes * (first_in + len(units) * assumed_first_output)
+        tokens_out = len(units) * (assumed_first_output + passes * assumed_glean_output)
+        cost = cost_usd(model, tokens_in, tokens_out)
+        rows.append(
+            {
+                "gleaning_passes": passes,
+                "units": len(units),
+                "tokens_in": tokens_in,
+                "tokens_out": tokens_out,
+                "estimated_cost_usd": None if cost is None else round(cost, 4),
+            }
+        )
+    return rows
+
+
 @dataclass
 class RunReport:
     units_total: int = 0

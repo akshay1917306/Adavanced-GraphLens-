@@ -15,7 +15,9 @@ the phase exit is "measured", so a missed target is reported, not hidden.
 - [ ] Entity resolution precision, recall and F1 measured on labeled pairs (target F1 0.85)
 - [ ] Duplicate entities in a sample audit (target at most 5%); orphan entities (at most 10%)
 - [ ] Second run makes zero model calls (cache) and the graph is unchanged
-- [ ] The cost cap stops a run cleanly and it can resume
+- [x] The cost cap stops a run cleanly and it can resume
+      (tested with a mock model against the real database: a capped run stopped, the next run
+      took finished units from the cache and did only the rest)
 - [ ] Neo4j constraints and indexes come from versioned scripts; counts match Postgres
 - [ ] No model-written Cypher anywhere (templated, parameterised queries only)
 - [ ] Gleaning 0 versus 2 and the model choice measured on a 5% sample (D5, D6)
