@@ -18,8 +18,9 @@ the phase exit is "measured", so a missed target is reported, not hidden.
 - [ ] Relation precision measured on 30 labeled text units (target 0.80)
 - [ ] Entity resolution precision, recall and F1 measured on labeled pairs (target F1 0.85)
 - [ ] Duplicate entities in a sample audit (target at most 5%); orphan entities (at most 10%)
-      (**orphans MISS: 17.5%**, 323 of 1,848; automatic duplicate proxy 2.9%, the owner's audit
-      is still to do; see `QUALITY.md`)
+      (orphans were **17.5%** (a miss), then 1.6% after D25 left 298 lonely single-mention
+      entities out; both numbers are in `QUALITY.md`; automatic duplicate proxy 2.6%, the
+      owner's audit is still to do)
 - [ ] Second run makes zero model calls (cache) and the graph is unchanged
       (extraction part done: the repeated `idx2-full-g0` run took 750 units from the cache and
       called the model only for the one unit that had failed; the graph part waits for step 7)

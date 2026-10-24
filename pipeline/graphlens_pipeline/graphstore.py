@@ -15,11 +15,11 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from graphlens_pipeline.ontology import Ontology
-from graphlens_pipeline.resolve import Resolution
+from graphlens_pipeline.resolve import Resolution, ResolvedEntity
 
 SCHEMA_DIR = Path(__file__).parent / "graph_schema"
 NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,40}")
@@ -108,6 +108,26 @@ def check_provenance(resolution: Resolution) -> None:
             raise GraphLoadError(f"a {relation.predicate} edge has no evidence text unit")
         if relation.source_id not in ids or relation.target_id not in ids:
             raise GraphLoadError(f"a {relation.predicate} edge points to a missing entity")
+
+
+def isolated_entities(resolution: Resolution) -> list[ResolvedEntity]:
+    """Entities that no relation starts or ends at."""
+    connected = {r.source_id for r in resolution.relations} | {
+        r.target_id for r in resolution.relations
+    }
+    return [e for e in resolution.entities if e.id not in connected]
+
+
+def split_isolated(resolution: Resolution) -> tuple[Resolution, list[ResolvedEntity]]:
+    """Leave out entities that have no relation and were mentioned only once.
+
+    Returns (the resolution without them, the entities left out). Entities with no relation but
+    two or more mentions stay: repetition makes them more likely to be real.
+    """
+    left_out = [e for e in isolated_entities(resolution) if e.mention_count <= 1]
+    gone = {e.id for e in left_out}
+    kept = replace(resolution, entities=[e for e in resolution.entities if e.id not in gone])
+    return kept, left_out
 
 
 def relation_key(source_id: str, predicate: str, target_id: str) -> str:

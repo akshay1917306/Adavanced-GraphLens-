@@ -9,8 +9,9 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 | edge_evidence | 100.0% | >= 100% | PASS |
 | ontology_conformance | 100.0% | >= 100% | PASS |
 | embedding_coverage | 100.0% | >= 100% | PASS |
-| duplicate_rate_proxy | 2.9% | <= 5% | PASS |
-| orphan_rate | 17.5% | <= 10% | **MISS** |
+| duplicate_rate_proxy | 2.6% | <= 5% | PASS |
+| orphan_rate | 1.6% | <= 10% | PASS |
+| orphan_rate_before_pruning | 17.5% | <= 10% | **MISS** |
 
 ## Not measured yet
 
@@ -39,8 +40,8 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 
 ```json
 {
-  "entities": 1848,
-  "with_existing_source_units": 1848
+  "entities": 1550,
+  "with_existing_source_units": 1550
 }
 ```
 
@@ -66,7 +67,7 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 
 ```json
 {
-  "entities": 1848
+  "entities": 1550
 }
 ```
 
@@ -75,28 +76,16 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 ```json
 {
   "kind": "automatic proxy, not the owner's audit",
-  "pairs": 28,
-  "entities_involved": 54,
+  "pairs": 21,
+  "entities_involved": 41,
   "examples": [
     [
       "ComplexWebQuestions (CWQ)",
       "CWQ"
     ],
     [
-      "OLTQA benchmark",
-      "OLTQA dataset"
-    ],
-    [
       "w/ head",
       "w/o head"
-    ],
-    [
-      "+K1\u2192Y",
-      "K1"
-    ],
-    [
-      "+K2\u2192Y",
-      "K2"
     ],
     [
       "adaptation tuning",
@@ -131,12 +120,24 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
       "Greedy algorithm"
     ],
     [
-      "language model architecture",
-      "language models"
-    ],
-    [
       "LLMs",
       "pipeline of LLMs"
+    ],
+    [
+      "neural models",
+      "neural module networks"
+    ],
+    [
+      "oracle strategy",
+      "oracle \u03c0*"
+    ],
+    [
+      "our method",
+      "Ours"
+    ],
+    [
+      "parametric models",
+      "Pm"
     ]
   ]
 }
@@ -146,16 +147,65 @@ Measured by `quality-report` on the graph in Neo4j. Numbers only; no model was c
 
 ```json
 {
-  "isolated": 323,
-  "entities": 1848,
+  "isolated": 25,
+  "entities": 1550,
   "by_type": {
-    "Author": 9,
-    "Dataset": 57,
-    "Method": 69,
-    "Organization": 21,
-    "Paper": 76,
-    "Task": 91
+    "Dataset": 6,
+    "Method": 1,
+    "Organization": 1,
+    "Paper": 8,
+    "Task": 9
   },
-  "single_mention": 298
+  "single_mention": 0
+}
+```
+
+## Details: orphan_rate_before_pruning
+
+```json
+{
+  "by_type": {
+    "Task": 91,
+    "Paper": 76,
+    "Author": 9,
+    "Method": 69,
+    "Dataset": 57,
+    "Organization": 21
+  },
+  "entities": 1848,
+  "isolated": 323,
+  "examples_left_out": [
+    "Author: Aaron Chan",
+    "Author: Allen",
+    "Author: authors of this paper",
+    "Author: crowd annotators",
+    "Author: Dong-Ho Lee",
+    "Author: experts",
+    "Author: Qihan Liu",
+    "Author: WEBGPT annotators",
+    "Author: Woojeong Jin",
+    "Dataset: AI Research Assistant",
+    "Dataset: AQUAINT corpus",
+    "Dataset: ARC",
+    "Dataset: Aseen",
+    "Dataset: ASQA LFQA dataset",
+    "Dataset: background KG",
+    "Dataset: Citation Graph Explorer",
+    "Dataset: Complex WebQuestions 1.1 (CWQ)",
+    "Dataset: CronQuestion",
+    "Dataset: distractor setting",
+    "Dataset: E2E",
+    "Dataset: enterprise documents",
+    "Dataset: Entire Data (3.6K)",
+    "Dataset: expert evaluation of long-form answers",
+    "Dataset: fact corpus C",
+    "Dataset: FinTabNet",
+    "Dataset: GenWiki",
+    "Dataset: Google-RE",
+    "Dataset: Head@3",
+    "Dataset: Human",
+    "Dataset: John_Lennon"
+  ],
+  "left_out_of_the_graph": 298
 }
 ```

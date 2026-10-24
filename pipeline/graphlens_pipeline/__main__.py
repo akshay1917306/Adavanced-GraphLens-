@@ -77,6 +77,10 @@ def main(argv: list[str] | None = None) -> int:
     graph.add_argument("--gleaning", type=int, default=0)
     graph.add_argument("--max-cost-usd", type=float, default=0.25)
     graph.add_argument("--no-llm", action="store_true", help="never ask the model")
+    graph.add_argument(
+        "--keep-isolated", action="store_true",
+        help="also load entities that have no relation and were mentioned once",
+    )  # fmt: skip
     graph.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     quality = sub.add_parser(
         "quality-report", help="measure the graph quality checks (no model, no cost)"
@@ -272,8 +276,11 @@ def _graph_load(engine, args) -> int:
         GraphLoadError,
         apply_schema,
         embedding_text,
+        isolated_entities,
         load_graph,
+        split_isolated,
     )
+    from graphlens_pipeline.quality import Check, save_checks
 
     uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
     if not (uri and user and password):
@@ -283,6 +290,11 @@ def _graph_load(engine, args) -> int:
     if isinstance(computed, int):
         return computed
     result, ontology, embedder = computed
+    full_count = len(result.entities)
+    isolated = isolated_entities(result)
+    left_out = []
+    if not args.keep_isolated:
+        result, left_out = split_isolated(result)
     texts = [embedding_text(e.name, e.description) for e in result.entities]
     vectors = dict(zip((e.id for e in result.entities), embedder.dense(texts), strict=True))
     try:
@@ -292,7 +304,25 @@ def _graph_load(engine, args) -> int:
     except GraphLoadError as error:
         print(f"Graph load refused: {error}", file=sys.stderr)
         return 1
+    # The orphan rate BEFORE leaving anything out stays on record, so the gate cannot be gamed.
+    from collections import Counter
+
+    from sqlalchemy import text
+
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.index_version}
+        ).first()
+    if run:
+        save_checks(engine, str(run[0]), [Check(
+            "orphan_rate_before_pruning", len(isolated) / max(full_count, 1), 0.10, False,
+            {"isolated": len(isolated), "entities": full_count,
+             "by_type": dict(Counter(e.type for e in isolated)),
+             "left_out_of_the_graph": len(left_out),
+             "examples_left_out": [f"{e.type}: {e.name}" for e in left_out[:30]]},
+        )])  # fmt: skip
     print(json.dumps({
+        "left_out_isolated_single_mention": len(left_out),
         "schema_scripts_applied_now": applied,
         "expected": {"entities": len(result.entities), "relations": len(result.relations)},
         "in_neo4j": {
@@ -311,7 +341,13 @@ def _quality_report(engine, args) -> int:
     from sqlalchemy import text
 
     from graphlens_pipeline.ontology import load_ontology
-    from graphlens_pipeline.quality import compute_checks, read_graph, render_report, save_checks
+    from graphlens_pipeline.quality import (
+        Check,
+        compute_checks,
+        read_graph,
+        render_report,
+        save_checks,
+    )
 
     uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
     if not (uri and user and password):
@@ -332,7 +368,20 @@ def _quality_report(engine, args) -> int:
         return 1
     checks = compute_checks(entities, edges, run.stats or {}, load_ontology(args.ontology), engine)
     save_checks(engine, str(run.id), checks)
-    report = render_report(checks, args.index_version)
+    shown = list(checks)
+    with engine.connect() as conn:  # the rate from before graph-load left lonely entities out
+        before = conn.execute(
+            text(
+                "SELECT value, threshold, details FROM quality_checks"
+                " WHERE run_id = :r AND check_name = 'orphan_rate_before_pruning'"
+            ),
+            {"r": run.id},
+        ).first()
+    if before:
+        shown.append(Check(
+            "orphan_rate_before_pruning", float(before[0]), float(before[1]), False, before[2]
+        ))  # fmt: skip
+    report = render_report(shown, args.index_version)
     if args.out:
         args.out.write_text(report, encoding="utf-8")
     for check in checks:

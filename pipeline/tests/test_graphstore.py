@@ -17,9 +17,11 @@ from graphlens_pipeline.graphstore import (
     check_provenance,
     count_graph,
     embedding_text,
+    isolated_entities,
     load_graph,
     relation_key,
     schema_scripts,
+    split_isolated,
 )
 from graphlens_pipeline.resolve import Resolution, ResolvedEntity, ResolvedRelation
 from tests.test_resolve import ONTOLOGY
@@ -73,6 +75,20 @@ def test_every_entity_needs_a_source_and_every_edge_needs_evidence():
         )
     with pytest.raises(GraphLoadError, match="missing entity"):
         check_provenance(resolution([entity("a", "A")], [relation("a", "X", "zzz")]))
+
+
+def test_lonely_single_mention_entities_are_left_out_but_repeated_ones_stay():
+    lonely = ResolvedEntity("c", "Cited et al.", "Paper", [], "d", 1, ["u1"])
+    repeated = ResolvedEntity("d", "Seen twice", "Method", [], "d", 2, ["u1", "u2"])
+    data = resolution(
+        [entity("a", "A"), entity("b", "B", "Dataset"), lonely, repeated],
+        [relation("a", "EVALUATED_ON", "b")],
+    )
+    kept, left_out = split_isolated(data)
+    assert [e.id for e in left_out] == ["c"]
+    assert [e.id for e in kept.entities] == ["a", "b", "d"] and kept.relations == data.relations
+    assert [e.id for e in isolated_entities(data)] == ["c", "d"]
+    assert len(data.entities) == 4  # the input is not changed
 
 
 def test_a_load_without_a_vector_is_refused_before_touching_the_database():

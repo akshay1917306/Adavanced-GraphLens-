@@ -141,7 +141,12 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
   `quality_checks`, report in `QUALITY.md`. 7 tests in `tests/test_quality.py`.
 - PASS: schema validity 100%, node provenance 100%, edge evidence 100%, ontology conformance
   100%, embedding coverage 100%, duplicate proxy 2.9% (automatic, not the owner's audit).
-- **MISS: orphan entities 17.5%** (323 of 1,848; target at most 10%).
+- **MISS: orphan entities 17.5%** (323 of 1,848; target at most 10%). Owner chose option B
+  (D25): `graph-load` now leaves out the 298 isolated entities that were mentioned once (flag
+  `--keep-isolated` keeps them). Neo4j now holds **1,550 entities and 2,695 relations**, orphan
+  rate 1.6% (25 entities with two or more mentions stay). The 17.5% is stored as
+  `orphan_rate_before_pruning` and shown in `QUALITY.md`; the real fix (a better extraction
+  prompt) is Phase 3 work.
 - **Cause (checked on the raw extraction):** the model proposes entities that have no relation in
   the same text unit. 805 of 4,591 mentions (17.5%) are like that: cited papers (25% of Paper
   mentions), generic tasks and metrics such as "F1 score" (34% of Task mentions) and
@@ -171,12 +176,7 @@ None.
 ## Decisions waiting for the owner
 
 - OpenAI monthly limit of about $5 or more in the OpenAI dashboard (PREREQUISITES item 3).
-- **Orphan entities (17.5%, target 10%).** Options: (A, my recommendation) keep them and report the
-  miss, because an isolated entity still links a name to its text units for entity search, and
-  the lever is a better extraction prompt in Phase 3; (B) leave isolated single-mention
-  entities out of the graph, which would show about 1% but loses those links; (C) re-extract
-  with a prompt that asks for a relation for every entity, which costs about $0.8 or more and
-  would pass the $3 cap (about $2.40 is spent).
+- (Decided: orphan entities, option B, D25.)
 
 ## Exact next action
 
