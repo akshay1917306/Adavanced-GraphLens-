@@ -94,6 +94,18 @@ def main(argv: list[str] | None = None) -> int:
     comm.add_argument("--index-version", default="idx2-full-g0")
     comm.add_argument("--max-cluster-size", type=int, default=50)
     comm.add_argument("--seed", type=int, default=42)
+    rep = sub.add_parser(
+        "community-reports", help="write a report for every community (calls OpenAI, costs money)"
+    )
+    rep.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    rep.add_argument("--index-version", default="idx2-full-g0", help="the graph to read")
+    rep.add_argument("--run-version", default="idx2-full-g0-reports")
+    rep.add_argument("--max-cost-usd", type=float, default=0.75, help="stop when spent")
+    rep.add_argument("--workers", type=int, default=4)
+    rep.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
+    rep.add_argument(
+        "--smoke", type=int, default=0, help="only N leaf communities, print them, store nothing"
+    )
     for name, helptext in (
         ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
         ("labels-render", "write the review pages from the label files"),
@@ -167,6 +179,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "communities":
         return _communities(args)
+
+    if args.command == "community-reports":
+        return _community_reports(engine, args)
 
     if args.command.startswith("labels-"):
         return _labels(engine, args)
@@ -404,6 +419,88 @@ def _communities(args) -> int:
         "problems_after_write": stored_problems,
     }, indent=2))  # fmt: skip
     return 1 if stored_problems else 0
+
+
+def _community_reports(engine, args) -> int:
+    import json
+
+    import tiktoken
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.communities import read_communities
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.reports import (
+        PROMPT_VERSION,
+        build_reports,
+        estimate,
+        read_graph_data,
+        store_reports,
+    )
+    from graphlens_pipeline.runs import begin_stage, end_stage, finish_run, start_run
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        communities = read_communities(driver, args.index_version)
+        graph = read_graph_data(driver, args.index_version)
+        if not communities:
+            print("No communities; run the communities command first.", file=sys.stderr)
+            return 1
+        if args.dry_run:
+            encoder = tiktoken.get_encoding("o200k_base")
+            print(json.dumps(
+                estimate(engine, model, communities, graph, lambda s: len(encoder.encode(s))),
+                indent=2,
+            ))  # fmt: skip
+            print("Prompt tokens are counted for leaf communities and assumed for parents;")
+            print("answer sizes are assumptions. Nothing was spent.")
+            return 0
+        try:
+            llm = OpenAiLlm(model=model)
+        except LlmError as error:
+            print(f"Cannot start: {error}", file=sys.stderr)
+            return 2
+        if args.smoke:  # a few real calls to look at the quality; the answers are cached
+            leaves = sorted(
+                (c for c in communities if c.is_leaf and not c.is_stub), key=lambda c: c.id
+            )
+            step = max(1, len(leaves) // args.smoke)
+            picked = leaves[::step][: args.smoke]
+            result = build_reports(engine, llm, picked, graph, args.max_cost_usd, args.workers)
+            for community in picked:
+                report = result.reports.get(community.id)
+                print(json.dumps({"community": community.id, "size": community.size,
+                                  "report": report.to_json() if report else result.failed},
+                                 indent=1, ensure_ascii=False))  # fmt: skip
+            print(f"cost ${result.cost_usd:.4f}, calls {result.generated}, stored nothing")
+            return 0
+        config = {"model": model, "prompt": PROMPT_VERSION, "graph": args.index_version}
+        run = start_run(
+            engine, args.corpus_name, args.run_version, config, args.max_cost_usd, sample=False
+        )
+        begin_stage(engine, run, "community_reports", len(communities))
+        result = build_reports(
+            engine, llm, communities, graph, args.max_cost_usd, args.workers,
+            on_progress=lambda done, total, cost: print(f"  {done}/{total} reports, ${cost:.4f}"),
+        )  # fmt: skip
+        store_reports(driver, result.reports, args.index_version)
+    complete = len(result.reports) == len(communities)
+    stats = {
+        "communities": len(communities), "reports": len(result.reports),
+        "generated": result.generated, "from_cache": result.from_cache, "stubs": result.stubs,
+        "failed": result.failed, "skipped_by_cap": result.skipped_by_cap,
+        "dropped_citations": result.dropped_citations,
+        "outcome": "complete" if complete else "partial",
+    }  # fmt: skip
+    end_stage(engine, run, "community_reports", len(result.reports), result.cost_usd,
+              None if complete else "not every community has a report")  # fmt: skip
+    finish_run(engine, run, "running" if complete else "failed", result.cost_usd,
+               result.tokens_in, result.tokens_out, stats)  # fmt: skip
+    print(json.dumps({**stats, "cost_usd": result.cost_usd}, indent=2))
+    return 0 if complete else 1
 
 
 def _labels(engine, args) -> int:
