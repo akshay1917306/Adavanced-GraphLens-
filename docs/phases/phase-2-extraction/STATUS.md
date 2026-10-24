@@ -97,7 +97,29 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
 - Money spent in Phase 2 so far (from `index_runs`): **$2.24**.
 - Run records: `idx2-full-g0` and `idx2-full-g2` stay `running` until the quality gate decides.
 
+## Step 6: entity resolution (2026-10-24, Claude, built; precision NOT yet measured)
+
+- Code: `pipeline/graphlens_pipeline/resolve.py`, CLI `resolve`, 46 tests in `tests/test_resolve.py`.
+  Whole suite: 198 passed (1 model test deselected); ruff check and format clean.
+- Result on the `idx2-full-g0` results (4,591 mentions): **1,738 entities**, 2,642 relations.
+  Decisions stored in `resolution_decisions`: 80 auto merges, 164 model merges, 414 model "keep
+  separate", 63 rule-blocked. 432 model calls, about $0.079; one call failed and stayed separate.
+  Judge calls now run 8 at a time: 2 min 19 s instead of 25+ min.
+- Rules alone give 1,884 entities, so the model adds about 146 more merges.
+- **Honest quality note:** I read the first 100 model merges. Most are right (RGF, DPR, RNN,
+  EM variants, beam search wording), but roughly 15 to 20 of them look wrong or too broad
+  (`ROUGE` with `Rouge-X`, `Step Verifier` with `verifier`, `bandit feedback` with `simulated
+  bandit feedback`, `WorldTreeQA` with `WorldTreeV2`, `Dense Passage Retrieval` with `dense
+  retrieval`). That is my reading only, not a measurement. The real number comes from the
+  labeled pairs in step 9 (gate: ER F1 at least 0.85). If it fails, options are a stricter
+  rule (model merges only when a rule agrees) or a stronger judge model (needs your cost OK).
+- Money spent in Phase 2 so far: about **$2.40** of the $3 cap (extraction $2.24, resolution
+  runs $0.16).
+
 ## Things that went wrong and were fixed (so the next session knows)
+
+- The first resolution run took 25+ minutes because model calls were one after another. I made
+  them parallel. A reboot had also stopped Docker; starting Docker Desktop again fixed it.
 
 - Docker's engine was stopped after a reboot. Quitting Docker Desktop, running `wsl --shutdown`
   and starting Docker Desktop again fixed it.
@@ -115,11 +137,10 @@ None.
 
 ## Exact next action
 
-Build step 6 (entity resolution) on the cached results of `idx2-full-g0`: normalise names, merge
-exact duplicates, find near-duplicate candidates (string and embedding similarity, same type
-only), auto-merge only when very sure, ask the model for the gray zone with a small cost cap,
-store every decision in `resolution_decisions`. Then step 7 (Neo4j load), 8 (quality report),
-9 (labeled sets, owner review), 10 (tests, docs, README, CI).
+Build step 7 (Neo4j load): versioned constraint and index scripts, nodes and edges with
+provenance (`source_unit_ids`, `evidence_unit_ids`), entity embeddings and vector index,
+idempotent, templated parameterised Cypher only. Then 8 (quality report), 9 (labeled sets, owner
+review), 10 (tests, docs, README, CI). Nothing from Phase 2 is pushed.
 
 ## Notes for the next session
 

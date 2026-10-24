@@ -390,6 +390,24 @@ def load_units(engine: Engine, corpus_name: str, fraction: float = 1.0) -> list[
     ]
 
 
+def load_cached_results(
+    engine: Engine, units: list[dict], model: str, ontology: Ontology, gleaning_passes: int
+) -> dict[str, UnitResult]:
+    """The stored extraction of each unit, found by the same key that `run_extraction` uses.
+
+    Units that were never extracted (or failed) are missing from the answer.
+    """
+    keyed = {
+        cache_key(u["hash"], u["title"], model, ontology, gleaning_passes): u["id"] for u in units
+    }
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text("SELECT cache_key, result FROM extraction_cache WHERE cache_key = ANY(:keys)"),
+            {"keys": list(keyed)},
+        ).all()
+    return {keyed[row.cache_key]: UnitResult.from_json(row.result) for row in rows}
+
+
 def run_extraction(
     engine: Engine,
     llm: Llm,

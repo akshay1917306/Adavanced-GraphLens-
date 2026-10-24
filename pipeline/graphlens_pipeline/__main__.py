@@ -62,6 +62,13 @@ def main(argv: list[str] | None = None) -> int:
     extract.add_argument("--workers", type=int, default=4)
     extract.add_argument("--index-version", default="idx-sample-1")
     extract.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    resolve = sub.add_parser("resolve", help="merge duplicate entities (small model cost, capped)")
+    resolve.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    resolve.add_argument("--index-version", default="idx2-full-g0")
+    resolve.add_argument("--gleaning", type=int, default=0)
+    resolve.add_argument("--max-cost-usd", type=float, default=0.25)
+    resolve.add_argument("--no-llm", action="store_true", help="never ask the model")
+    resolve.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
@@ -108,6 +115,9 @@ def main(argv: list[str] | None = None) -> int:
         for paper_id, reason in ingest["failures"].items():
             print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
         return 1 if ingest["failures"] else 0
+
+    if args.command == "resolve":
+        return _resolve(engine, args)
 
     if args.command == "extract-estimate":
         return _extract_estimate(engine, args)
@@ -199,6 +209,58 @@ def main(argv: list[str] | None = None) -> int:
     for paper_id, reason in report.failures.items():
         print(f"FAILED {paper_id}: {reason}", file=sys.stderr)
     return 1 if report.failures else 0
+
+
+def _resolve(engine, args) -> int:
+    import json
+    from collections import Counter
+
+    from sqlalchemy import text
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.extract import load_cached_results, load_units
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.resolve import resolve, save_decisions
+
+    ontology = load_ontology(args.ontology)
+    model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
+    units = load_units(engine, args.corpus_name)
+    results = load_cached_results(engine, units, model, ontology, args.gleaning)
+    if len(results) < len(units):
+        print(f"Only {len(results)} of {len(units)} units are extracted; run extract first.",
+              file=sys.stderr)  # fmt: skip
+        return 1
+    llm = None
+    if not args.no_llm:
+        try:
+            llm = OpenAiLlm(model=model)
+        except LlmError as error:
+            print(f"Cannot start: {error}", file=sys.stderr)
+            return 2
+    embedder = FastEmbedder()
+    result = resolve(
+        engine, results, {u["id"]: u["title"] for u in units}, ontology, embedder.dense, llm,
+        args.max_cost_usd,
+    )  # fmt: skip
+    with engine.connect() as conn:
+        run = conn.execute(
+            text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.index_version}
+        ).first()
+    if run:
+        save_decisions(engine, str(run[0]), result.decisions)
+    methods = Counter((d.method, d.decision) for d in result.decisions)
+    print(json.dumps({
+        "mentions": result.mentions, "noise_dropped": result.dropped_noise,
+        "groups_after_exact_merge": result.clusters_before_merging_pairs,
+        "entities_final": len(result.entities), "relations_final": len(result.relations),
+        "aliases_kept": sum(len(e.aliases) for e in result.entities),
+        "by_type": dict(Counter(e.type for e in result.entities)),
+        "decisions": {f"{m}/{d}": n for (m, d), n in sorted(methods.items())},
+        "model_calls": result.model_calls, "model_cost_usd": result.model_cost_usd,
+        "pairs_left_unasked": result.unasked_pairs, "decisions_saved": bool(run),
+    }, indent=2))  # fmt: skip
+    return 0
 
 
 def _extract_estimate(engine, args) -> int:
