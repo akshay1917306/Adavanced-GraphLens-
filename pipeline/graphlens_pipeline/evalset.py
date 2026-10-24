@@ -137,9 +137,12 @@ def render_review(questions: list[dict]) -> str:
         "Write your decision in the **Your decision** line (OK, CHANGE: ..., or DROP).",
         "",
     ]
-    for kind, title in (("local", "Local questions (30)"), ("global", "Global questions (10)")):
-        lines += [f"## {title}", ""]
-        for q in (x for x in questions if x["kind"] == kind):
+    for kind in ("local", "global"):
+        of_kind = [x for x in questions if x["kind"] == kind]
+        if not of_kind:
+            continue
+        lines += [f"## {kind.capitalize()} questions ({len(of_kind)})", ""]
+        for q in of_kind:
             lines += [
                 f"### {q['id']}: {q['question']}",
                 "",

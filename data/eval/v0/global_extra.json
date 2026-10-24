@@ -1,0 +1,289 @@
+{
+  "version": 0,
+  "corpus": "qa_v0",
+  "status": "DRAFT by Claude, waiting for the owner's review (10 extra global questions)",
+  "drafted_by": "Claude (from the abstracts of the 25 papers)",
+  "note": "Extra global questions G11 to G20, added for the Phase 3 win-rate measurement because 10 questions are too few. Every quote is an exact substring of the cited text unit; this is checked by a script.",
+  "questions": [
+    {
+      "id": "G11",
+      "kind": "global",
+      "hops": 5,
+      "question": "Which papers aim to make question answering explainable, faithful or attributable, and how?",
+      "reference_answer": "Entailment trees built with Monte-Carlo planning (FAME); rationales learned without supervision (Hop, Union, Generate); evidential paths for knowledge graph reasoning (SQUIRE); interpretable logic rules (deep inductive logic reasoning); attributing answers to retrieved sources (cross-lingual attribution).",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.218",
+          "unit_id": "u_bd66cdf3c6b3_0001",
+          "quote": "The reasoning steps are organized as a structured entailment tree"
+        },
+        {
+          "paper_id": "2023.emnlp-main.1001",
+          "unit_id": "u_08db683fca63_0001",
+          "quote": "not only predicts answers but also identifies rationales"
+        },
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0001",
+          "quote": "provide interpretable predictions on missing links with evidential paths"
+        },
+        {
+          "paper_id": "2022.acl-long.343",
+          "unit_id": "u_f1e807c70065_0001",
+          "quote": "logic-based approaches provide interpretable rules to infer the target answer"
+        },
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0001",
+          "quote": "attribute the answer to a retrieved source"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G12",
+      "kind": "global",
+      "hops": 3,
+      "question": "What role do data augmentation, counterfactuals or simulated data play in the corpus?",
+      "reference_answer": "Hidden space augmentation of training samples (QADA); counterfactual training and evaluation data created by retrieve-generate-filter; user feedback simulated from supervised data (bandit learning).",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.147",
+          "unit_id": "u_56d31becd18d_0001",
+          "quote": "introduces a novel data augmentation pipeline used to augment training QA samples"
+        },
+        {
+          "paper_id": "2022.acl-long.117",
+          "unit_id": "u_6183c13e0bb6_0001",
+          "quote": "create counterfactual evaluation and training data with minimal human supervision"
+        },
+        {
+          "paper_id": "2022.acl-long.355",
+          "unit_id": "u_e4de0d926563_0001",
+          "quote": "simulating feedback using supervised data"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G13",
+      "kind": "global",
+      "hops": 3,
+      "question": "How do the papers deal with long documents or evidence spread over several documents?",
+      "reference_answer": "Long context documents with logically related information (ConditionalQA); a global memory over a long document (GEMFormer); questions that need reasoning across multiple documents (WikiHowQA).",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.253",
+          "unit_id": "u_85db020b91cb_0001",
+          "quote": "long context documents with information that is related in logically complex ways"
+        },
+        {
+          "paper_id": "2023.emnlp-main.262",
+          "unit_id": "u_2dae343019ba_0001",
+          "quote": "This task includes processing a long document and reasoning over the multiple parts of it"
+        },
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0001",
+          "quote": "many questions require reasoning across multiple documents"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G14",
+      "kind": "global",
+      "hops": 3,
+      "question": "Which papers study long-form or non-factoid answers, and what problems do they point out?",
+      "reference_answer": "Experts judge long-form answers and no existing metric predicts their preferences (critical evaluation of LFQA); non-factoid answers are passage-level and hard to construct and evaluate (WikiHowQA); longer candidate answers make matching with gold answers harder (evaluating open-domain QA with LLMs).",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0001",
+          "quote": "no existing metrics are predictive of human preference judgments"
+        },
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0001",
+          "quote": "requiring passage-level answers that are difficult to construct and evaluate"
+        },
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0001",
+          "quote": "candidate answers become longer"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G15",
+      "kind": "global",
+      "hops": 5,
+      "question": "Which papers build their method around a pre-trained language model or an encoder-decoder Transformer, and for what?",
+      "reference_answer": "An encoder-decoder Transformer translating a query into a path (SQUIRE) and acting as a knowledge graph embedding model (sequence-to-sequence KG completion and QA); a pre-trained language model that supports subgraph reasoning (ReasoningLM); retriever and reranker as attention inside one Transformer (You Only Need One Model); a pre-trained language model aligning questions and KG artifacts (ALCQA).",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0001",
+          "quote": "utilizes an encoder-decoder Transformer structure to translate the query to a path"
+        },
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0001",
+          "quote": "an off-the-shelf encoder-decoder Transformer model can serve as a scalable and versatile KGE model"
+        },
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0001",
+          "quote": "develop a more capable PLM that can directly support subgraph reasoning for KGQA"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0001",
+          "quote": "within the transformer architecture"
+        },
+        {
+          "paper_id": "2022.emnlp-main.10",
+          "unit_id": "u_a97dfd913ccf_0001",
+          "quote": "utilize a pretrained language model to implicitly align the question and KG artifacts"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G16",
+      "kind": "global",
+      "hops": 3,
+      "question": "Which papers handle special kinds of questions, such as temporal, numeric or conditional ones?",
+      "reference_answer": "Temporal questions over knowledge graphs (SF-TQA); multi-step quantitative reasoning where numeric and verbal cues interact (compositional generalization); answers that only hold under certain conditions (ConditionalQA).",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0001",
+          "quote": "Answering factual questions with temporal intent over knowledge graphs"
+        },
+        {
+          "paper_id": "2022.emnlp-main.125",
+          "unit_id": "u_039c611d6451_0001",
+          "quote": "Quantitative reasoning is an important aspect of question answering"
+        },
+        {
+          "paper_id": "2022.acl-long.253",
+          "unit_id": "u_85db020b91cb_0001",
+          "quote": "the answers are only applicable when certain conditions apply"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G17",
+      "kind": "global",
+      "hops": 3,
+      "question": "Which papers improve the retriever-reader pipeline of open-domain question answering, and how?",
+      "reference_answer": "A knowledge graph linking the retrieved passages (KG-FiD); merging retriever, reranker and reader into one model (You Only Need One Model); a verbalizer that turns structured data into text for the retriever and reader (unified knowledge interface).",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0001",
+          "quote": "uses a knowledge graph to establish the structural relationship among the retrieved passages"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0001",
+          "quote": "a single question answering model trained end-to-end"
+        },
+        {
+          "paper_id": "2022.acl-long.113",
+          "unit_id": "u_b8cfb9072b0d_0001",
+          "quote": "retrieverreader framework"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G18",
+      "kind": "global",
+      "hops": 3,
+      "question": "Which papers rewrite or transform questions, text or data as a step in their method?",
+      "reference_answer": "Rewriting questions to align them with actions (ALCQA); rewriting snippets so that they can be read on their own (decontextualization); turning structured data into text (data-to-text verbalizer).",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.10",
+          "unit_id": "u_a97dfd913ccf_0001",
+          "quote": "We train a question rewriting model to align the question and each action"
+        },
+        {
+          "paper_id": "2023.emnlp-main.193",
+          "unit_id": "u_d352bfc2d1e1_0001",
+          "quote": "rewrite snippets from scientific documents to be read on their own"
+        },
+        {
+          "paper_id": "2022.acl-long.113",
+          "unit_id": "u_b8cfb9072b0d_0001",
+          "quote": "use the data-to-text method as a means for encoding structured knowledge"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G19",
+      "kind": "global",
+      "hops": 4,
+      "question": "Which papers point out weaknesses of existing models, metrics or practices, and which weaknesses?",
+      "reference_answer": "Metrics do not predict expert preferences (LFQA evaluation); lexical matching fails when a plausible answer is not in the gold list (evaluating open-domain QA); models rely on shortcuts instead of multi-hop reasoning (counterfactual multihop QA); raw generations of generative models often fall short in factuality (attribution for cross-lingual QA).",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0001",
+          "quote": "no existing metrics are predictive of human preference judgments"
+        },
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0001",
+          "quote": "lexical matching fails completely when a plausible candidate answer does not appear in the list of gold answers"
+        },
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0001",
+          "quote": "the existing QA models always rely on shortcuts"
+        },
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0001",
+          "quote": "their raw generations often fall short in factuality"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "G20",
+      "kind": "global",
+      "hops": 4,
+      "question": "Which papers propose one unified or simplified model in place of a multi-stage pipeline?",
+      "reference_answer": "One model for retrieval, reranking and reading (You Only Need One Model); one encoder-decoder Transformer in place of a multi-stage KGE pipeline (sequence-to-sequence KG completion and QA); a single PLM instead of PLM plus GNN (ReasoningLM); one unified model for many tasks (long-tailed QA).",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0001",
+          "quote": "This allows us to use a single question answering model trained end-to-end"
+        },
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0001",
+          "quote": "integrated into a multi stage pipeline"
+        },
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0001",
+          "quote": "we aim to simplify the above two-module approach"
+        },
+        {
+          "paper_id": "2023.acl-long.351",
+          "unit_id": "u_533dbf92ffe5_0001",
+          "quote": "building a unified QA model supporting various tasks is vital"
+        }
+      ],
+      "review": "draft"
+    }
+  ]
+}

@@ -41,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
         "eval-verify", help="check that every evidence quote exists in the corpus"
     )
     check.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    check.add_argument("--local", type=int, default=30, help="expected number of local questions")
+    check.add_argument("--global", dest="global_count", type=int, default=10,
+                       help="expected number of global questions")  # fmt: skip
     review = sub.add_parser("eval-review", help="write the review page for the owner")
     review.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     review.add_argument("--out", type=Path, default=Path("/tmp/REVIEW.md"))  # noqa: S108
@@ -127,6 +130,20 @@ def main(argv: list[str] | None = None) -> int:
     gask.add_argument(
         "--select-only", action="store_true", help="show the selection, call no model"
     )
+    geval = sub.add_parser(
+        "global-eval", help="judge global search against the baseline (calls OpenAI, costs money)"
+    )
+    geval.add_argument("--index-version", default="idx2-full-g0")
+    geval.add_argument(
+        "--questions", type=Path, nargs="+",
+        default=[eval_dir / "questions.json", eval_dir / "global_extra.json"],
+    )  # fmt: skip
+    geval.add_argument("--ablation-questions", type=int, default=10,
+                       help="how many questions also run without dynamic selection")  # fmt: skip
+    geval.add_argument("--max-cost-usd", type=float, default=1.0)
+    geval.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
+    geval.add_argument("--out-dir", type=Path, default=Path("/out"))
+    geval.add_argument("--label", default="")
     for name, helptext in (
         ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
         ("labels-render", "write the review pages from the label files"),
@@ -210,6 +227,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "global-ask":
         return _global_ask(args)
 
+    if args.command == "global-eval":
+        return _global_eval(engine, args)
+
     if args.command == "community-quality":
         return _community_quality(engine, args)
 
@@ -261,7 +281,8 @@ def main(argv: list[str] | None = None) -> int:
 
         questions = load_questions(args.questions)
         wanted = {item["unit_id"] for q in questions for item in q["evidence"]}
-        problems = verify(questions, fetch_unit_texts(engine, wanted), {"local": 30, "global": 10})
+        expected = {"local": args.local, "global": args.global_count}
+        problems = verify(questions, fetch_unit_texts(engine, wanted), expected)
         for problem in problems:
             print(f"PROBLEM {problem.question_id}: {problem.message}", file=sys.stderr)
         print(f"{len(questions)} questions, {len(wanted)} evidence units, {len(problems)} problems")
@@ -531,6 +552,188 @@ def _community_reports(engine, args) -> int:
                result.tokens_in, result.tokens_out, stats)  # fmt: skip
     print(json.dumps({**stats, "cost_usd": result.cost_usd}, indent=2))
     return 0 if complete else 1
+
+
+def _global_eval(engine, args) -> int:
+    import json
+    import threading
+    from datetime import date
+
+    import tiktoken
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import AnswerError, answer_question
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.globaleval import (
+        _key,
+        cached,
+        render_report,
+        run_global_eval,
+        store,
+        win_rates,
+    )
+    from graphlens_pipeline.globalsearch import answer_from_selection, select_communities
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    qdrant_url = os.environ.get("QDRANT_URL")
+    if not (uri and user and password and qdrant_url):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    questions = [
+        q
+        for path in args.questions
+        for q in json.loads(path.read_text(encoding="utf-8"))["questions"]
+        if q["kind"] == "global"
+    ]
+    encoder = tiktoken.get_encoding("o200k_base")
+
+    def count(s: str) -> int:
+        return len(encoder.encode(s))
+
+    embedder, embed_lock = FastEmbedder(), threading.Lock()
+    driver = GraphDatabase.driver(uri, auth=(user, password))
+
+    def query_vector(question: str):
+        with embed_lock:
+            return embedder.dense_query(question)
+
+    if args.dry_run:
+        per = {"baseline": 0.0012, "ours": 0.008, "judge_call": 0.0015}
+        fresh_base = fresh_ours = 0
+        for q in questions:
+            if cached(engine, _key("baseline", q["question"])) is None:
+                fresh_base += 1
+            sel = select_communities(driver, query_vector, q["question"], args.index_version)
+            signature = ",".join(s.id for s in sel)
+            if cached(engine, _key("ours", q["question"], "dynamic", signature)) is None:
+                fresh_ours += 1
+        full = select_communities(
+            driver, query_vector, questions[0]["question"], args.index_version, dynamic=False
+        )
+        tokens = sum(count(s.summary) + count(s.title) + 120 for s in full)
+        ablation = min(args.ablation_questions, len(questions))
+        full_cost = (tokens * 0.40 + (tokens // 6000 + 1) * 700 * 1.60) / 1e6 + 0.003
+        comparisons = len(questions) + ablation
+        total = (
+            fresh_base * per["baseline"]
+            + fresh_ours * per["ours"]
+            + ablation * full_cost
+            + comparisons * 2 * per["judge_call"]
+        )
+        print(
+            json.dumps(
+                {
+                    "global_questions": len(questions),
+                    "fresh_baseline_answers": fresh_base,
+                    "fresh_global_answers": fresh_ours,
+                    "ablation_questions": ablation,
+                    "reports_without_selection": len(full),
+                    "map_tokens_without_selection": tokens,
+                    "judge_calls": comparisons * 2,
+                    "cost_usd_estimate": round(total, 3),
+                    "cost_usd_with_margin": round(total * 1.4, 3),
+                },
+                indent=2,
+            )
+        )
+        print("Per-call prices are assumptions checked on one real question. Nothing was spent.")
+        driver.close()
+        return 0
+
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    qdrant = QdrantClient(url=qdrant_url)
+
+    def baseline_for(question: str):
+        key = _key("baseline", question)
+        hit = cached(engine, key)
+        if hit:
+            return hit["text"], 0.0
+        try:
+            with embed_lock:
+                result = answer_question(question, qdrant, engine, embedder, llm, k=6)
+        except AnswerError as error:
+            raise LlmError(f"baseline failed: {error}") from error
+        store(engine, key, {"text": result.answer})
+        return result.answer, result.cost_usd or 0.0
+
+    def ours_with(dynamic: bool):
+        def ours_for(question: str):
+            sel = select_communities(
+                driver, query_vector, question, args.index_version, dynamic=dynamic
+            )
+            mode = "dynamic" if dynamic else "all"
+            key = _key("ours", question, mode, ",".join(s.id for s in sel))
+            hit = cached(engine, key)
+            if hit:
+                return hit["text"], hit["partial"], 0.0
+            answer = answer_from_selection(llm, question, sel, count, dynamic=dynamic)
+            if not answer.partial:  # a partial answer is not kept, so a rerun can complete it
+                store(engine, key, {"text": answer.text, "partial": answer.partial})
+            return answer.text, answer.partial, answer.cost_usd
+
+        return ours_for
+
+    def progress(done: int, total: int, cost: float) -> None:
+        print(f"  {done}/{total} questions, ${cost:.4f}")
+
+    label = args.label or date.today().isoformat()
+    main = run_global_eval(
+        engine, llm, questions, baseline_for, ours_with(True), args.max_cost_usd,
+        on_progress=progress,
+    )  # fmt: skip
+    remaining = max(args.max_cost_usd - main.cost_usd, 0.0)
+    ablation = run_global_eval(
+        engine, llm, questions[: args.ablation_questions], baseline_for, ours_with(False),
+        remaining, on_progress=progress,
+    )  # fmt: skip
+    driver.close()
+    rates, rates_all = win_rates(main.results), win_rates(ablation.results)
+    note = (
+        "Judge and answerer are the same model family and the question set is small; read the "
+        "interval, not only the rate."
+    )
+    report = render_report(f"dynamic selection ({label})", rates, main, note)
+    report += "\n" + render_report(
+        f"no selection, first {len(ablation.results)} questions ({label})", rates_all, ablation
+    )
+    (args.out_dir / f"global-{label}.md").write_text(report, encoding="utf-8")
+
+    def dump(run):
+        return [
+            {
+                "id": r.question_id, "question": r.question, "baseline": r.baseline_answer,
+                "ours": r.ours_answer, "partial": r.ours_partial, "failed": r.failed,
+                "outcome": r.judgement.outcome if r.judgement else None,
+                "reasons": r.judgement.reasons if r.judgement else None,
+                "cost_usd": r.cost_usd,
+            }
+            for r in run.results
+        ]  # fmt: skip
+
+    payload = {
+        "dynamic": {"rates": rates, "cost_usd": main.cost_usd, "results": dump(main)},
+        "no_selection": {
+            "rates": rates_all,
+            "cost_usd": ablation.cost_usd,
+            "results": dump(ablation),
+        },
+    }
+    (args.out_dir / f"global-{label}.json").write_text(
+        json.dumps(payload, indent=1, ensure_ascii=False), encoding="utf-8"
+    )
+    for name, r in rates.items():
+        rate = "-" if r["win_rate"] is None else f"{r['win_rate']:.0%}"
+        print(
+            f"{name}: {rate} ({r['wins']} wins, {r['ties']} ties, {r['losses']} losses of {r['n']})"
+        )
+    print(f"cost ${main.cost_usd + ablation.cost_usd:.4f}")
+    return 0
 
 
 def _global_ask(args) -> int:
