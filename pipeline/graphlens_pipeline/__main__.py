@@ -115,6 +115,18 @@ def main(argv: list[str] | None = None) -> int:
     )
     cquality.add_argument("--index-version", default="idx2-full-g0")
     cquality.add_argument("--run-version", default="idx2-full-g0-reports")
+    gask = sub.add_parser(
+        "global-ask", help="answer a corpus-wide question from community reports (costs money)"
+    )
+    gask.add_argument("question")
+    gask.add_argument("--index-version", default="idx2-full-g0")
+    gask.add_argument("--level", type=int, default=1)
+    gask.add_argument("--max-reports", type=int, default=40)
+    gask.add_argument("--threshold", type=float, default=None)
+    gask.add_argument("--no-dynamic", action="store_true", help="use every report of the level")
+    gask.add_argument(
+        "--select-only", action="store_true", help="show the selection, call no model"
+    )
     for name, helptext in (
         ("labels-draw", "draw the samples for labeling (refuses to overwrite existing files)"),
         ("labels-render", "write the review pages from the label files"),
@@ -194,6 +206,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "community-embed":
         return _community_embed(args)
+
+    if args.command == "global-ask":
+        return _global_ask(args)
 
     if args.command == "community-quality":
         return _community_quality(engine, args)
@@ -516,6 +531,58 @@ def _community_reports(engine, args) -> int:
                result.tokens_in, result.tokens_out, stats)  # fmt: skip
     print(json.dumps({**stats, "cost_usd": result.cost_usd}, indent=2))
     return 0 if complete else 1
+
+
+def _global_ask(args) -> int:
+    import json
+
+    import tiktoken
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.globalsearch import (
+        THRESHOLD,
+        answer_from_selection,
+        select_communities,
+    )
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    threshold = THRESHOLD if args.threshold is None else args.threshold
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        selected = select_communities(
+            driver, FastEmbedder().dense_query, args.question, args.index_version,
+            args.level, args.max_reports, threshold, dynamic=not args.no_dynamic,
+        )  # fmt: skip
+    print(f"selected {len(selected)} reports at level {args.level} (threshold {threshold})")
+    if args.select_only:
+        for item in selected[:15]:
+            print(f"  {item.score:.3f}  {item.label}  {item.title[:90]}")
+        return 0
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    encoder = tiktoken.get_encoding("o200k_base")
+    answer = answer_from_selection(
+        llm, args.question, selected, lambda s: len(encoder.encode(s)),
+        on_progress=lambda done, total, state: print(f"  map batch {done}/{total}: {state}"),
+        dynamic=not args.no_dynamic,
+    )  # fmt: skip
+    print(chr(10) + answer.text + chr(10))
+    print(json.dumps({
+        "partial": answer.partial, "batches": answer.batches,
+        "failed_batches": answer.failed_batches,
+        "reports_selected": answer.selected, "reports_used": len(answer.used),
+        "cost_usd": answer.cost_usd, "seconds": answer.seconds,
+    }))  # fmt: skip
+    for item in answer.used:
+        print(f"  [{item.label}] {item.title}")
+    return 0
 
 
 def _community_embed(args) -> int:
