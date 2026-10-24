@@ -4,9 +4,9 @@ GraphLens turns a document collection into a knowledge graph and answers questio
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is built on a branch and waits for the owner's review.**
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is built on a branch and waits for the owner's approval.**
 > The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
-> used for answers, and its accuracy numbers are drafts). There is no web interface for
+> used for answers, and its relation precision is 0.81 and entity-resolution F1 0.75, below the target). There is no web interface for
 > questions (Phase 5). Development data: 25 open-licensed research papers.
 
 ## Status
@@ -37,7 +37,7 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Entity resolution with stored decisions and a merge guard | Implemented |
 | Neo4j graph: 1,550 entities, 2,695 relations, with source and evidence passages, vector index | Implemented |
 | Quality report on the graph | Implemented, see [QUALITY.md](docs/phases/phase-2-extraction/QUALITY.md) |
-| Relation precision 0.81 and entity-resolution F1 0.75 | **Draft** (labels not owner-reviewed yet) |
+| Relation precision 0.81 (target 0.80) and entity-resolution F1 0.75 (target 0.85) | **Measured** on 182 relations and 110 pairs |
 | Communities, global search, router, relate, citation support check | Planned (Phases 3 and 4) |
 | Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |
 | CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
@@ -112,7 +112,7 @@ database and Qdrant collections.
 - Only 25 development papers; the real corpus (200 to 300) is not loaded.
 - The evaluation questions come from abstracts, so the local score (93%) is probably too easy.
   The judge is the same model as the answerer and was too strict in 2 of 4 spot-checks.
-- The graph's accuracy numbers (relation precision, entity-resolution F1) are drafts until the owner reviews the labels; the resolver is strict, so many true duplicates stay separate.
+- Entity-resolution F1 is 0.75 against a 0.85 target: the resolver is strict, so many true duplicates stay separate. Claude drafted the labels and the owner confirmed them without changes.
 - About 17.5% of extracted entities had no relation; lonely single-mention ones are left out of the graph.
 - Citation checking only proves a cited number exists, not that the passage supports the claim.
 - Text cleaning is heuristic (footnotes, equations and tables can be messy).

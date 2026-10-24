@@ -16,7 +16,7 @@
      "description": "The paper studies training Transformerbased models with limited data and sensitivity analysis.",
      "draft": "unsure",
      "reason": "models are studied for stability; 'uses' is weak",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R01.2",
@@ -26,7 +26,7 @@
      "description": "The paper uses HotpotQA dataset for training initial models and simulation experiments.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R01.3",
@@ -36,7 +36,7 @@
      "description": "The paper uses TriviaQA dataset for training initial models and simulation experiments.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -54,7 +54,7 @@
      "description": "The paper proposes the QADECONTEXT method for decontextualizing user-facing snippets.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R02.2",
@@ -64,7 +64,7 @@
      "description": "QADECONTEXT uses the Rewriter module as the final step in its decontextualization pipeline.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R02.3",
@@ -74,7 +74,7 @@
      "description": "QADECONTEXT uses a question generation module as part of its pipeline.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R02.4",
@@ -84,7 +84,7 @@
      "description": "QADECONTEXT uses a question answering module as part of its pipeline, which is a major source of error.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -102,7 +102,7 @@
      "description": "The paper uses the BEM model for evaluation of QA systems via semantic similarity.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R03.2",
@@ -112,7 +112,7 @@
      "description": "BEM is trained on a human-annotated collection of answer pairs derived from SQuAD.",
      "draft": "incorrect",
      "reason": "BEM was trained on SQuAD-derived data, not evaluated on it",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R03.3",
@@ -122,7 +122,7 @@
      "description": "BEM is used to decide whether gold answers and candidate answers are semantically equivalent or not.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -140,7 +140,7 @@
      "description": "The paper introduces the compositional attention component to enhance alignments between natural language input and program output in quantitative QA.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R04.2",
@@ -150,7 +150,7 @@
      "description": "The compositional attention component targets the task of multi-step quantitative reasoning in question answering.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R04.3",
@@ -160,7 +160,7 @@
      "description": "The paper discusses the FinQA dataset to illustrate the long-tail distribution challenge in multi-step quantitative reasoning.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -178,7 +178,7 @@
      "description": "The paper proposes the Global Explicit Memory method involving collecting global memory from remaining tokens in the document.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.2",
@@ -188,7 +188,7 @@
      "description": "Global Explicit Memory uses the HotpotQA dataset with threshold 0.3 for evaluation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.3",
@@ -198,7 +198,7 @@
      "description": "Global Explicit Memory uses the 2WikiMHQA dataset with threshold 0.45 for evaluation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.4",
@@ -208,7 +208,7 @@
      "description": "Global Explicit Memory uses the MuSiQue dataset with threshold 0.2 for evaluation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.5",
@@ -218,7 +218,7 @@
      "description": "Task-tuned RoBERTa is evaluated on HotpotQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.6",
@@ -228,7 +228,7 @@
      "description": "Task-tuned RoBERTa is evaluated on 2WikiMHQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.7",
@@ -238,7 +238,7 @@
      "description": "Task-tuned RoBERTa is evaluated on MuSiQue dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.8",
@@ -248,7 +248,7 @@
      "description": "YAKE! keywords memory is evaluated on HotpotQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.9",
@@ -258,7 +258,7 @@
      "description": "YAKE! keywords memory is evaluated on 2WikiMHQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.10",
@@ -268,7 +268,7 @@
      "description": "YAKE! keywords memory is evaluated on MuSiQue dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.11",
@@ -278,7 +278,7 @@
      "description": "GEMFormer HighestH is evaluated on HotpotQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.12",
@@ -288,7 +288,7 @@
      "description": "GEMFormer HighestH is evaluated on 2WikiMHQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.13",
@@ -298,7 +298,7 @@
      "description": "GEMFormer HighestH is evaluated on MuSiQue dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.14",
@@ -308,7 +308,7 @@
      "description": "GEMFormer Low (H <ˆθ) is evaluated on HotpotQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.15",
@@ -318,7 +318,7 @@
      "description": "GEMFormer Low (H <ˆθ) is evaluated on 2WikiMHQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.16",
@@ -328,7 +328,7 @@
      "description": "GEMFormer Low (H <ˆθ) is evaluated on MuSiQue dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.17",
@@ -338,7 +338,7 @@
      "description": "GEMFormer Low (H <5th%) is evaluated on HotpotQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.18",
@@ -348,7 +348,7 @@
      "description": "GEMFormer Low (H <5th%) is evaluated on 2WikiMHQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R05.19",
@@ -358,7 +358,7 @@
      "description": "GEMFormer Low (H <5th%) is evaluated on MuSiQue dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -376,7 +376,7 @@
      "description": "The paper discusses the BEM method which rejects only 1 exactly matched correct answer.",
      "draft": "incorrect",
      "reason": "BEM comes from Bulian et al. 2022; this paper does not propose it",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R06.2",
@@ -386,7 +386,7 @@
      "description": "BEM's accuracy is evaluated on the CuratedTREC dataset.",
      "draft": "unsure",
      "reason": "BEM is the evaluator; the figure evaluates QA models on CuratedTREC",
-     "owner": null
+     "owner": "unsure"
     }
    ]
   },
@@ -404,7 +404,7 @@
      "description": "The paper proposes passage graph construction based on knowledge graph for reranking retrieved passages.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R07.2",
@@ -414,7 +414,7 @@
      "description": "The paper uses the DPR retriever for passage retrieval and to generate offline passage embeddings reused as initial node representations.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R07.3",
@@ -424,7 +424,7 @@
      "description": "The paper employs a graph attention network with Lg layers as the graph neural network model to update node representations for reranking.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R07.4",
@@ -434,7 +434,7 @@
      "description": "The graph attention network updates node embeddings based on the passage graph structure.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R07.5",
@@ -444,7 +444,7 @@
      "description": "The graph attention network uses initial node representations generated from the DPR retriever's offline passage embeddings.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -462,7 +462,7 @@
      "description": "The paper proposes a novel KG-based reranking method to enhance FiD for Open-Domain Question Answering.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R08.2",
@@ -472,7 +472,7 @@
      "description": "The KG-based reranking method targets the task of Open-Domain Question Answering.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R08.3",
@@ -482,7 +482,7 @@
      "description": "The reranking method reuses the passage representation generated by DPR retriever.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R08.4",
@@ -492,7 +492,7 @@
      "description": "The reranking method reuses the passage representation generated by the reader encoder.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R08.5",
@@ -502,7 +502,7 @@
      "description": "The reranking method applies graph neural networks to compute reranking scores.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R08.6",
@@ -512,7 +512,7 @@
      "description": "The proposed model significantly improves original FiD by 1.5% exact match score.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R08.7",
@@ -522,7 +522,7 @@
      "description": "Experiments on Natural Questions show the model's performance improvements.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R08.8",
@@ -532,7 +532,7 @@
      "description": "Experiments on TriviaQA show the model's performance improvements.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -550,7 +550,7 @@
      "description": "The paper proposes the CompAQT method which has a regularizing effect on the model.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R09.2",
@@ -560,7 +560,7 @@
      "description": "The paper proposes the FinQANet+CompAQT model evaluated in the study.",
      "draft": "unsure",
      "reason": "FinQANet is prior work; the combination is a configuration",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R09.3",
@@ -570,7 +570,7 @@
      "description": "FinQANet+CompAQT incorporates the CompAQT method as part of its model.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R09.4",
@@ -580,7 +580,7 @@
      "description": "FinQANet+CompAQT's performance is reported on the FinQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R09.5",
@@ -590,7 +590,7 @@
      "description": "FinQANet+CompAQT is evaluated on the TAT-QA dataset as part of the combined dataset.",
      "draft": "unsure",
      "reason": "TAT-QA is added to the training data; not clearly an evaluation set",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R09.6",
@@ -600,7 +600,7 @@
      "description": "FinQANet+CompAQT is evaluated on the MULTIHIERTT dataset as part of the combined dataset.",
      "draft": "unsure",
      "reason": "MULTIHIERTT is added to the training data; not clearly an evaluation set",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R09.7",
@@ -610,7 +610,7 @@
      "description": "CompAQT targets the task of multi-step quantitative reasoning in question answering.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R09.8",
@@ -620,7 +620,7 @@
      "description": "FinQANet+CompAQT addresses multi-step quantitative reasoning in question answering.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -638,7 +638,7 @@
      "description": "Contrastive loss has been proposed to handle domain adaptation in extractive QA.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R10.2",
@@ -648,7 +648,7 @@
      "description": "Augmentation in the hidden space encourages more generalizable features for training in NLP tasks, relevant to QA.",
      "draft": "incorrect",
      "reason": "hidden-space augmentation is described as used outside QA",
-     "owner": null
+     "owner": "incorrect"
     }
    ]
   },
@@ -666,7 +666,7 @@
      "description": "The paper adds CompAQT to each model to indicate additional performance gain/loss.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R11.2",
@@ -676,7 +676,7 @@
      "description": "The paper uses the paired-bootstrap test proposed by Berg-Kirkpatrick et al. (2012) to determine significance of gain/loss.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -694,7 +694,7 @@
      "description": "The paper proposes a question rewriting model to transform queries into utterances corresponding to single actions.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R12.2",
@@ -704,7 +704,7 @@
      "description": "The paper proposes a two-phase training method to train the rewriting model on the lack of training pairs.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R12.3",
@@ -714,7 +714,7 @@
      "description": "The paper builds a seq2seq model to generate logical forms with beam search algorithm.",
      "draft": "unsure",
      "reason": "'we build' a seq2seq model; not clearly proposed",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R12.4",
@@ -724,7 +724,7 @@
      "description": "The seq2seq model uses beam search algorithm in the decoding stage to generate logical forms.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R12.5",
@@ -734,7 +734,7 @@
      "description": "The paper uses a pretrained language model like BERT to encode concatenated question and KG artifact input for alignment.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R12.6",
@@ -744,7 +744,7 @@
      "description": "The pretrained language model is exemplified by BERT used for encoding input for alignment.",
      "draft": "incorrect",
      "reason": "'PLM like BERT': BERT is an example, the PLM does not improve on it",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R12.7",
@@ -754,7 +754,7 @@
      "description": "The paper proposes a framework mitigating the gap between natural language questions and structural logical forms through question-to-action alignment.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R12.8",
@@ -764,7 +764,7 @@
      "description": "The paper proposes to improve complex knowledge base question answering via question-to-question alignment.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R12.9",
@@ -774,7 +774,7 @@
      "description": "The paper proposes a reward-guided selection strategy that scores candidate action sequences using similar question-answer pairs.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -792,7 +792,7 @@
      "description": "The paper proposes the retriever R1 as part of the model.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R13.2",
@@ -802,7 +802,7 @@
      "description": "The paper proposes the re-ranker R2 as part of the model.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R13.3",
@@ -812,7 +812,7 @@
      "description": "The paper proposes the component F used for knowledge distillation.",
      "draft": "unsure",
      "reason": "F is the QA model (a variable name)",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R13.4",
@@ -822,7 +822,7 @@
      "description": "The paper uses BM25 Retriever as a baseline to replace retriever R1.",
      "draft": "unsure",
      "reason": "BM25 replaces R1 in an ablation",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R13.5",
@@ -832,7 +832,7 @@
      "description": "The paper uses EPR Retriever as a baseline to train R1 using a pre-trained LM scoring function.",
      "draft": "unsure",
      "reason": "EPR replaces R1 in an ablation",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R13.6",
@@ -842,7 +842,7 @@
      "description": "The paper uses the w/o Re-ranker variant to evaluate the effect of removing R2.",
      "draft": "incorrect",
      "reason": "ablation variant, not something the paper uses",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R13.7",
@@ -852,7 +852,7 @@
      "description": "The paper uses the w/o MKD variant to evaluate the effect of removing the adaptive mutual KD loss Lmkd.",
      "draft": "incorrect",
      "reason": "ablation variant, not something the paper uses",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R13.8",
@@ -862,7 +862,7 @@
      "description": "The paper uses the Static MKD variant to evaluate the effect of removing Lmkd and performing mutual KD based on initial performance.",
      "draft": "incorrect",
      "reason": "ablation variant, not something the paper uses",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R13.9",
@@ -872,7 +872,7 @@
      "description": "The paper uses the Back KD variant to evaluate the effect of removing Lmkd and training R1 and R2 using knowledge distilled from F.",
      "draft": "incorrect",
      "reason": "ablation variant, not something the paper uses",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R13.10",
@@ -882,7 +882,7 @@
      "description": "The two-stage training of R1 in the model performs better than BM25 Retriever.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R13.11",
@@ -892,7 +892,7 @@
      "description": "The two-stage training of R1 in the model performs better than EPR Retriever.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R13.12",
@@ -902,7 +902,7 @@
      "description": "Re-ranking hints by R2 improves QA performance compared to removing R2.",
      "draft": "unsure",
      "reason": "compares with removing the re-ranker",
-     "owner": null
+     "owner": "unsure"
     }
    ]
   },
@@ -920,7 +920,7 @@
      "description": "The paper proposes casting the retriever and reranker as internal passage-wise attention mechanisms within the transformer architecture to create a single question answering model.",
      "draft": "incorrect",
      "reason": "the paper builds on the transformer; it does not propose it",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R14.2",
@@ -930,7 +930,7 @@
      "description": "The paper evaluates the proposed model on the Natural Questions dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R14.3",
@@ -940,7 +940,7 @@
      "description": "The paper evaluates the proposed model on the TriviaQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -958,7 +958,7 @@
      "description": "Exact-Match accuracy is used to measure the performance of models on open-domain QA tasks by checking exact matches with gold answers.",
      "draft": "unsure",
      "reason": "EM is a metric for the task; 'addresses' is loose",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R15.2",
@@ -968,7 +968,7 @@
      "description": "F1 score is used to evaluate open-domain QA by measuring token overlap between candidate and gold answers.",
      "draft": "unsure",
      "reason": "F1 is a metric for the task; 'addresses' is loose",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R15.3",
@@ -978,7 +978,7 @@
      "description": "Exact-Match accuracy is computed using answers derived from a knowledge source such as Wikipedia.",
      "draft": "incorrect",
      "reason": "Wikipedia is the knowledge source, not an evaluation set",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R15.4",
@@ -988,7 +988,7 @@
      "description": "F1 score is computed using answers derived from a knowledge source such as Wikipedia.",
      "draft": "incorrect",
      "reason": "Wikipedia is the knowledge source, not an evaluation set",
-     "owner": null
+     "owner": "incorrect"
     }
    ]
   },
@@ -1006,7 +1006,7 @@
      "description": "The paper proposes the QADA method for QA domain adaptation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R16.2",
@@ -1016,7 +1016,7 @@
      "description": "QADA was evaluated on the HotpotQA dataset as shown in the ablation study table.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R16.3",
@@ -1026,7 +1026,7 @@
      "description": "QADA was evaluated on the NaturalQ dataset as shown in the ablation study table.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R16.4",
@@ -1036,7 +1036,7 @@
      "description": "QADA was evaluated on the NewsQA dataset as shown in the ablation study table.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R16.5",
@@ -1046,7 +1046,7 @@
      "description": "QADA was evaluated on the SearchQA dataset as shown in the ablation study table.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R16.6",
@@ -1056,7 +1056,7 @@
      "description": "QADA was evaluated on the TriviaQA dataset as shown in the ablation study table.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R16.7",
@@ -1066,7 +1066,7 @@
      "description": "CAQA* adopts the same process of pseudo labeling and self-supervised adaptation as QADA but excludes question generation and hidden space augmentation.",
      "draft": "unsure",
      "reason": "CAQA* adopts QADA's process; direction unclear",
-     "owner": null
+     "owner": "unsure"
     }
    ]
   },
@@ -1084,7 +1084,7 @@
      "description": "The paper introduces how to apply KG to build a graph structure among retrieved passages.",
      "draft": "incorrect",
      "reason": "KG is background, not proposed",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R17.2",
@@ -1094,7 +1094,7 @@
      "description": "The paper proposes graph-based stage-1 reranking with DPR retriever to improve passage retrieval.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R17.3",
@@ -1104,7 +1104,7 @@
      "description": "Graph-based stage-1 reranking is adopted with DPR retriever to improve passage retrieval.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R17.4",
@@ -1114,7 +1114,7 @@
      "description": "The paper introduces joint stage-2 reranking and answer generation in the reading module.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R17.5",
@@ -1124,7 +1124,7 @@
      "description": "The paper illustrates improvement of efficiency by using intermediate layer representation for stage-2 reranking.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -1142,7 +1142,7 @@
      "description": "The paper uses NSM as a baseline method that utilizes a key-variable memory to handle compositionality and helps find good programs by pruning the search space.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.2",
@@ -1152,7 +1152,7 @@
      "description": "The paper uses MRL-CQA as a baseline method that proposes a meta-reinforcement learning approach adapting the meta-learned programmer to new questions using an unsupervised retrieval model.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.3",
@@ -1162,7 +1162,7 @@
      "description": "The paper uses MARL as a baseline method that proposes a meta-reinforcement learning approach learning alternately with the programmer from weak supervision.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.4",
@@ -1172,7 +1172,7 @@
      "description": "The paper uses NS-CQA as a baseline method that presents a memory buffer storing high-reward programs and proposes an adaptive reward function to improve training performance.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.5",
@@ -1182,7 +1182,7 @@
      "description": "The paper uses SSRP as a baseline method that presents a noise-resilient model distant-supervised by the final answer.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.6",
@@ -1192,7 +1192,7 @@
      "description": "The paper uses CBR-KBQA as a baseline method that generates complex logical forms conditioned on similar retrieved questions and their logical forms to generalize to unseen relations.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.7",
@@ -1202,7 +1202,7 @@
      "description": "The paper compares its method with graph-based methods on the WQSP dataset including STAGG which proposes a staged query graph generation framework and leverages the knowledge base early to prune the search space.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.8",
@@ -1212,7 +1212,7 @@
      "description": "The paper compares its method with graph-based methods on the WQSP dataset including TEXTRAY which answers complex questions using a novel decompose-execute-join approach.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.9",
@@ -1222,7 +1222,7 @@
      "description": "The paper compares its method with graph-based methods on the WQSP dataset including QGG which modifies STAGG with more flexible ways to handle constraints and multi-hop relations.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R18.10",
@@ -1232,7 +1232,7 @@
      "description": "The paper compares its method with graph-based methods on the WQSP dataset including OQGG which starts with the entire knowledge base and gradually shrinks it to the desired query graph.",
      "draft": "incorrect",
      "reason": "baseline compared against, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     }
    ]
   },
@@ -1250,7 +1250,7 @@
      "description": "The paper introduces Pm as a soft prompt optimized during QA model training.",
      "draft": "unsure",
      "reason": "Pm may be this paper's soft prompt; the passage cites Liu et al. 2021",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R19.2",
@@ -1260,7 +1260,7 @@
      "description": "The paper introduces a retrieve-then-rerank framework to select in-context examples.",
      "draft": "unsure",
      "reason": "framework is cited (Ren et al. 2021) though 'introduced' here",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R19.3",
@@ -1270,7 +1270,7 @@
      "description": "Pm is optimized when training the QA model F.",
      "draft": "unsure",
      "reason": "Pm is a prompt for F; direction unclear",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R19.4",
@@ -1280,7 +1280,7 @@
      "description": "The paper mines knowledge from a large pre-trained LM g to construct knowledge prompt Pk.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R19.5",
@@ -1290,7 +1290,7 @@
      "description": "The framework includes retriever R1 to retrieve candidate examples.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R19.6",
@@ -1300,7 +1300,7 @@
      "description": "The framework includes re-ranker R2 to select top hints for knowledge prompt Pk.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R19.7",
@@ -1310,7 +1310,7 @@
      "description": "Retriever R1 retrieves candidate examples from training set Dtr.",
      "draft": "incorrect",
      "reason": "R1 retrieves from Dtr; it is not evaluated on it",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R19.8",
@@ -1320,7 +1320,7 @@
      "description": "Re-ranker R2 selects top hints from examples retrieved from training set Dtr.",
      "draft": "incorrect",
      "reason": "R2 selects among hints from Dtr examples; it is not evaluated on it",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R19.9",
@@ -1330,7 +1330,7 @@
      "description": "Knowledge prompt Pk is constructed using text generated by LM g.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R19.10",
@@ -1340,7 +1340,7 @@
      "description": "Re-ranker R2 selects top hints to form knowledge prompt Pk.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -1358,7 +1358,7 @@
      "description": "The paper uses long answers from Natural Questions encoded into sentence embeddings for similarity search.",
      "draft": "incorrect",
      "reason": "describes other datasets in related work, not WikiHowQA",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R20.2",
@@ -1368,7 +1368,7 @@
      "description": "The paper uses the Common Crawl corpus for similarity search for QF-MDS tasks.",
      "draft": "incorrect",
      "reason": "describes other datasets in related work, not WikiHowQA",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R20.3",
@@ -1378,7 +1378,7 @@
      "description": "The paper performs similarity search over the corpus for QF-MDS tasks similar to ELI5.",
      "draft": "incorrect",
      "reason": "describes other datasets in related work, not WikiHowQA",
-     "owner": null
+     "owner": "incorrect"
     }
    ]
   },
@@ -1396,7 +1396,7 @@
      "description": "Ehsan Kamalloo is an author of the paper.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R21.2",
@@ -1406,7 +1406,7 @@
      "description": "Nouha Dziri is an author of the paper.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R21.3",
@@ -1416,7 +1416,7 @@
      "description": "Charles L. A. Clarke is an author of the paper.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R21.4",
@@ -1426,7 +1426,7 @@
      "description": "Davood Rafiei is an author of the paper.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R21.5",
@@ -1436,7 +1436,7 @@
      "description": "Ehsan Kamalloo is affiliated with University of Alberta.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R21.6",
@@ -1446,7 +1446,7 @@
      "description": "Davood Rafiei is affiliated with University of Alberta.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R21.7",
@@ -1456,7 +1456,7 @@
      "description": "Charles L. A. Clarke is affiliated with University of Waterloo.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R21.8",
@@ -1466,7 +1466,7 @@
      "description": "Nouha Dziri is affiliated with Allen Institute for Artificial Intelligence.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -1484,7 +1484,7 @@
      "description": "Traditional KGE models address the task of knowledge graph completion by creating unique embeddings per entity/relation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R22.2",
@@ -1494,7 +1494,7 @@
      "description": "DKRL attempts to tackle scalability issues of traditional KGE models using compositional embeddings.",
      "draft": "unsure",
      "reason": "DKRL improves scalability, not quality",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R22.3",
@@ -1504,7 +1504,7 @@
      "description": "KEPLER attempts to tackle scalability issues of traditional KGE models using compositional embeddings.",
      "draft": "unsure",
      "reason": "KEPLER improves scalability, not quality",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R22.4",
@@ -1514,7 +1514,7 @@
      "description": "KG-BERT utilizes pretrained BERT for link prediction, addressing knowledge graph completion with potential versatility.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R22.5",
@@ -1524,7 +1524,7 @@
      "description": "QA methods leveraging KGEs address question answering on incomplete knowledge graphs.",
      "draft": "incorrect",
      "reason": "these QA methods address KGQA, not KGC",
-     "owner": null
+     "owner": "incorrect"
     }
    ]
   },
@@ -1542,7 +1542,7 @@
      "description": "The paper uses ROUGE-1 scores to filter training instances for data-to-text model training.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R23.2",
@@ -1552,7 +1552,7 @@
      "description": "The paper uses the filtered training data T-F for training the generator in the first iteration.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R23.3",
@@ -1562,7 +1562,7 @@
      "description": "The paper uses the ID-T dataset, sampled based on ROUGE-1 scores, for next-round training of the generator.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R23.4",
@@ -1572,7 +1572,7 @@
      "description": "The paper uses the pretrained T5-Large model as the generator for verbalization.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R23.5",
@@ -1582,7 +1582,7 @@
      "description": "The T5-Large model is fine-tuned to generate target sentences from structured data inputs, addressing data-to-text generation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -1600,7 +1600,7 @@
      "description": "The paper proposes the HUG-Small method for multi-hop reasoning without rationale supervision.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.2",
@@ -1610,7 +1610,7 @@
      "description": "The paper evaluates HUG-Small on the HotpotQA dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.3",
@@ -1620,7 +1620,7 @@
      "description": "The paper evaluates HUG-Small on the MuSiQue dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.4",
@@ -1630,7 +1630,7 @@
      "description": "The paper evaluates HUG-Small on the FEVER dataset.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.5",
@@ -1640,7 +1640,7 @@
      "description": "HUG-Small is evaluated on the HotpotQA dataset, outperforming RAG-Small and CHAIN on rationale prediction and answer prediction.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.6",
@@ -1650,7 +1650,7 @@
      "description": "HUG-Small is evaluated on the MuSiQue dataset, outperforming RAG-Small in rationale identification and answer prediction.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.7",
@@ -1660,7 +1660,7 @@
      "description": "HUG-Small is evaluated on the FEVER dataset, outperforming RU-DIAGNOSTICS and RU-FAITHFUL in rationale selection and answer prediction.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.8",
@@ -1670,7 +1670,7 @@
      "description": "HUG-Small outperforms RAG-Small on HotpotQA and MuSiQue datasets in rationale and answer prediction.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R24.9",
@@ -1680,7 +1680,7 @@
      "description": "HUG-Small outperforms the semi-supervised CHAIN method on predicting rationales on HotpotQA.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -1698,7 +1698,7 @@
      "description": "The paper introduces a simple human evaluation framework to ensure the reliability of MD-NFQA evaluation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R25.2",
@@ -1708,7 +1708,7 @@
      "description": "The human evaluation framework is introduced to ensure the reliability of MD-NFQA evaluation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R25.3",
@@ -1718,7 +1718,7 @@
      "description": "The human evaluation framework is employed to assess the performance of baselines in the benchmark.",
      "draft": "unsure",
      "reason": "the framework is used to assess baselines; 'uses' is loose",
-     "owner": null
+     "owner": "unsure"
     }
    ]
   },
@@ -1736,7 +1736,7 @@
      "description": "The paper proposes the OLTQA model with knowledge sharing and mining components.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R26.2",
@@ -1746,7 +1746,7 @@
      "description": "The OLTQA model employs a retrieve-then-rerank frame to mine knowledge from a large pretrained LM.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R26.3",
@@ -1756,7 +1756,7 @@
      "description": "The OLTQA model uses a novel two-stage knowledge distillation training process.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R26.4",
@@ -1766,7 +1766,7 @@
      "description": "The retrieve-then-rerank frame mines knowledge from a large pretrained LM.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R26.5",
@@ -1776,7 +1776,7 @@
      "description": "The second stage jointly trains the retrieve-then-rerank framework and an encoder-decoder QA model through adaptive mutual knowledge distillation.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R26.6",
@@ -1786,7 +1786,7 @@
      "description": "The OLTQA model addresses the challenges of the OLTQA task.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -1804,7 +1804,7 @@
      "description": "The paper discusses atomic KGE models as part of knowledge graph embeddings.",
      "draft": "incorrect",
      "reason": "related work, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R27.2",
@@ -1814,7 +1814,7 @@
      "description": "The paper discusses compositional KGE models as part of knowledge graph embeddings.",
      "draft": "incorrect",
      "reason": "related work, not used by the paper",
-     "owner": null
+     "owner": "incorrect"
     },
     {
      "id": "R27.3",
@@ -1824,7 +1824,7 @@
      "description": "Atomic KGE models obtain superior performance in the link prediction task.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R27.4",
@@ -1834,7 +1834,7 @@
      "description": "Applying atomic KGE models to question answering requires separate KGE and QA modules.",
      "draft": "unsure",
      "reason": "applicable to QA only with a separate QA module",
-     "owner": null
+     "owner": "unsure"
     },
     {
      "id": "R27.5",
@@ -1844,7 +1844,7 @@
      "description": "Compositional KGE models combat the linear scaling problem of atomic KGE models with the number of entities.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R27.6",
@@ -1854,7 +1854,7 @@
      "description": "DKRL uses the TransE scoring function after encoding entity descriptions with a CNN encoder.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R27.7",
@@ -1864,7 +1864,7 @@
      "description": "DKRL is a compositional KGE model designed for link prediction.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R27.8",
@@ -1874,7 +1874,7 @@
      "description": "KEPLER combines KGE training with masked language modeling for link prediction.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R27.9",
@@ -1884,7 +1884,7 @@
      "description": "MLMLM performs worse than atomic KGE models on link prediction on large KGs.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R27.10",
@@ -1894,7 +1894,7 @@
      "description": "MLMLM is yet to be applied to downstream text-based tasks such as question answering.",
      "draft": "incorrect",
      "reason": "MLMLM is 'yet to be applied' to downstream tasks",
-     "owner": null
+     "owner": "incorrect"
     }
    ]
   },
@@ -1912,7 +1912,7 @@
      "description": "The paper introduces CompAQT, a compositional attention module for quantitative reasoning in question answering.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R28.2",
@@ -1922,7 +1922,7 @@
      "description": "CompAQT targets the question answering task by enabling the model to attend to relevant parts of text at each reasoning step.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R28.3",
@@ -1932,7 +1932,7 @@
      "description": "CompAQT improves state-of-the-art performance on numeric question answering tasks.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R28.4",
@@ -1942,7 +1942,7 @@
      "description": "CompAQT enhances model robustness and program accuracy in multi-step reasoning tasks.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R28.5",
@@ -1952,7 +1952,7 @@
      "description": "The paper combines and refines four QA datasets over tabular data and unifies their annotation schema for use in experiments.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -1970,7 +1970,7 @@
      "description": "The paper uses ETC as a baseline method for evaluation on ConditionalQA.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R29.2",
@@ -1980,7 +1980,7 @@
      "description": "The paper uses DocHopper as a baseline method for evaluation on ConditionalQA.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R29.3",
@@ -1990,7 +1990,7 @@
      "description": "The paper uses FiD as a baseline method for evaluation on ConditionalQA.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R29.4",
@@ -2000,7 +2000,7 @@
      "description": "ETC is evaluated on the ConditionalQA dataset as a baseline method.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R29.5",
@@ -2010,7 +2010,7 @@
      "description": "DocHopper is evaluated on the ConditionalQA dataset as a baseline method.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R29.6",
@@ -2020,7 +2020,7 @@
      "description": "FiD is evaluated on the ConditionalQA dataset as a baseline method.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   },
@@ -2038,7 +2038,7 @@
      "description": "The paper cites Bohnet et al. (2022) for defining the AQA task.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R30.2",
@@ -2048,7 +2048,7 @@
      "description": "The paper cites Asai et al. (2021b) for showing that crosslingual QA systems outperform monolingual systems for many languages.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     },
     {
      "id": "R30.3",
@@ -2058,7 +2058,7 @@
      "description": "The paper cites Muller et al. (2022) for showing that crosslingual QA systems outperform monolingual systems for many languages.",
      "draft": "correct",
      "reason": "",
-     "owner": null
+     "owner": "correct"
     }
    ]
   }

@@ -15,11 +15,12 @@ the phase exit is "measured", so a missed target is reported, not hidden.
 - [x] Every edge has at least one evidence unit; every node has `source_unit_ids` (100%)
       (2,695 of 2,695 edges and 1,848 of 1,848 nodes, and the ids exist in `text_units`;
       measured by `quality-report` on the real Neo4j graph)
-- [ ] Relation precision measured on 30 labeled text units (target 0.80)
-      (**draft only, not owner-reviewed:** 0.81 on 182 relations; waits for the owner's review)
-- [ ] Entity resolution precision, recall and F1 measured on labeled pairs (target F1 0.85)
-      (**draft only, not owner-reviewed:** precision 1.00, recall 0.60, F1 0.75, a miss; waits for
-      the owner's review)
+- [x] Relation precision measured on 30 labeled text units (target 0.80)
+      (**0.81** on 182 relations, 20 unsure excluded (0.72 to 0.83 if they all went one way);
+      owner confirmed all labels 2026-10-24)
+- [x] Entity resolution precision, recall and F1 measured on labeled pairs (target F1 0.85)
+      (measured, **F1 0.75 is a miss**: precision 1.00, recall 0.60; owner confirmed all labels
+      2026-10-24; decision on the guard is open)
 - [ ] Duplicate entities in a sample audit (target at most 5%); orphan entities (at most 10%)
       (orphans were **17.5%** (a miss), then 1.6% after D25 left 298 lonely single-mention
       entities out; both numbers are in `QUALITY.md`; automatic duplicate proxy 2.6%, the

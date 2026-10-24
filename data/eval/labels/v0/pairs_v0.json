@@ -23,7 +23,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P002",
@@ -38,7 +38,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P003",
@@ -53,7 +53,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P004",
@@ -68,7 +68,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P005",
@@ -83,7 +83,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P006",
@@ -98,7 +98,7 @@
    "rationale": "acronym written next to its long form",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P007",
@@ -113,7 +113,7 @@
    "rationale": "acronym written next to its long form",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P008",
@@ -128,7 +128,7 @@
    "rationale": "acronym written next to its long form",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P009",
@@ -143,7 +143,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P010",
@@ -158,7 +158,7 @@
    "rationale": "acronym written next to its long form",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P011",
@@ -173,7 +173,7 @@
    "rationale": "acronym written next to its long form",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P012",
@@ -188,7 +188,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P013",
@@ -203,7 +203,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P014",
@@ -218,7 +218,7 @@
    "rationale": "near-identical spelling",
    "draft": "unsure",
    "reason": "QA as a paradigm versus QA systems",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P015",
@@ -233,7 +233,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P016",
@@ -248,7 +248,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P017",
@@ -263,7 +263,7 @@
    "rationale": "acronym written next to its long form",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P018",
@@ -278,7 +278,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P019",
@@ -293,7 +293,7 @@
    "rationale": "near-identical spelling",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P020",
@@ -308,7 +308,7 @@
    "rationale": "near-identical spelling",
    "draft": "unsure",
    "reason": "a module of one pipeline versus QA systems in general",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P021",
@@ -323,7 +323,7 @@
    "rationale": "LFQA is an abbreviation for long-form question answering.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P022",
@@ -338,7 +338,7 @@
    "rationale": "Lexical Match and lexical matching are the same evaluation method described with minor wording differences.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P023",
@@ -353,7 +353,7 @@
    "rationale": "Both names refer to the same task of answering questions with faithful reasoning steps, with minor wording differences and an abbreviation.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P024",
@@ -368,7 +368,7 @@
    "rationale": "ODQA is the abbreviation of Open-Domain Question Answering, referring to the same task.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P025",
@@ -383,7 +383,7 @@
    "rationale": "EM is an abbreviation for exact matching, both referring to the evaluation metric.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P026",
@@ -398,7 +398,7 @@
    "rationale": "beam search and beam search algorithm refer to the same inference method with a harmless extra word 'algorithm'.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P027",
@@ -413,7 +413,7 @@
    "rationale": "Both names refer to the same encoder-decoder Transformer architecture with different word order.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P028",
@@ -428,7 +428,7 @@
    "rationale": "Both names refer to text passages from Wikipedia, differing only in word order and phrasing.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P029",
@@ -443,7 +443,7 @@
    "rationale": "The names differ only by the harmless extra word 'structure' and refer to the same Transformer model architecture.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P030",
@@ -458,7 +458,7 @@
    "rationale": "MCP is an abbreviation for Monte-Carlo planning, referring to the same planning method.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P031",
@@ -473,7 +473,7 @@
    "rationale": "Name B is a harmless variation of Name A with the word 'mechanism' added.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P032",
@@ -488,7 +488,7 @@
    "rationale": "FQA is an abbreviation of Faithful Question Answering, referring to the same task.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P033",
@@ -503,7 +503,7 @@
    "rationale": "ILP is the abbreviation of Inductive Logic Programming, referring to the same method.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P034",
@@ -518,7 +518,7 @@
    "rationale": "RAG is the abbreviation of Retrieval-Augmented Generation, referring to the same method.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P035",
@@ -533,7 +533,7 @@
    "rationale": "Name B is a specific QA model, and Name A is a general QA model; the extra word 'F' is a harmless addition.",
    "draft": "unsure",
    "reason": "generic 'QA model' versus the specific model F",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P036",
@@ -548,7 +548,7 @@
    "rationale": "Name B is the same as Name A with an added harmless word 'strategy'.",
    "draft": "unsure",
    "reason": "one is described as a simpler prompting variant inspired by the framework",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P037",
@@ -563,7 +563,7 @@
    "rationale": "RGF is an abbreviation of Retrieve-Generate-Filter, referring to the same method.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P038",
@@ -578,7 +578,7 @@
    "rationale": "KG is an abbreviation of knowledge graph, referring to the same concept.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P039",
@@ -593,7 +593,7 @@
    "rationale": "'algorithm' and 'mechanism' are interchangeable terms here, both referring to beam search.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P040",
@@ -608,7 +608,7 @@
    "rationale": "Both names refer to the same encoder-decoder Transformer model with only word order difference and harmless extra word 'model'.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P041",
@@ -623,7 +623,7 @@
    "rationale": "EM is an abbreviation for Exact-Match, both referring to the same evaluation metric.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P042",
@@ -638,7 +638,7 @@
    "rationale": "Exact-Match and exact matching are the same evaluation method described with minor wording differences.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P043",
@@ -653,7 +653,7 @@
    "rationale": "The names differ only by 'mechanism' and 'method', which are interchangeable in this context.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P044",
@@ -668,7 +668,7 @@
    "rationale": "The names differ only by the harmless extra word 'model'.",
    "draft": "unsure",
    "reason": "generic architectures from different papers",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P045",
@@ -683,7 +683,7 @@
    "rationale": "DPR is the abbreviation of Dense Passage Retrieval, referring to the same method.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P046",
@@ -698,7 +698,7 @@
    "rationale": "Both names refer to the same Transformer encoder-decoder model used for query-to-path translation in SQUIRE.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P047",
@@ -713,7 +713,7 @@
    "rationale": "The names differ only by 'architecture' and 'model', which are harmless variations referring to the same method.",
    "draft": "unsure",
    "reason": "generic architectures from different papers",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P048",
@@ -728,7 +728,7 @@
    "rationale": "RNN is the abbreviation of Recurrent Neural Network.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P049",
@@ -743,7 +743,7 @@
    "rationale": "Both names are abbreviations and full names of the same method with identical components and purpose.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P050",
@@ -758,7 +758,7 @@
    "rationale": "'systems' and 'tools' are interchangeable terms referring to the same decontextualization functionality.",
    "draft": "same",
    "reason": "",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P051",
@@ -773,7 +773,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to the task of assessing faithfulness in summarization, just phrased differently.)",
    "draft": "unsure",
    "reason": "related tasks; second is broader",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P052",
@@ -788,7 +788,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Name B is a specific neural version of the multi-hop QA model described in Name A, with an added harmless descriptor 'neural' and a model identifier 'F'.)",
    "draft": "different",
    "reason": "generic model versus the specific model F",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P053",
@@ -803,7 +803,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: QUOREF-C is the contrast set version of the QUOREF dataset.)",
    "draft": "different",
    "reason": "QUOREF-C is the contrast set, a different dataset",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P054",
@@ -818,7 +818,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to the same dataset focused on human versus model answer comparison with minor wording differences.)",
    "draft": "same",
    "reason": "same dataset, 'answer' versus 'data'",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P055",
@@ -833,7 +833,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: The second name refers to the evaluation of the first task, which is a harmless extra word.)",
    "draft": "different",
    "reason": "a task versus its evaluation",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P056",
@@ -848,7 +848,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to the same probing dataset used to measure reduction of disconnected reasoning, with B specifying the source.)",
    "draft": "same",
    "reason": "same probing dataset",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P057",
@@ -863,7 +863,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to text passages from Wikipedia used as knowledge sources, differing only in word order.)",
    "draft": "same",
    "reason": "both are Wikipedia passage collections",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P058",
@@ -878,7 +878,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Name B is a specific implementation of Name A with an added identifier, referring to the same method retriever.)",
    "draft": "different",
    "reason": "generic retriever versus R1",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P059",
@@ -893,7 +893,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Open-domain and open-domain settings refer to the same task context in question answering.)",
    "draft": "unsure",
    "reason": "task versus setting, same idea",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P060",
@@ -908,7 +908,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Dense Passage Retrieval is a specific dense retrieval method using contextualized embeddings.)",
    "draft": "different",
    "reason": "DPR is one method; dense retrieval is a category",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P061",
@@ -923,7 +923,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to adapting QA models to new domains without labeled data, with 'self-supervised' and 'unsupervised' used interchangeably here.)",
    "draft": "unsure",
    "reason": "self-supervised versus unsupervised adaptation",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P062",
@@ -938,7 +938,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to the same Wikipedia passages dataset used for retrieval, with minor wording differences.)",
    "draft": "unsure",
    "reason": "two Wikipedia passage collections from different papers",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P063",
@@ -953,7 +953,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: YONO retriever is a specific retriever method, so they refer to the same type of method with YONO retriever being a specific instance.)",
    "draft": "different",
    "reason": "generic retriever versus YONO retriever",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P064",
@@ -968,7 +968,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: The dev split is a subset of the EntailmentBankQA dataset.)",
    "draft": "different",
    "reason": "dataset versus its dev split",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P065",
@@ -983,7 +983,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to a QA model combining retrieval and reading components, with only minor wording differences.)",
    "draft": "unsure",
    "reason": "same architecture class, different papers",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P066",
@@ -998,7 +998,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: NQ reading comprehension task is a specific instance of the reading comprehension task, with a harmless extra word 'NQ' indicating the dataset.)",
    "draft": "different",
    "reason": "NQ-specific task versus the general task",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P067",
@@ -1013,7 +1013,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Name B is a shorter form of Name A referring to the same concept of tasks not seen during training.)",
    "draft": "different",
    "reason": "a proportion versus the tasks",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P068",
@@ -1028,7 +1028,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Name B is a shortened form of Name A, both describing the same reward-guided selection strategy for action sequences.)",
    "draft": "same",
    "reason": "same strategy, extra word 'action sequence'",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P069",
@@ -1043,7 +1043,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: One name is a capitalized form and the other includes the word 'generation', both referring to the same task.)",
    "draft": "same",
    "reason": "same task",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P070",
@@ -1058,7 +1058,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Contriever3 is a retriever paired with Fusion-In-Decoder, which matches the combined method Contriever & FiD.)",
    "draft": "different",
    "reason": "Contriever versus the Contriever and FiD system",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P071",
@@ -1073,7 +1073,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: claude-v1 is a specific version of the claude model, referring to the same model.)",
    "draft": "same",
    "reason": "claude and its version claude-v1 refer to the same model in the paper",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P072",
@@ -1088,7 +1088,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to large language models, with one being a more detailed description including 'pre-trained' and 'LM' as an abbreviation.)",
    "draft": "unsure",
    "reason": "generic LLM versus pre-trained LM",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P073",
@@ -1103,7 +1103,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to the same task of reasoning over multiple hops in a knowledge graph, with only a minor difference in word order.)",
    "draft": "unsure",
    "reason": "second is defined as KG reasoning, which matches the first",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P074",
@@ -1118,7 +1118,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: WorldTreeQA and WorldTreeV2 refer to the same dataset with different versions or naming conventions.)",
    "draft": "different",
    "reason": "WorldTreeQA versus the WorldTreeV2 corpus",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P075",
@@ -1133,7 +1133,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Names differ only in capitalization and description refers to the same step validity checking method.)",
    "draft": "same",
    "reason": "same step verifier",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P076",
@@ -1148,7 +1148,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: Both names refer to the same learning scenario involving contextual bandits with feedback and reward signals.)",
    "draft": "unsure",
    "reason": "learning scenario versus its formalization",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P077",
@@ -1163,7 +1163,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: cross-entropy loss and cross-entropy loss Lce refer to the same loss function with Lce as a variable name.)",
    "draft": "same",
    "reason": "same loss, with its symbol",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P078",
@@ -1178,7 +1178,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: multi-hop and multi-step reasoning tasks refer to the same type of multi-step reasoning task with minor wording differences.)",
    "draft": "different",
    "reason": "multi-hop versus multi-step",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P079",
@@ -1193,7 +1193,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: 'crowdsourced human annotations' and 'human annotation' refer to the same method of using human annotators for evaluation.)",
    "draft": "unsure",
    "reason": "crowdsourced annotations versus human annotation as oracle",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P080",
@@ -1208,7 +1208,7 @@
    "rationale": "names differ by more than a generic word, plural, word order or acronym (model said: The second name is a more detailed description of the first method, referring to the same two-stage knowledge distillation process.)",
    "draft": "same",
    "reason": "same training",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P081",
@@ -1223,7 +1223,7 @@
    "rationale": "Name B specifies a particular use case and source, making it narrower than Name A.",
    "draft": "same",
    "reason": "same reward function",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P082",
@@ -1238,7 +1238,7 @@
    "rationale": "One method uses partially labeled data (semi-supervised) while the other uses no labeled data (unsupervised), so they are different approaches.",
    "draft": "different",
    "reason": "semi-supervised versus unsupervised",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P083",
@@ -1253,7 +1253,7 @@
    "rationale": "The descriptions indicate different methods with distinct functionalities and names.",
    "draft": "different",
    "reason": "EPAr and EPR are different methods",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P084",
@@ -1268,7 +1268,7 @@
    "rationale": "The two names refer to different types of methods with distinct approaches and are not the same.",
    "draft": "different",
    "reason": "different families of methods",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P085",
@@ -1283,7 +1283,7 @@
    "rationale": "WT5 is a different method compared on a dataset, not just an abbreviation or variant of T5.",
    "draft": "different",
    "reason": "T5 versus WT5",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P086",
@@ -1298,7 +1298,7 @@
    "rationale": "MQA-2H and MQA-3H are different datasets indicated by their distinct names and likely represent different versions or subsets.",
    "draft": "different",
    "reason": "2-hop versus 3-hop datasets",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P087",
@@ -1313,7 +1313,7 @@
    "rationale": "Bandit learning is a general method, while contextual bandit process is a specific formalization; they are related but not exactly the same.",
    "draft": "different",
    "reason": "learning method versus a formalization",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P088",
@@ -1328,7 +1328,7 @@
    "rationale": "SI and soft interfaces refer to different concepts; one is a specific method and the other is a general concept of flexible interfaces.",
    "draft": "different",
    "reason": "different things",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P089",
@@ -1343,7 +1343,7 @@
    "rationale": "BERT and BLEURT are different methods with distinct purposes.",
    "draft": "different",
    "reason": "BERT versus BLEURT",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P090",
@@ -1358,7 +1358,7 @@
    "rationale": "A reader model and a reranker model are different types of models with distinct functions.",
    "draft": "different",
    "reason": "reader versus reranker",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P091",
@@ -1373,7 +1373,7 @@
    "rationale": "The first is a specific fine-tuned T5 model for Wikidata conversion, the second refers broadly to models fine-tuned on NLI tasks.",
    "draft": "different",
    "reason": "different models",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P092",
@@ -1388,7 +1388,7 @@
    "rationale": "The datasets are from different authors and have different content characteristics.",
    "draft": "different",
    "reason": "different datasets",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P093",
@@ -1403,7 +1403,7 @@
    "rationale": "Name A is a variant of Name B with a specific data type, not exactly the same method.",
    "draft": "different",
    "reason": "a variant versus the whole method",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P094",
@@ -1418,7 +1418,7 @@
    "rationale": "Name B is a narrower task focusing on temporal questions, while Name A is broader.",
    "draft": "different",
    "reason": "temporal QA is narrower",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P095",
@@ -1433,7 +1433,7 @@
    "rationale": "The names refer to different methods with distinct descriptions and purposes.",
    "draft": "different",
    "reason": "different methods",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P096",
@@ -1448,7 +1448,7 @@
    "rationale": "NQ dataset and WQSP dataset are different datasets used for different purposes.",
    "draft": "different",
    "reason": "different datasets",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P097",
@@ -1463,7 +1463,7 @@
    "rationale": "Attribution for question answering is a specific aspect of cross-lingual question answering, so the tasks are not exactly the same.",
    "draft": "different",
    "reason": "attribution in cross-lingual QA versus cross-lingual QA",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P098",
@@ -1478,7 +1478,7 @@
    "rationale": "Question answering is a task, while question augmentation is a different task focused on enriching data for QA models.",
    "draft": "different",
    "reason": "QA versus question augmentation",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P099",
@@ -1493,7 +1493,7 @@
    "rationale": "Pre-trained language models are a specific subset of language models, so they are not exactly the same.",
    "draft": "unsure",
    "reason": "language models versus pre-trained language models",
-   "owner": null
+   "owner": "unsure"
   },
   {
    "id": "P100",
@@ -1508,7 +1508,7 @@
    "rationale": "NatQA and TAT-QA are different datasets with distinct characteristics and descriptions.",
    "draft": "different",
    "reason": "different datasets",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P101",
@@ -1523,7 +1523,7 @@
    "rationale": "different numbers",
    "draft": "different",
    "reason": "reranking in general versus its first stage",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P102",
@@ -1538,7 +1538,7 @@
    "rationale": "different numbers",
    "draft": "same",
    "reason": "same model",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P103",
@@ -1553,7 +1553,7 @@
    "rationale": "different size or version word",
    "draft": "different",
    "reason": "T5 versus T5-base",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P104",
@@ -1568,7 +1568,7 @@
    "rationale": "different numbers",
    "draft": "different",
    "reason": "21 specific tasks versus seen tasks",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P105",
@@ -1583,7 +1583,7 @@
    "rationale": "one name is a negation",
    "draft": "same",
    "reason": "MD-NFQA is the abbreviation",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P106",
@@ -1598,7 +1598,7 @@
    "rationale": "different numbers",
    "draft": "different",
    "reason": "stage 1 versus stage 2",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P107",
@@ -1613,7 +1613,7 @@
    "rationale": "different numbers",
    "draft": "same",
    "reason": "same dataset, version 1.1",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P108",
@@ -1628,7 +1628,7 @@
    "rationale": "different numbers",
    "draft": "same",
    "reason": "same model",
-   "owner": null
+   "owner": "same"
   },
   {
    "id": "P109",
@@ -1643,7 +1643,7 @@
    "rationale": "different size or version word",
    "draft": "different",
    "reason": "RoBERTa versus the base size",
-   "owner": null
+   "owner": "different"
   },
   {
    "id": "P110",
@@ -1658,7 +1658,7 @@
    "rationale": "different numbers",
    "draft": "different",
    "reason": "v1.0 versus v1.1",
-   "owner": null
+   "owner": "different"
   }
  ]
 }

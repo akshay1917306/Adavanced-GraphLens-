@@ -150,14 +150,15 @@ Integration tests use their own temporary database, Qdrant collections and a thr
 - Quality checks (`QUALITY.md`): schema validity 100%, node provenance 100%, edge evidence 100%,
   ontology conformance 100%, embedding coverage 100%, duplicate proxy 2.6%, orphan rate 1.6%
   (**17.5% before** the lonely entities were left out, a miss against the 10% target).
-- **Draft** accuracy from the labeled samples (my labels, **not owner-reviewed**): relation
-  precision **0.81** (target 0.80); entity-resolution precision 1.00, recall 0.60, **F1 0.75**
-  (target 0.85, a miss).
+- Accuracy from the labeled samples (I drafted the labels, the owner confirmed all of them):
+  relation precision **0.81** (target 0.80, narrow; 0.72 to 0.83 depending on the 20 unsure
+  items); entity-resolution precision 1.00, recall 0.60, **F1 0.75** (target 0.85, a miss).
 - Tests: 242 pass; `ruff` clean. CI for this branch has **not run on GitHub yet**.
 
 ## 8. Limitations and open issues
 
-- The two accuracy numbers are **drafts**. The owner's review can change them either way.
+- Only I drafted the labels and the owner confirmed them without changing any, so the labels
+  have one author in practice. 20 relations and 16 pairs are "unsure" and are left out.
 - The resolver is strict by design (a wrong merge hurts more than a missed one), so recall is
   low: pairs like `Step Verifier (Vs)` and `step verifier Vs` stay apart. Recall only covers
   pairs the resolver looked at; names that never became a pair are not counted.
