@@ -225,3 +225,72 @@ def render_report(checks: list[Check], index_version: str) -> str:
         body = json.dumps(c.details, indent=2)
         lines += ["", f"## Details: {c.name}", "", "```json", body, "```"]
     return "\n".join(lines) + "\n"
+
+
+def read_community_state(driver, index_version: str, database: str = "neo4j") -> tuple[list, list]:
+    """(entities with the levels they are in, communities with their report state)."""
+    with driver.session(database=database) as session:
+        entities = [
+            dict(r)
+            for r in session.run(
+                "MATCH (e:Entity {index_version: $v})"
+                " OPTIONAL MATCH (e)-[m:IN_COMMUNITY]->(c:Community)"
+                " RETURN e.id AS id, collect(m.level) AS levels, collect(c.is_leaf) AS leaves,"
+                " collect(c.level) AS community_levels",
+                v=index_version,
+            )
+        ]  # fmt: skip
+        communities = [
+            dict(r)
+            for r in session.run(
+                "MATCH (c:Community {index_version: $v}) RETURN c.id AS id, c.is_stub AS is_stub,"
+                " c.report_title IS NOT NULL AS has_report, c.embedding IS NOT NULL AS embedded,"
+                " c.report_findings AS findings",
+                v=index_version,
+            )
+        ]  # fmt: skip
+    return entities, communities
+
+
+def community_checks(entities: list[dict], communities: list[dict], engine: Engine) -> list[Check]:
+    """Phase 3 gate checks, measured on what is stored."""
+    complete = 0
+    for e in entities:
+        levels = sorted(e["levels"])
+        deepest_is_leaf = any(
+            leaf for leaf, lvl in zip(e["leaves"], e["community_levels"], strict=True)
+            if lvl == (levels[-1] if levels else -1)
+        )  # fmt: skip
+        if levels and levels == list(range(len(levels))) and deepest_is_leaf:
+            complete += 1
+    cited = set()
+    for c in communities:
+        for finding in json.loads(c["findings"] or "[]"):
+            cited.update(finding["cited_unit_ids"])
+    known = _existing_units(engine, cited)
+    bad_reports = sum(
+        1
+        for c in communities
+        if any(not set(f["cited_unit_ids"]) <= known for f in json.loads(c["findings"] or "[]"))
+    )
+    real = [c for c in communities if not c["is_stub"]]
+    total = max(len(communities), 1)
+    return [
+        Check(
+            "community_assignment", complete / max(len(entities), 1), 1.0, True,
+            {"entities": len(entities), "with_a_complete_chain_to_a_leaf": complete},
+        ),
+        Check(
+            "communities_with_report", sum(1 for c in communities if c["has_report"]) / total,
+            1.0, True, {"communities": len(communities), "stubs": len(communities) - len(real)},
+        ),
+        Check(
+            "report_citations_valid", 1 - bad_reports / total, 1.0, True,
+            {"reports_with_a_missing_unit": bad_reports, "distinct_units_cited": len(cited)},
+        ),
+        Check(
+            "report_embedding_coverage",
+            sum(1 for c in real if c["embedded"]) / max(len(real), 1), 1.0, True,
+            {"model_written_reports": len(real)},
+        ),
+    ]  # fmt: skip

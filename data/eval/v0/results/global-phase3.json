@@ -1,0 +1,1094 @@
+{
+ "dynamic": {
+  "rates": {
+   "comprehensiveness": {
+    "wins": 20,
+    "ties": 0,
+    "losses": 0,
+    "n": 20,
+    "win_rate": 1.0,
+    "ci95": [
+     0.839,
+     1.0
+    ]
+   },
+   "diversity": {
+    "wins": 20,
+    "ties": 0,
+    "losses": 0,
+    "n": 20,
+    "win_rate": 1.0,
+    "ci95": [
+     0.839,
+     1.0
+    ]
+   },
+   "empowerment": {
+    "wins": 20,
+    "ties": 0,
+    "losses": 0,
+    "n": 20,
+    "win_rate": 1.0,
+    "ci95": [
+     0.839,
+     1.0
+    ]
+   },
+   "directness": {
+    "wins": 1,
+    "ties": 16,
+    "losses": 3,
+    "n": 20,
+    "win_rate": 0.45,
+    "ci95": [
+     0.258,
+     0.658
+    ]
+   }
+  },
+  "cost_usd": 0.0,
+  "results": [
+   {
+    "id": "G01",
+    "question": "What are the main research directions in this corpus?",
+    "baseline": "The main research directions in the corpus include improving open-domain question answering (ODQA) systems by enhancing retrievers and readers, such as moving from sparse retrieval methods like TF-IDF or BM25 to dense retrieval based on contextualized embeddings from pre-trained language models (PLMs), and improving readers by adopting PLMs like BERT, BART, and T5 [5]. Another direction is the development and evaluation of modules in QA frameworks, such as question rewriting, action sequence selection, and cross-attention mechanisms, which have been shown to significantly impact performance [1]. Additionally, research addresses challenges in handling references within and across documents, particularly in scientific documents, and the task of decontextualization to improve snippet utility and passage retrieval [4][6]. There is also a focus on user-centered explainability in NLP, aiming to provide users with relevant information to assess model predictions rather than just explaining model internals [3]. Lastly, memory-enhanced input processing using models like RoBERTa for document comprehension and task prediction is another explored area [2].",
+    "ours": "The main research directions in this corpus revolve around diverse question answering (QA) methodologies, evaluation strategies, and semantic parsing techniques, often applied across multiple datasets and languages.\n\n1. **Complex and Multi-hop Question Answering:**  \n   A significant focus is on complex QA tasks requiring quantitative, comparative, and logical reasoning. Datasets like CQA support this research, with state-of-the-art methods developed to handle such challenges [C21][C35]. Multi-hop QA, which involves reasoning over multiple documents, is addressed by models such as GEMFormer that utilize uncertainty-guided global memory and RoBERTa embeddings to enhance reasoning capabilities [C30].\n\n2. **Open-domain QA and Knowledge Integration:**  \n   Open-domain QA research emphasizes leveraging heterogeneous knowledge sources, including Wikipedia passages, tables, and knowledge graphs. Models like REALM and UniK-QA exemplify this direction, often employing retriever-reader frameworks and dense retrieval techniques to improve answer generation from large-scale knowledge bases [C19][C39].\n\n3. **Prompt-enhanced and Retrieval-based Models:**  \n   Addressing challenges like the long-tailed QA problem, some approaches incorporate prompt-enhanced encoder-decoder architectures with knowledge and meta prompts, combined with retrieve-then-rerank frameworks and instance-level knowledge sharing to boost performance [C37]. Retrieval-guided counterfactual generation methods also emerge, using QED-based decomposition and T5-based models to create label-changing counterfactual questions and explanations for reading comprehension tasks [C3].\n\n4. **Cross-lingual and Attribution-focused QA:**  \n   Cross-lingual QA systems such as CORA integrate multilingual retrieval and generation models, incorporating attribution detection mechanisms to validate answers effectively [C38]. Attribution detection research further involves fine-tuning large models like mT5 and PaLM 2 on multilingual datasets (e.g., NLI, XOR-AttriQA) to improve passage attribution and reranking, enhancing answer reliability [C10][C12][C18][C20].\n\n5. **Semantic Parsing and Logical Form Generation:**  \n   Semantic parsing research aims to map natural language queries to formal representations. Techniques include sequence-to-sequence and sequence-to-tree models, with innovations like sketch decoding to better handle hierarchical logical forms and decontextualization. Incorporating explicit human feedback and supervised attention mechanisms further improves parsing accuracy [C4][C6].\n\n6. **Long-form QA and Evaluation Frameworks:**  \n   Long-form QA research focuses on generating detailed, coherent, and factual answers, evaluated through multiple metrics including human judgments [C9][C11][C14]. Evaluation research also covers human evaluation frameworks and semantic similarity methods to assess multi-document non-factoid QA systems, ensuring answer correctness and quality [C40]. Additionally, evaluation of non-large language models on datasets like CuratedTREC highlights improvements in QA accuracy using retrieval methods such as ANCE and Contriever [C2].\n\n7. **Large-scale Model Fine-tuning:**  \n   Fine-tuning large models like T5-11B on multiple datasets for tasks including natural language inference, fact verification, and paraphrase detection is another direction, with a focus on masked justification reference prediction tasks to enhance reasoning and justification capabilities [C1].\n\nIn summary, the corpus covers a broad spectrum of QA research, from complex reasoning and multi-hop retrieval to cross-lingual systems, semantic parsing, and rigorous evaluation methodologies, often leveraging large pretrained models and diverse knowledge sources.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents a more varied set of perspectives, addressing multiple QA subfields, methodologies, languages, and evaluation strategies, whereas Answer B focuses mainly on retrieval improvements and some specific modules.",
+      "Answer B presents a more varied set of perspectives, addressing multiple QA methodologies, languages, reasoning types, and evaluation strategies, whereas Answer A focuses mainly on retrieval and reader improvements and explainability."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses the question by enumerating and explaining the main research directions, while Answer B is less structured and less explicit in outlining the directions.",
+      "Answer A directly lists the main research directions succinctly and clearly, while Answer B, though comprehensive, is more elaborate and less concise in addressing the question."
+     ],
+     "empowerment": [
+      "Answer A provides detailed explanations and examples that help the reader understand the scope and nuances of the research directions, enabling informed judgments about the field.",
+      "Answer B provides detailed explanations and examples that help the reader understand the scope and nuances of the research directions, enabling more informed judgments."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wider range of research directions with detailed examples and references, including complex QA, open-domain QA, prompt-enhanced models, cross-lingual QA, semantic parsing, long-form QA, evaluation frameworks, and large-scale model fine-tuning.",
+      "Answer B covers a wider range of research directions with detailed examples and references, including complex QA, open-domain QA, prompt-enhanced models, cross-lingual QA, semantic parsing, long-form QA, evaluation frameworks, and large-scale model fine-tuning."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G02",
+    "question": "Which papers in the corpus work with knowledge graphs, and for which tasks?",
+    "baseline": "The papers working with knowledge graphs and their tasks are as follows:\n\n1. Paper 2023.emnlp-main.228 focuses on Knowledge Graph Question Answering (KGQA). It defines a knowledge graph as a collection of triples and addresses the KGQA task of finding answer entities to natural language questions using a retrieval-then-reasoning framework over the KG [1].\n\n2. Paper 2022.acl-long.340 discusses the use of knowledge graphs in Open-Domain Question Answering (ODQA). It mentions leveraging knowledge graphs to improve passage retrieval and reasoning, including methods that transform KG triplets into text or use passage graphs to propagate retrieval scores [3].\n\n3. Paper 2022.acl-long.201 covers knowledge graph embeddings (KGEs) and their use in KGQA. It describes KGQA as answering natural language questions using a KG, including both simple fact retrieval and complex multi-hop reasoning questions [4].\n\n4. Paper 2022.acl-long.113 mentions generating text from knowledge bases (KBs) as part of data-to-text generation and discusses verbalizing knowledge graphs for ODQA tasks [2].\n\nThus, the corpus includes papers working with knowledge graphs primarily for KGQA and ODQA tasks, involving question answering, retrieval, reasoning, and text generation from KG data [1][2][3][4].",
+    "ours": "Several papers in the corpus work with knowledge graphs, addressing a variety of tasks such as question answering (QA), link prediction, knowledge graph completion, and multi-hop reasoning.\n\nA major focus is on knowledge base question answering (KBQA). Community C36 develops a framework that transforms natural language questions into structured logical forms by aligning questions to actions using knowledge graph artifacts. This approach is enhanced by BERT embeddings with cross-attention to improve semantic alignment between questions and the knowledge graph, facilitating complex KBQA tasks [C36]. Similarly, C3 explores methods that combine pre-trained language models (PLMs) and graph neural networks to perform multi-hop reasoning over knowledge graphs, integrating KG representations into PLMs for QA [C3]. Community C7 introduces ReasoningLM, a pre-trained language model with subgraph-aware self-attention and adaptation tuning designed for structured reasoning over knowledge graph subgraphs in QA scenarios [C7]. C9 focuses on temporal knowledge graph question answering, using the TimeQuestions dataset and methods like EXAQT that leverage Group Steiner Trees and relational graph convolutional networks (RGCN) to handle temporal aspects in KGQA [C9]. C11 presents SQUIRE, a sequence-to-sequence Transformer framework enhanced with rule-based learning for interpretable multi-hop reasoning over knowledge graphs [C11]. Additionally, C10 discusses semantic parsing approaches for KBQA, including graph-based query graph construction and sequence-based action sequence generation [C10].\n\nFor link prediction and knowledge graph completion, several communities contribute embedding-based and sequence-to-sequence methods. C1 covers knowledge graph tasks including QA and link prediction, employing verbalization, knowledge graph embedding models, and long-tailed learning techniques [C1]. C2 focuses on popular KG datasets like FB15K237 and NELL995 and embedding methods such as TransE, RotatE, ConvE, and TuckER for link prediction and reasoning [C2]. C4 studies knowledge graph embeddings applied to KG completion and link prediction, aiming to improve QA performance on incomplete graphs [C4]. C5 introduces KGT5, a sequence-to-sequence Transformer model capable of both link prediction and question answering, evaluated on multiple benchmarks to demonstrate versatility [C5]. C6 discusses multi-hop reasoning methods for KG completion, including walk-based reinforcement learning and symbolic rule-based models [C6].\n\nFinally, C35 notes that some graph-based methods are evaluated on complex question answering datasets like CQA, highlighting challenges certain question types pose to graph-based approaches, implying the use of knowledge graphs in these methods [C35].\n\nIn summary, the corpus includes a rich variety of approaches working with knowledge graphs, primarily targeting question answering (including complex, multi-hop, and temporal KGQA), link prediction, and knowledge graph completion, using techniques ranging from embedding models and semantic parsing to Transformer-based sequence models and graph neural networks.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides diverse perspectives including embedding models, semantic parsing, Transformer-based models, graph neural networks, and temporal reasoning, whereas Answer B mainly lists papers with brief summaries.",
+      "Answer B provides diverse perspectives including different tasks, datasets, models, and techniques such as embeddings, semantic parsing, graph neural networks, and temporal reasoning, while Answer A is more limited in scope."
+     ],
+     "directness": [
+      "Answer A directly addresses the question by explicitly linking papers to specific tasks and methods related to knowledge graphs, while Answer B is more general and less specific.",
+      "Answer A directly lists the papers and their specific tasks related to knowledge graphs in a clear and concise manner, whereas Answer B is more elaborate and less directly tied to specific papers by their identifiers."
+     ],
+     "empowerment": [
+      "Answer A explains various approaches and techniques in detail, helping readers understand the scope and methods used in knowledge graph research, enabling informed judgments.",
+      "Answer B offers detailed explanations of methods and approaches, enabling readers to understand the variety of tasks and techniques involving knowledge graphs, thus better supporting informed judgments."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of papers and tasks related to knowledge graphs, including question answering, link prediction, knowledge graph completion, and multi-hop reasoning, with detailed descriptions of methods and datasets.",
+      "Answer B covers a wider range of tasks including question answering, link prediction, knowledge graph completion, and multi-hop reasoning, with detailed descriptions of various methods and communities, whereas Answer A focuses mainly on KGQA and ODQA."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G03",
+    "question": "How do the papers in the corpus approach multi-hop reasoning?",
+    "baseline": "The papers approach multi-hop reasoning through various methods including explainable multi-hop QA systems that identify rationales leading to answers, either within single or multiple documents, often relying on supervised settings with rationale and answer annotations or exploring approaches without rationale annotations due to their scarcity and cost [1]. Another approach formalizes a causal graph to disentangle disconnected reasoning from true multi-hop reasoning by modeling direct causal effects and applying counterfactual multi-hop QA to improve reasoning capabilities [2]. Some methods break down questions into smaller modules or use modular designs with retrievers and entailment modules to adaptively update facts and provide detailed explanations [3]. Deep learning methods include memory-based models with attention mechanisms, graph neural networks for entity connections, path-finding formulations, and neurosymbolic learning integrating deep learning with logic programming to handle uncertainty and reasoning [5][6]. Additionally, multi-hop reasoning models are evaluated using benchmarks and metrics like Mean Reciprocal Rank and Hits at N, with training involving techniques such as beam search and inverse edges to generate multi-hop paths [4].",
+    "ours": "The papers in the corpus approach multi-hop reasoning through a diverse set of methods spanning neural networks, logic reasoning, graph-based models, and knowledge graph techniques.\n\nA prominent theme is the integration of deep learning with symbolic or logical reasoning. For example, Deep Inductive Logic Reasoning (DILR) frameworks combine attention mechanisms, neural logic operators, and clause instantiation to progressively select and refine candidate rules for multi-hop reading comprehension, outperforming traditional logic programming baselines [C4][C7]. This approach highlights the benefit of combining neural attention with explicit logic reasoning to filter relevant information across multiple hops.\n\nGraph-based approaches are also widely used. Many methods build entity or knowledge graphs to represent connections between documents or facts, enabling information propagation and structured reasoning. Pre-trained language models (PLMs) combined with graph neural networks (GNNs) enhance reasoning over knowledge graph subgraphs by improving question understanding and reasoning capabilities [C14]. Similarly, ReasoningLM introduces a subgraph-aware self-attention mechanism and adaptation tuning to improve structured multi-hop reasoning over knowledge graphs, outperforming baseline KGQA methods [C15]. KG-FiD integrates knowledge graphs and GNNs within a Fusion-in-Decoder architecture to support multi-hop reasoning over structured knowledge [C35].\n\nWalk-based reasoning methods use reinforcement learning to train agents to navigate knowledge graphs from head to tail entities, with symbolic rule-based models improving interpretability [C5]. SQUIRE employs a sequence-to-sequence Transformer framework with rule-enhanced learning to infer evidential paths in knowledge graphs, improving interpretability and convergence [C11]. Verbalization techniques convert knowledge graph queries into textual sequences, unifying QA and link prediction tasks to facilitate reasoning [C37].\n\nIn multi-hop reading comprehension, modeling dependencies between documents is crucial. The failure of the HUG-Ind model at bridge-based reasoning due to lack of document connection modeling underscores this need [C36]. Bridge-based reasoning specifically requires connections between previously selected documents to enable multi-hop inference [C36]. GEMFormer uses a two-stage approach with uncertainty-guided global memory augmentation and RoBERTa embeddings to improve reasoning over multiple document parts [C8].\n\nCounterfactual multi-hop reasoning methods based on BERT reduce disconnected reasoning by disentangling shortcut impacts using causal inference and adversarial examples, enhancing reasoning across multiple paragraphs [C3]. Explainable multi-hop QA systems predict answers while identifying minimal rationale sentences, sometimes without relying on rationale annotations, using multi-task loss functions and specialized architectures [C2].\n\nFinally, generative QA readers with encoder-decoder architectures outperform extraction-based readers in handling complex multi-hop reasoning [C35].\n\nIn summary, the corpus covers a variety of approaches to multi-hop reasoning, including memory-based neural networks, neural-symbolic logic integration, graph neural networks over knowledge graphs, reinforcement learning for graph navigation, and generative QA models. A key insight is the importance of modeling document or entity connections explicitly and combining deep learning with structured reasoning to improve multi-hop inference.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A discusses a broader variety of methods including neural-symbolic integration, graph neural networks, reinforcement learning, verbalization, counterfactual reasoning, and generative models, offering richer perspectives.",
+      "Answer B presents a richer variety of perspectives, including neural networks, logic reasoning, graph-based models, reinforcement learning, and generative QA, whereas Answer A is more limited in scope."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses how the papers approach multi-hop reasoning with specific examples and explanations, whereas Answer B is more general and less focused.",
+      "Both answers directly address how the papers approach multi-hop reasoning, though Answer B is more elaborate, both are clear and specific in their explanations."
+     ],
+     "empowerment": [
+      "Answer A explains the rationale behind different approaches and highlights key insights, enabling readers to understand the strengths and challenges of various multi-hop reasoning methods.",
+      "Answer B helps the reader understand the topic deeply by explaining different techniques, their benefits, and challenges, enabling informed judgments about multi-hop reasoning approaches."
+     ],
+     "comprehensiveness": [
+      "Answer A provides a detailed and extensive overview of multiple approaches, techniques, and specific examples from the corpus, covering a wide range of methods and insights.",
+      "Answer B provides a more detailed and extensive overview of various methods, including specific frameworks, models, and examples, covering a wider range of approaches to multi-hop reasoning."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G04",
+    "question": "What new datasets or benchmarks are introduced in the corpus?",
+    "baseline": "The corpus introduces a new dataset and benchmark called WIKI HOWQA, sourced from the WikiHow website, which consists of passage-level answers to \"how to\" questions [2]. This dataset fills a critical gap in resources for multi-document non-factoid question answering (MD-NFQA) [2]. Unlike previous datasets such as ELI5, which rely on automated methods for curating reference content, WIKI HOWQA uses texts parsed from relevant HTML pages chosen by the author of the corresponding WikiHow article [1]. The benchmark also includes a novel human-evaluation framework that leverages highlighted relevant passages to improve the quality and factual accuracy of NFQA assessments [3].",
+    "ours": "Several new datasets and benchmarks are introduced across the corpus, targeting diverse challenges in question answering (QA), reasoning, and attribution detection.\n\nIn the financial and tabular data domain, community C39 presents multiple datasets—FinQA, TAT-QA, HiTab, and MULTIHIERTT—that focus on quantitative reasoning tasks, providing complex challenges for models dealing with numerical and structured data [C39].\n\nFor complex reading comprehension, the ConditionalQA dataset is introduced, featuring questions with conditional answers that require compositional logical reasoning, thus pushing the boundaries of understanding nuanced question structures [C10].\n\nWikiHowQA is a large-scale benchmark derived from WikiHow articles, designed for multi-document non-factoid QA tasks. This dataset emphasizes answering questions that require synthesizing information from multiple documents rather than simple fact retrieval [C5].\n\nIn the realm of entailment and reasoning, the EntailmentBank dataset is mentioned twice: once as a training resource for a controller model employing Monte-Carlo planning for faithful QA [C37], and also as a test split benchmark for evaluating entailment tree generation methods [C23]. This highlights its dual role in both training and evaluation of reasoning models.\n\nCross-lingual and multilingual QA is addressed by the XOR-AttriQA dataset, which evaluates attribution in multilingual QA systems, thus supporting research in language transfer and attribution accuracy across languages [C7].\n\nTemporal reasoning in knowledge graph question answering (KGQA) is targeted by two related datasets: TempQuestions [C19] and TimeQuestions [C27]. Both focus on temporal intents, providing benchmarks to evaluate how well models handle time-sensitive queries in KGQA settings.\n\nThe CuratedTREC dataset offers a benchmark with gold standard answers formatted as regular expressions, facilitating precise QA evaluation [C4].\n\nFor long-form QA, the ELI5 dataset provides questions and supporting documents sourced from Reddit, enabling research into generating detailed, explanatory answers [C28].\n\nFinally, attribution detection tasks are supported by the TyDi QA dataset with around 100k examples [C9], and a large-scale NLI dataset with approximately one million examples for tuning and evaluating multilingual attribution detection methods [C8].\n\nTogether, these datasets and benchmarks cover a wide spectrum of QA challenges, including quantitative reasoning, logical and compositional reasoning, multi-document synthesis, multilingual attribution, temporal reasoning, and long-form answer generation. They provide valuable resources for advancing QA systems across different domains and languages.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents diverse datasets addressing various QA challenges including financial, temporal, multilingual, and attribution tasks, whereas Answer B discusses only one dataset from a single perspective.",
+      "Answer B covers a wide range of datasets addressing different QA challenges, including financial, logical, multilingual, temporal, and long-form QA, while Answer A discusses only the WikiHowQA dataset."
+     ],
+     "directness": [
+      "Answer A directly and specifically lists multiple new datasets and benchmarks introduced in the corpus, fully addressing the question, while Answer B only partially addresses it with one example.",
+      "Both answers directly address the question by naming new datasets and benchmarks introduced in the corpus, though Answer B is more extensive."
+     ],
+     "empowerment": [
+      "Answer A provides detailed descriptions and contexts for each dataset, enabling readers to understand their purposes and applications, unlike Answer B which offers limited insight.",
+      "Answer B equips the reader with detailed knowledge about various datasets and their specific purposes, enabling informed understanding of the QA landscape, unlike Answer A which is limited to one dataset."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of datasets and benchmarks across multiple domains and tasks, while Answer B focuses only on the WikiHowQA dataset.",
+      "Answer B lists multiple datasets and benchmarks across various domains and tasks, providing a broad and detailed overview, whereas Answer A focuses only on one dataset."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G05",
+    "question": "How is the evaluation of question answering systems discussed across the corpus?",
+    "baseline": "The evaluation of question answering (QA) systems is discussed with a focus on different methods and challenges across the corpus. Passage 1 highlights the use of regex matching and multiple evaluation mechanisms, including exact match (EM) accuracy, BEM, InstructGPT-eval, and human judgment, to assess QA models on the CuratedTREC 2002 dataset, noting that large language models often answer from memory rather than using the knowledge source [1]. Passage 6 discusses the challenges in evaluating long-form question answering (LFQA), emphasizing that no existing automatic metrics reliably predict human preference judgments, and suggests adopting multi-faceted evaluation approaches targeting aspects like factuality and completeness rather than a single overall score [6]. Passage 3 mentions a Wizard-of-Oz experiment to study user reliance on QA predictions and the effects of background information, acknowledging limitations due to dataset noise and the controlled experimental setting [3]. Overall, the corpus underscores the complexity of QA evaluation, the need for human judgment, and the limitations of current automatic metrics [1][3][6].",
+    "ours": "The evaluation of question answering (QA) systems across the corpus reveals a rich variety of approaches tailored to different QA tasks, answer formats, and system designs.\n\nFor open-domain QA, traditional metrics such as Exact Match and F1 score remain foundational, comparing candidate answers to gold standards often derived from Wikipedia or curated datasets [C15][C1]. However, newer automated metrics like BEM, InstructGPT-eval, and GPT4-eval have been introduced to better capture semantic equivalence and reduce failure cases inherent in string-matching metrics [C1][C29]. These metrics aim to assess not just surface-level correctness but deeper semantic alignment between predicted and reference answers.\n\nLong-form QA evaluation emphasizes multiple qualitative aspects beyond correctness. Metrics such as QAFactEval, RankGen, BERTScore, BLEURT, and ROUGE are used to assess faithfulness, diversity, fluency, and factuality of generated answers [C2]. Human evaluation remains crucial, with frameworks including expert annotations, human preference judgments, and A/B testing where annotators choose better answers between candidates [C2][C11][C33]. These evaluations consider factors like completeness, conciseness, ease of understanding, and specificity, reflecting the complexity of long-form answers [C11][C10].\n\nMulti-hop and complex QA systems are evaluated using both standard metrics and task-specific datasets. For example, multi-hop QA methods like HUG and counterfactual approaches are benchmarked on datasets such as FEVER, MultiRC, and HotpotQA using Exact Match and F1 scores, demonstrating improvements over baselines [C36][C37]. Additionally, semantic similarity methods and human evaluation frameworks are employed to assess multi-document non-factoid QA, ensuring reliability beyond exact matches [C17].\n\nComplex question answering involving knowledge bases (KBQA) and temporal reasoning incorporates specialized evaluation strategies. The CQA dataset serves as a benchmark for complex QA methods, with state-of-the-art models evaluated on their ability to handle intricate queries [C38]. The question-to-action framework evaluates candidate action sequences via reward-guided reinforcement learning, reflecting an evaluation approach based on sequence selection and optimization [C40]. Temporal QA methods use knowledge graphs like Wikidata and logical query formulations, with neural ranking models assessing candidate answers in a time-sensitive manner [C39].\n\nFinally, some approaches leverage large language models (LLMs) such as GPT-4 and davinci for document-based QA, evaluating systems under different settings like retrieve-then-answer or full document input to understand performance trade-offs [C24]. Human evaluation remains a consistent theme across many communities, often complementing automated metrics to capture nuanced answer quality.\n\nIn summary, the corpus highlights a multi-faceted evaluation landscape for QA systems, combining traditional string-based metrics, advanced semantic similarity measures, human judgments, and task-specific benchmarks to comprehensively assess answer correctness, quality, and relevance across diverse QA paradigms.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents diverse perspectives including traditional metrics, semantic similarity measures, human evaluations, task-specific benchmarks, and LLM-based evaluations, whereas B is more limited.",
+      "Answer B presents a variety of perspectives including traditional metrics, semantic similarity measures, human evaluations, and task-specific benchmarks, reflecting diverse evaluation approaches."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses the evaluation of QA systems across the corpus with structured detail, while B is more general and less specific.",
+      "Answer A directly summarizes key points about QA evaluation from specific passages in the corpus, focusing clearly on the challenges and methods discussed."
+     ],
+     "empowerment": [
+      "Answer A equips the reader with a thorough understanding of various evaluation strategies and their purposes, enabling informed judgments about QA system assessment.",
+      "Answer B equips the reader with a deeper understanding of different evaluation strategies and their applicability, enabling informed judgments about QA system assessment."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of QA evaluation methods across different QA types, metrics, datasets, and human evaluation approaches, providing detailed examples and references.",
+      "Answer B covers a wider range of evaluation methods, metrics, QA tasks, and system designs, providing detailed examples and references across the corpus."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G06",
+    "question": "Which papers address factuality, faithfulness or attribution problems of language model answers?",
+    "baseline": "Papers 2023.emnlp-main.10 (passages 1, 2, 3, 5, 6) address attribution and factuality problems of language model answers. They find that state-of-the-art cross-lingual QA systems lack attribution and that raw generations often fall short in factuality, proposing attribution detection techniques using models like PaLM 2 to improve attribution levels [1][2][3][5][6]. Paper 2023.acl-long.218 (passage 4) addresses faithfulness by proposing FAME, a method to produce faithful reasoning steps in question answering, organizing reasoning as entailment trees to prove answer correctness [4]. Thus, both papers 2023.emnlp-main.10 and 2023.acl-long.218 focus on factuality, faithfulness, or attribution issues in language model answers.",
+    "ours": "Several papers explicitly address factuality, faithfulness, and attribution problems in language model answers, focusing on improving reasoning validity, answer support, and evaluation metrics.\n\nFaithfulness and reasoning validity are central themes in multiple works. Community C5 introduces the Selection-Inference (SI) method and Faithful Question Answering (FQA) approach, which ensure that each reasoning step validly supports the final answer, thereby improving faithfulness and explainability in QA systems [C5]. Similarly, C8 proposes a controller model based on T5-large trained on EntailmentBank, using behavior cloning and a verifier to enhance reasoning trajectories and faithfulness through Monte-Carlo planning [C8]. Community C11 also formulates faithful question answering as a discrete decision-making problem using Monte-Carlo planning and organizes reasoning steps into structured entailment trees, demonstrating improvements across multiple datasets [C11].\n\nAttribution problems—ensuring that answers are supported by appropriate evidence—are tackled by several papers. Community C1 introduces AIS, a novel evaluation metric for attribution in cross-lingual QA, and proposes XOR-AttriQA to improve attribution detection in closed-book QA systems [C1]. C2 discusses fine-tuning PaLM 2 on attribution data and leveraging Natural Language Inference (NLI) models to detect attribution and rerank passages, aiming to ensure QA predictions are supported by human-written text for safer deployment [C2]. Communities C3 and C10 focus on attribution detection using NLI fine-tuned models: C3 uses the TyDi QA dataset and shows strong performance in translate-test settings [C3], while C10 enhances multilingual attribution detection with fine-tuned mT5 models [C10].\n\nEvaluation of factuality and faithfulness is another important aspect. Community C38 presents the WikiHowQA benchmark with evaluation methods and metrics to assess answer quality and factual consistency, directly relating to factuality and faithfulness [C38]. C34 discusses evaluation metrics like QAFactEval and datasets for long-form QA that comprehensively assess faithfulness and factuality of generated answers [C34]. Communities C9 and C35 emphasize evaluation methods for long-form QA, including human and expert judgments to assess factuality, completeness, and specificity, which are crucial for faithfulness in QA outputs [C9][C35].\n\nFinally, C36 proposes the QADECONTEXT framework that improves faithfulness by modularizing snippet rewriting and decontextualization using question answering, employing soft interfaces between models to enhance output reliability [C36].\n\nIn summary, the addressed papers cover a range of approaches: improving reasoning faithfulness via structured entailment and planning (C5, C8, C11), enhancing attribution detection through NLI and fine-tuning (C1, C2, C3, C10), and developing evaluation benchmarks and metrics for factuality and faithfulness (C9, C34, C35, C38), as well as modular frameworks for faithful output generation (C36).",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides multiple perspectives including reasoning validity, attribution detection, evaluation benchmarks, and modular frameworks, while B focuses mainly on two papers and their contributions.",
+      "Answer B provides multiple perspectives including reasoning validity, attribution detection, evaluation metrics, and modular frameworks, while A focuses mainly on attribution detection and faithfulness methods."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses the question by listing relevant papers and their contributions to factuality, faithfulness, and attribution, whereas B is less detailed and less explicit.",
+      "Answer A directly names specific papers and their contributions to factuality, faithfulness, and attribution, providing a clear and focused response, while B is more elaborate and less concise."
+     ],
+     "empowerment": [
+      "Answer A explains various approaches and concepts in depth, enabling readers to understand different strategies and make informed judgments, unlike B which is more cursory.",
+      "Answer B explains various methods and evaluation strategies, helping readers understand different approaches to address the problems, whereas A is more concise and less explanatory."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of papers addressing factuality, faithfulness, and attribution, detailing methods, datasets, and evaluation metrics, whereas B mentions fewer papers with less detail.",
+      "Answer B covers a wider range of papers and approaches addressing factuality, faithfulness, and attribution, including methods, evaluation metrics, and benchmarks, whereas A mentions fewer papers and details."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G07",
+    "question": "Which approaches aim to make question answering systems smaller or cheaper to run?",
+    "baseline": "The ReasoningLM model can accomplish adaptation tuning at a smaller cost by updating fewer parameters or using cheaper constructed data, as shown by its variants that update either the full parameters or only an added adapter while freezing the model parameters [1][4]. KG-FiD improves efficiency by reranking passages in two stages using GNNs and only passing a few top reranked passages into higher layers for answer generation, significantly reducing computation cost to 40% of FiD while maintaining good QA performance [6].",
+    "ours": "Several approaches aim to make question answering (QA) systems smaller or cheaper to run by improving efficiency, reducing model size, or integrating components to lower computational costs.\n\nOne direct approach is the development of smaller model variants. For example, HUG-Small is a smaller variant of the HUG multi-hop QA method that outperforms competing unsupervised methods, demonstrating that smaller models can still achieve strong performance [C15].\n\nKnowledge distillation techniques are also prominent in reducing model complexity and training costs. The OLTQA model uses a two-stage knowledge distillation process within a retrieve-then-rerank framework to improve efficiency, particularly addressing challenges in long-tailed QA by sharing knowledge and handling unseen tasks [C34]. Similarly, adaptive mutual knowledge distillation selectively transfers knowledge from better-performing models in a retrieve-then-rerank setup, enhancing training efficiency and model performance [C14].\n\nIntegration of components into unified architectures can reduce system complexity and resource requirements. The YONO model unifies retrieval, reranking, and reading into a single trainable encoder-decoder architecture, potentially lowering the computational overhead compared to separate modules [C13].\n\nSemi-parametric frameworks in open-domain QA (ODQA) combine parametric and non-parametric components, which can reduce reliance on large parametric models alone, thereby potentially decreasing model size and computational cost [C35]. Dense retrieval models improve retriever effectiveness, which can contribute to more efficient retrieval processes and thus smaller or cheaper systems [C35].\n\nUser feedback-based learning methods, such as bandit learning, improve extractive QA model performance by enhancing learning efficiency and adaptation without requiring large-scale retraining, which can reduce operational costs [C3][C8].\n\nFinally, prompt-enhanced encoder-decoder QA models use knowledge and meta prompts within a retrieve-then-rerank framework to address low-resource scenarios, facilitating knowledge transfer and potentially reducing training costs [C6].\n\nIn summary, approaches to making QA systems smaller or cheaper include creating smaller model variants, employing knowledge distillation, integrating multiple components into unified architectures, leveraging semi-parametric frameworks, improving retrieval efficiency, and using adaptive learning methods that reduce retraining needs. These strategies collectively aim to balance performance with reduced computational and resource demands.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides multiple perspectives such as model size reduction, knowledge distillation, integration, semi-parametric methods, and user feedback, whereas Answer B focuses narrowly on two examples.",
+      "Answer B provides multiple distinct perspectives and techniques for reducing QA system size or cost, whereas Answer A focuses narrowly on two model examples."
+     ],
+     "directness": [
+      "Both answers directly address approaches to making QA systems smaller or cheaper, but Answer A is more detailed while Answer B is concise; neither is off-topic or unclear.",
+      "Answer A directly addresses the question with specific examples of models designed to reduce cost and size, while Answer B is more general and less focused on directly answering the question."
+     ],
+     "empowerment": [
+      "Answer A explains various methods and their benefits in detail, helping readers understand different strategies to reduce QA system size or cost, while Answer B offers limited insight into only two approaches.",
+      "Answer B explains various methods and their benefits, helping readers understand different strategies and make informed judgments, unlike Answer A which is more technical and less explanatory."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of approaches including smaller models, knowledge distillation, unified architectures, semi-parametric frameworks, retrieval improvements, and adaptive learning, while Answer B only mentions two specific models.",
+      "Answer B covers a wider range of approaches including smaller models, knowledge distillation, unified architectures, semi-parametric frameworks, retrieval improvements, and adaptive learning, while Answer A only mentions two specific models."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G08",
+    "question": "How do the papers handle robustness and adapting QA models to new domains or unseen tasks?",
+    "baseline": "The papers address robustness and adaptation of QA models to new domains or unseen tasks primarily through domain adaptation and augmentation techniques. One approach is unsupervised QA domain adaptation, where models adapt to target domains without access to labeled answers, using pseudo labeling, hidden space augmentation, and self-supervised domain adaptation, as proposed in the QADA framework [1][2][4]. QADA enriches training data by augmenting hidden representations of questions and contexts and employs attention-based contrastive learning to improve generalization across domains [2][4]. Other methods include semi-supervised adaptation with partially labeled target data and unsupervised adaptation with question generation to create synthetic QA samples for training [1][3]. Additionally, handling long-tailed and open-ended distributions of QA tasks involves sharing knowledge between head, tail, and unseen tasks and mining external resources to improve performance under low-resource conditions [6].",
+    "ours": "The papers address robustness and adaptation of QA models to new domains or unseen tasks through several complementary strategies, often involving counterfactual data augmentation, user feedback, domain-invariant feature learning, and knowledge distillation.\n\nA prominent approach involves generating counterfactual examples to improve robustness by reducing disconnected or spurious reasoning. Counterfactual multi-hop QA methods use causal inference to create counterfactual questions during training, which helps models reason more coherently across multiple paragraphs and improves robustness in multi-hop QA tasks [C39][C21]. Similarly, retrieval-guided counterfactual question generation produces label-changing counterfactuals with noise filtering and round-trip consistency checks to ensure quality, aiding both robustness and domain adaptation [C40]. Counterfactual Data Augmentation (CDA) simulates interventions on attributes to enhance local consistency and robustness, showing improvements on biomedical and open-domain QA benchmarks [C9]. The RGF method also generates counterfactual question-context-answer triples to augment training data, further boosting robustness in reading comprehension and open-domain QA [C22].\n\nAnother key theme is leveraging user feedback and self-supervised learning for domain adaptation. Several works employ contextual bandit learning frameworks that use binary or explicit user feedback as a learning signal to improve extractive QA models. These methods support supervised, semi-supervised, and unsupervised domain adaptation, and have been tested on Transformer-based models like SpanBERT, exploring both online and offline learning paradigms [C4][C7]. One paper explicitly adapts QA models to new domains by optimizing on labeled source data and updating parameters with unlabeled target data through self-supervised learning and user feedback [C1].\n\nLearning domain-invariant features is also explored to improve generalization across domains. The QADA framework uses hidden space augmentation and attention-based contrastive adaptation to learn features that transfer well between source and target QA domains [C2]. For long-tailed QA and unseen tasks, models like OLTQA combine a retrieve-then-rerank framework with adaptive mutual knowledge distillation from large pre-trained language models, selectively transferring knowledge between student models to improve performance on domain-specific and adversarial datasets [C12][C14]. Prompt-enhanced encoder-decoder QA models similarly use knowledge and meta prompts with retrieve-then-rerank to facilitate knowledge transfer and alleviate low-resource challenges [C11].\n\nAdditional robustness is achieved without heavy supervision, as shown by the HUG method for multi-hop QA, which attains competitive performance without rationale supervision, indicating robustness through model design [C38]. Large language models like PaLM 2, fine-tuned on attribution data, improve robustness in cross-lingual QA by enhancing attribution detection across languages and domains [C37].\n\nIn summary, the papers collectively demonstrate that robustness and domain adaptation in QA are advanced through counterfactual data augmentation, user feedback-driven learning, domain-invariant feature extraction, knowledge distillation, and prompt-based knowledge transfer. These methods address challenges from multi-hop reasoning to long-tailed and cross-lingual QA tasks, enabling models to better generalize to new domains and unseen tasks.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents multiple distinct perspectives such as causal inference, user feedback, contrastive learning, knowledge distillation, and large language model fine-tuning, whereas Answer B mainly discusses domain adaptation and augmentation.",
+      "Answer B presents multiple distinct strategies such as causal inference, user feedback, self-supervised learning, and large language models, offering a richer variety of perspectives."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses how the papers handle robustness and adaptation with concrete examples and methods, whereas Answer B is less detailed and more general in its response.",
+      "Both answers directly address how the papers handle robustness and adaptation, but Answer B is more detailed while Answer A is concise; neither is unclear or off-topic."
+     ],
+     "empowerment": [
+      "Answer A provides detailed explanations of various approaches and their effects, enabling readers to understand how robustness and adaptation are achieved, while Answer B is more general and less explanatory.",
+      "Answer B explains how different techniques contribute to robustness and adaptation, helping readers understand the mechanisms and make informed judgments."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wider range of methods including counterfactual data augmentation, user feedback, domain-invariant feature learning, knowledge distillation, and prompt-based transfer, while Answer B focuses mainly on domain adaptation and augmentation techniques.",
+      "Answer B covers a wider range of methods including counterfactual data augmentation, user feedback, domain-invariant feature learning, knowledge distillation, and prompt-based transfer, providing more detailed examples and references."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G09",
+    "question": "How are human users or human judges involved in the studies in this corpus?",
+    "baseline": "Human users participate in an online user-study where they answer questions by indicating agreement or disagreement with model predicted answers and their confidence level on a 5-point Likert scale; they also provide aggregate ratings on the utility of background information, confidence in the model, and self-confidence in their responses, along with optional free-text feedback and demographic information [1][4]. Human annotators are involved in judging the correctness of answers in open-domain QA by evaluating question/answer pairs without knowing the model source or gold status, using search engines to find supporting evidence, with disagreements resolved by a third annotator [6]. Non-expert crowdworkers are used to evaluate long-form answers, sometimes with access to evidence documents and optional justifications, though their reliability in judging correctness without domain expertise or full evidence access is questioned [3]. Human evaluators also assess model answers in comparison to human-written answers, as in the WebGPT dataset, where assessors prefer model answers 69% of the time, though supporting documents are not always released [5]. Simulation studies use simulated user feedback as a learning signal for QA systems, but actual human feedback is suggested as future work beyond simulation [2].",
+    "ours": "Human users and judges play a central role in the studies within this corpus, primarily through various forms of evaluation and feedback mechanisms designed to assess and improve question answering (QA) systems.\n\nOne common approach involves human evaluation frameworks where judges assess the quality of QA outputs. For example, multi-document non-factoid QA systems are evaluated by human judges who check answer correctness and attentiveness, ensuring reliable assessment beyond automatic metrics [C2][C18]. Similarly, long-form question answering (LFQA) systems are evaluated using human and expert judgments focusing on factuality, completeness, and conciseness of answers [C13][C9]. Human preference data also serves as a benchmark for evaluating the factuality and coherence of long-form answers, highlighting the importance of human judgment in quality assessment [C6].\n\nA/B testing is another human-involved evaluation method where annotators compare pairs of answers to select the better one, providing comparative quality judgments that guide system improvements [C3]. Additionally, Wizard-of-Oz experiments and online user studies involve human users interacting with QA systems under controlled conditions to analyze user reliance and confidence, thus incorporating real user behavior into system evaluation [C1].\n\nHuman involvement extends to dataset creation and maintenance. The CuratedTREC dataset, a long-standing resource with gold standard answers, reflects human curation efforts that provide benchmarks for QA evaluation [C37]. This dataset’s longevity underscores the sustained human role in creating reliable evaluation standards.\n\nBeyond evaluation, explicit human feedback is used as a direct learning signal to improve model performance. For instance, supervised attention and span-level alignments in semantic parsing benefit from human feedback [C4]. Contextual bandit learning methods leverage binary user feedback to enhance extractive QA systems, showing how human users contribute to model training through interactive feedback [C30]. Furthermore, human annotation is employed to estimate oracle outputs necessary for computing learner regret, involving judges in approximating ideal system performance [C12].\n\nIn summary, human users and judges are involved in this corpus through experimental studies, annotation and evaluation frameworks, dataset curation, and interactive feedback mechanisms. Their roles are crucial for assessing answer quality, guiding model improvements, and establishing reliable benchmarks across various QA tasks.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides multiple perspectives such as human evaluation frameworks, A/B testing, Wizard-of-Oz experiments, dataset curation, and interactive feedback, whereas Answer B mainly discusses user studies and annotator judgments.",
+      "Answer B presents multiple perspectives such as evaluation methods, dataset creation, user studies, and learning approaches, showing greater variety."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses the question by detailing various ways humans are involved in the corpus studies, while Answer B is less focused and more fragmented in its response.",
+      "Answer A directly and specifically describes how human users and judges participate in studies with concrete examples and methods."
+     ],
+     "empowerment": [
+      "Answer A explains how human involvement impacts model improvement, evaluation quality, and benchmark creation, helping readers understand the significance of human roles in the studies, unlike Answer B which is more descriptive without deeper insights.",
+      "Answer B explains how human roles impact QA system assessment and improvement, helping readers understand the significance of human involvement."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of human involvement including evaluation, feedback, dataset curation, and experimental studies, while Answer B focuses mainly on evaluation and user studies with less breadth.",
+      "Answer B covers a wider range of human involvement including evaluation, dataset curation, interactive feedback, and training signals, providing a more complete picture."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G10",
+    "question": "Which retrieval techniques appear in the corpus papers?",
+    "baseline": "The retrieval techniques mentioned in the corpus papers include sparse retrieval based on TF-IDF or BM25 and dense retrieval based on contextualized embeddings generated by pre-trained language models (PLMs) [1]. Additionally, cross-lingual retrieval of passages in multiple languages is noted as a recent advancement in Open-Retrieval Question Answering (ORQA) [5]. There is also mention of retrievers that retrieve documents from a large corpus, such as Wikipedia, to support answer generation [1][5]. Furthermore, some works propose improvements like better training strategies, reranking based on retrieved passages, and knowledge distillation from reader to retriever [1]. Finally, one paper discusses the limitation of retrieving facts from a fixed corpus and suggests the potential of retrieving up-to-date information using a modern search engine as a retriever [6].",
+    "ours": "The corpus papers present a diverse range of retrieval techniques applied primarily in open-domain and multi-hop question answering (QA) tasks, leveraging both traditional and neural methods.\n\nA prominent theme is the use of dense retrieval models, which embed queries and documents into vector spaces for similarity search. Dense Passage Retriever (DPR) is frequently mentioned, serving as a baseline or core retriever in several works, including WikiHowQA and open-domain QA frameworks [C39][C2]. Similarly, MDPR, a multilingual dense passage retriever based on mBERT, is used in CORA for cross-lingual QA [C35]. Dense retrieval is often combined with reranking or reading components to improve answer accuracy [C2][C24].\n\nTraditional lexical retrieval methods like TF-IDF and BM25 also appear, especially in open-domain QA settings, often integrated with dense retrievers to balance precision and recall [C2]. The YONO model exemplifies an end-to-end architecture that unifies retrieval, reranking, and reading layers, trained with multiple losses to optimize retrieval quality [C24].\n\nMulti-hop QA retrieval techniques frequently exploit knowledge graphs and entity-centric approaches. For example, HotpotQA fullwiki employs several retrievers such as Path-Retriever, CogQA, Entitycentric, Golden Retriever, HopRetriever, and SMRS, which utilize knowledge graphs, entity queries, and iterative document selection to navigate multi-hop reasoning paths [C1]. CogQA, Entitycentric, and Golden Retriever explicitly use entities extracted from query keywords to retrieve subsequent documents in multi-hop QA [C1]. KG-FiD further integrates knowledge graphs with graph neural networks (GNNs) for graph-based reranking, enhancing retrieval in open-domain QA [C37].\n\nOther retrieval enhancements include reranking strategies based on natural language inference (NLI) models, as in CORA, which reranks passages by assessing attribution levels to improve retrieval quality [C35]. Siamese network encoders fine-tuned with contrastive loss are also used for retrieval in Faithful Question Answering [C40].\n\nFor QA over tabular data, retrieval incorporates structure-aware representations and tabular encoding, combined with generators that produce executable programs for answer derivation [C25]. Additionally, some approaches leverage large language models (LLMs) like GPT-4 and davinci in retrieve-then-answer pipelines, where retrieval precedes LLM-based answer generation [C3].\n\nSequence-to-sequence models such as BART and T5 are integrated with dense retrieval in frameworks like RAG, enabling document-level retrieval and generation [C17]. The OLTQA model uses a two-stage knowledge distillation process in a retrieve-then-rerank framework to address long-tailed QA challenges [C34].\n\nIn summary, the corpus highlights a rich variety of retrieval techniques ranging from traditional lexical methods (TF-IDF, BM25) to dense neural retrievers (DPR, MDPR), entity- and knowledge graph-based retrieval, reranking with NLI and graph neural networks, and integration with large language models and sequence-to-sequence architectures. These methods are often combined in multi-stage pipelines to enhance retrieval effectiveness for complex QA tasks.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A discusses a wider variety of retrieval techniques and perspectives, such as knowledge graph-based retrieval, multi-hop QA, cross-lingual retrieval, and sequence-to-sequence models, whereas Answer B is more limited in scope.",
+      "Answer B presents a wide range of retrieval approaches from traditional lexical methods to dense neural retrievers, knowledge graph-based methods, reranking strategies, and integration with large language models, offering a richer variety of perspectives."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses the question by enumerating and explaining the retrieval techniques appearing in the corpus papers, while Answer B is more general and less specific.",
+      "Answer A directly lists retrieval techniques mentioned in the corpus papers in a concise manner, whereas Answer B, though comprehensive, is more elaborate and less succinct in directly answering the question."
+     ],
+     "empowerment": [
+      "Answer A offers detailed explanations and examples that help the reader understand different retrieval methods and their applications, enabling more informed judgments compared to the brief summary in Answer B.",
+      "Answer B equips the reader with a deeper understanding of the retrieval landscape by explaining different techniques, their combinations, and contexts, enabling more informed judgments about retrieval methods."
+     ],
+     "comprehensiveness": [
+      "Answer A provides a detailed and extensive overview of various retrieval techniques, including dense and sparse methods, multi-hop QA approaches, reranking strategies, and integration with LLMs, covering more aspects than Answer B.",
+      "Answer B provides a detailed and extensive overview of various retrieval techniques, including specific models, methods, and their applications across different QA tasks, covering more aspects than Answer A."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G11",
+    "question": "Which papers aim to make question answering explainable, faithful or attributable, and how?",
+    "baseline": "The paper \"2023.acl-long.218\" aims to make question answering explainable and faithful by proposing FAME, which answers questions based on faithful reasoning steps organized as a structured entailment tree showing how premises produce intermediate conclusions to prove the correctness of the answer [1][4]. FAME formulates the task as a discrete decision-making problem solved through a modular reasoning environment and a controller using Monte-Carlo planning to select actions leading to valid and faithful reasoning steps [3][4]. \n\nThe paper \"2023.emnlp-main.10\" addresses the attribution aspect of question answering by analyzing the extent to which answers are attributable to retrieved passages, finding that many correct answers are not attributable, highlighting challenges in ensuring answer attribution [6]. \n\nThe paper \"2023.emnlp-main.193\" focuses on snippet decontextualization to make extracted text snippets from scientific documents more understandable and reliable for users, which indirectly supports explainability by providing context for model-generated outputs [2][5].",
+    "ours": "Several papers focus on making question answering (QA) systems more explainable, faithful, or attributable by improving reasoning processes, data augmentation, and model architectures.\n\nA prominent approach is the use of Monte-Carlo planning to enhance faithfulness in QA. The paper \"Faithful Question Answering with Monte-Carlo Planning\" by Dong Yu and Hongming Zhang proposes a controller model based on T5-large trained on EntailmentBank. It uses behavior cloning and a verifier to improve reasoning trajectories, guided by a planning algorithm that constructs a planning tree to simulate reasoning steps. This method aims to ensure that the reasoning process is faithful to the evidence and improves answer reliability [C1][C3]. Similarly, the FAME method formulates faithful QA as a discrete decision-making problem using Monte-Carlo planning, organizing reasoning steps into structured entailment trees and employing a single-step entailment module to combine premises. It is evaluated on datasets like EntailmentBankQA, OBQA, and WorldTreeQA, demonstrating structured and faithful reasoning [C10].\n\nAnother line of work improves faithfulness and explainability by generating reasoning trees or chains of thought. The Selection-Inference (SI) method iteratively generates reasoning trees using beam search with the Chinchilla-7B model, ensuring each reasoning step is a valid entailment that supports the final answer. This enhances Chain-of-Thought prompting and improves faithfulness and explainability by making intermediate reasoning explicit [C4].\n\nData augmentation techniques also contribute to faithfulness and explainability. The RGF method generates counterfactual question-context-answer triples to augment training data, improving local consistency and robustness of QA models. This supports explainability by enhancing model reliability and reducing spurious correlations [C38]. Similarly, counterfactual multi-hop QA methods use causal inference and adversarial examples to reduce disconnected reasoning, disentangling shortcut impacts and generating counterfactual examples during training to improve reasoning faithfulness [C8][C11]. A retrieval-guided approach generates counterfactual questions for reading comprehension, using QED-based decomposition and a T5-based model fine-tuned on the QED dataset to generate explanations, improving explanation quality across multiple datasets [C7].\n\nExplainability is also addressed in multi-hop QA systems that identify minimal rationale sentences supporting answers. Some methods use supervised learning with multi-task loss functions and specialized network architectures to predict answers and rationale sentences, while others operate without rationale annotations, improving explainability by highlighting evidence used in reasoning [C2]. The HUG method is a probabilistic approach for explainable multi-hop QA that does not require rationale supervision. It selects relevant documents and sentences before generating answers, evaluated on datasets like FEVER and MultiRC, thus providing explainability without explicit rationale labels [C13].\n\nAttribution in QA is tackled by methods that align question semantics with action sequences or detect attribution across languages. The ALCQA framework uses alignment techniques and reward-guided action sequence selection to improve attribution and faithfulness by ensuring that question semantics align with the executed actions in complex knowledge base QA [C39]. Cross-lingual QA attribution detection methods use datasets like XOR-AttriQA and models such as PaLM 2 fine-tuned on attribution data and Natural Language Inference models to improve attribution detection and passage reranking, ensuring that QA predictions are supported by human-written text, which is crucial for safe deployment [C5][C6].\n\nFinally, neurosymbolic learning integrates deep learning with logic programming in multi-hop reading comprehension, potentially aiding explainability and faithfulness by combining symbolic reasoning with neural models [C35].\n\nIn summary, these papers employ a variety of strategies—structured reasoning with entailment trees, counterfactual data augmentation, probabilistic document selection, alignment of question semantics with actions, and cross-lingual attribution detection—to make QA systems more explainable, faithful, and attributable. They leverage planning algorithms, reasoning tree generation, causal inference, and multi-task learning to ensure that answers are supported by valid, interpretable reasoning steps and evidence.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "baseline",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents a wide range of approaches including Monte-Carlo planning, reasoning trees, data augmentation, multi-hop QA, attribution detection, and neurosymbolic learning, whereas B focuses narrowly on three papers.",
+      "Answer B presents multiple perspectives such as Monte-Carlo planning, data augmentation, multi-hop QA, attribution detection, and neurosymbolic learning, offering a richer variety of insights compared to Answer A."
+     ],
+     "directness": [
+      "Answer B directly names specific papers and their aims related to explainability, faithfulness, and attribution, while A provides a broader synthesis that is less directly tied to individual papers.",
+      "Answer A directly names specific papers and succinctly states their aims and methods related to explainability, faithfulness, and attribution, while Answer B is more general and less focused on directly answering the question."
+     ],
+     "empowerment": [
+      "Answer A explains how different methods work and their impact on QA explainability and faithfulness, enabling readers to understand and evaluate the approaches, unlike B which is more superficial.",
+      "Answer B provides detailed explanations of methods and their goals, helping readers understand how different techniques contribute to explainability, faithfulness, and attribution, thus enabling informed judgments."
+     ],
+     "comprehensiveness": [
+      "Answer A covers multiple papers and methods addressing explainability, faithfulness, and attribution in QA with detailed descriptions, while B mentions only three papers with less detail.",
+      "Answer B covers a wider range of papers and methods, including detailed descriptions of various approaches to explainability, faithfulness, and attribution in QA, whereas Answer A mentions fewer papers with less detail."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G12",
+    "question": "What role do data augmentation, counterfactuals or simulated data play in the corpus?",
+    "baseline": "Data augmentation, particularly counterfactual data augmentation (CDA), is used to improve model robustness and out-of-domain generalization by exposing models to minimal pairs that reduce spurious correlations and encourage learning of causal features [1][5][6]. Counterfactual data augmentation methods generate synthetic examples paired with original data, which have shown better performance than non-counterfactual augmentation methods that produce unpaired synthetic examples [1]. CDA is especially effective in low-resource settings, where augmenting limited in-domain data with counterfactual examples can significantly improve performance, nearly matching models trained on twice as much original data [3]. The paper's method, RGF, generates fully-labeled counterfactual examples that can be directly used for augmentation, and targets a broad range of semantic phenomena to avoid overfitting [4][1]. Overall, counterfactual and simulated data serve as a tool to probe and enhance model generalization and robustness in question answering tasks [5][6].",
+    "ours": "Data augmentation, counterfactuals, and simulated data play significant and diverse roles in the corpus, primarily aimed at improving model robustness, reasoning, and generalization in question answering (QA) and natural language understanding tasks.\n\n**Counterfactual Data Augmentation (CDA)** is a prominent approach where interventions on specific attributes generate counterfactual examples to probe and enhance model behavior. CDA improves robustness and local consistency across various datasets, including BioASQ [C1]. Similarly, the **RGF method** creates counterfactual question-context-answer triples to augment training data, boosting performance and robustness on reading comprehension and open-domain QA datasets like AmbigQA and SQuAD v1.0 [C2].\n\nMore advanced counterfactual generation techniques involve **retrieval-guided methods** that use QED-based decomposition and fine-tuned T5 models to produce label-changing counterfactual questions. These are quality-controlled through noise filtering and round-trip consistency checks, evaluated on datasets such as AQA and QUOREF [C3]. \n\nCounterfactual reasoning also leverages **causal inference and causal graphs** to generate counterfactual examples that reduce disconnected reasoning in multi-hop QA models. This approach modifies training data distributions and uses specialized metrics like DiRe to evaluate improvements [C4]. Extensions of this idea include counterfactual multi-hop reasoning methods based on BERT architectures (e.g., HGN, DFGN), which use adversarial examples and causal inference to disentangle shortcut reasoning, significantly enhancing multi-hop QA performance on datasets like HotpotQA [C5].\n\n**Simulated data** plays a role in reasoning models through techniques like Monte-Carlo planning, which simulates exploration of next states and uses a state verifier to estimate state scores for better action evaluation. This simulated planning outperforms other algorithms such as beam search and greedy methods, indicating that simulated exploration improves reasoning performance [C40]. \n\nIn terms of data augmentation beyond counterfactuals, frameworks like **QADA** introduce hidden space augmentation techniques (e.g., attentive context cutoff, Dirichlet neighborhood sampling) to enrich training data for domain adaptation in QA, helping models learn domain-invariant features and generalize better across domains [C13]. The **Gold Agen-Qgen method** selects samples based on longest edit distance for question generation, outperforming random selection and ensemble models in improving model consistency, serving as an effective augmentation technique [C12].\n\nOther related approaches include leveraging **knowledge bases** to collect alternative plausible answers, enhancing QA evaluation through augmented data [C37], and using **bandit learning methods** with explicit or simulated user feedback to improve extractive QA models and facilitate domain adaptation across datasets like SQuAD and NewsQA [C24][C33].\n\nFinally, retriever-generator architectures for QA over tabular data incorporate causal reasoning and graph-based methods to enhance quantitative reasoning, supporting data augmentation through structured data representations [C35].\n\nIn summary, the corpus demonstrates a rich variety of approaches where counterfactual data augmentation, simulated data, and related augmentation techniques are central to improving robustness, reasoning quality, domain adaptation, and evaluation in QA and natural language understanding tasks.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents diverse perspectives including counterfactual data augmentation, causal inference, simulated planning, domain adaptation, knowledge base augmentation, and bandit learning, whereas Answer B focuses mainly on counterfactual data augmentation.",
+      "Answer B presents multiple perspectives such as causal inference, retrieval-guided methods, simulated planning, domain adaptation, and knowledge base augmentation, offering a richer variety of insights."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses the role of data augmentation, counterfactuals, and simulated data in the corpus with clear examples and explanations, while Answer B is more general and less detailed.",
+      "Answer A directly and succinctly addresses the role of data augmentation and counterfactuals in improving robustness and generalization, while Answer B, though comprehensive, is more elaborate and less concise."
+     ],
+     "empowerment": [
+      "Answer A explains various approaches and their impacts in detail, enabling readers to understand how these techniques improve robustness and reasoning, thus better equipping them to make informed judgments.",
+      "Answer B equips the reader with detailed examples, methods, and contexts that help understand how these techniques improve QA models and how to evaluate them, enabling informed judgments."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of methods and applications of data augmentation, counterfactuals, and simulated data across multiple datasets and techniques, providing detailed examples and references.",
+      "Answer B covers a wider range of methods and applications of data augmentation, counterfactuals, and simulated data, including specific techniques, datasets, and evaluation metrics, providing a more detailed and thorough overview."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G13",
+    "question": "How do the papers deal with long documents or evidence spread over several documents?",
+    "baseline": "The papers address long documents and evidence spread over several documents by proposing specialized models and methods. One approach is GEMFormer, which augments pre-trained language models with a memory to store global information relevant to the task, processing long inputs concatenated with a memory sequence of important tokens defined by language model uncertainty [2]. Another approach involves joint document selection models that consider dependencies between documents, as selecting documents independently may result in insufficient information when reasoning steps depend on one another [4]. Additionally, some datasets and tasks require reading multiple sections or entire long documents, such as academic papers or books, to collect relevant information for answering questions, highlighting the challenge of reasoning through long and complex contents [5]. Documents are also processed to retain hierarchical structures and crucial content while simplifying formats to manage long documents effectively [6].",
+    "ours": "The papers address the challenge of handling long documents or evidence spread across multiple documents through a variety of retrieval, reasoning, and evaluation strategies.\n\nA common approach is the retrieve-then-answer or retrieve-then-rerank framework, where relevant paragraphs or passages are first retrieved from large corpora or entire documents before generating answers. This effectively narrows down the context to pertinent snippets, making it easier to handle long documents or multiple documents [C1][C20][C30]. For example, the OLTQA model mines knowledge from large pre-trained language models using retrieval and reranking to manage long-tailed QA scenarios involving dispersed evidence [C20].\n\nMulti-hop question answering (QA) methods explicitly focus on reasoning over multiple documents or document parts. The HUG method selects relevant documents and sentences in stages before answer generation, enabling multi-hop reasoning without requiring rationale supervision [C15]. Similarly, Path-Retriever uses knowledge graphs to iteratively select documents forming paragraph-level reasoning paths, facilitating multi-hop reasoning across documents [C4]. Other multi-hop reading comprehension approaches employ graph-based and neurosymbolic learning techniques to integrate information from multiple text pieces [C10].\n\nTo improve reasoning over long documents, GEMFormer introduces uncertainty-guided global memory that collects relevant information across entire documents and integrates it with local context, enhancing the model’s ability to synthesize dispersed evidence [C19]. The Selection-Inference (SI) method iteratively generates reasoning trees to ensure faithful reasoning steps, which helps structure reasoning over long or multi-document inputs [C39].\n\nSome methods attempt to process entire documents directly. For instance, a full document setting uses GPT-4 to answer questions by inputting the entire source document, addressing long documents holistically [C1]. However, challenges remain, as shown by the HUG-Ind model, which does not model dependencies between documents and fails at bridge-based reasoning, highlighting difficulties in reasoning over evidence spread across documents [C2].\n\nTo support evaluation of such methods, datasets and frameworks have been developed specifically for multi-document non-factoid QA. WikiHowQA is a benchmark designed for multi-document QA tasks [C23], and a human evaluation framework tailored for multi-document non-factoid QA (MD-NFQA) has been proposed to assess system performance in this context [C38].\n\nFinally, decontextualization and rewriting techniques have been explored to make text snippets understandable independently of their original context, which aids in handling evidence spread over multiple documents by improving snippet interpretability [C36].\n\nIn summary, the papers employ retrieval-based frameworks, multi-hop reasoning with graph or memory mechanisms, full-document processing, and specialized evaluation datasets to tackle the challenges posed by long documents and evidence dispersed across multiple documents. They also highlight ongoing challenges in modeling inter-document dependencies effectively.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "ours",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides diverse perspectives such as retrieval, multi-hop reasoning, memory augmentation, evaluation frameworks, and decontextualization, whereas Answer B focuses mainly on memory augmentation and document selection.",
+      "Answer B presents multiple perspectives including retrieval frameworks, multi-hop reasoning, memory mechanisms, evaluation datasets, and decontextualization techniques, offering a richer variety of approaches."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses how papers deal with long documents and evidence spread over multiple documents with specific examples and methods, whereas Answer B is less specific and more general.",
+      "Answer B directly and clearly addresses how the papers deal with long documents and multi-document evidence with specific examples and explanations, whereas Answer A is more general and less explicit."
+     ],
+     "empowerment": [
+      "Answer A explains various techniques and their purposes in detail, helping readers understand how different methods tackle long documents and dispersed evidence, while Answer B is more general and less explanatory.",
+      "Answer B helps the reader understand different strategies and their implications, enabling informed judgments about the strengths and limitations of various methods."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of methods including retrieval frameworks, multi-hop reasoning, memory mechanisms, full-document processing, evaluation datasets, and challenges, while Answer B mentions fewer approaches and details.",
+      "Answer B covers a wider range of methods, models, datasets, and challenges related to handling long documents and multi-document evidence, providing more detailed examples and explanations."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G14",
+    "question": "Which papers study long-form or non-factoid answers, and what problems do they point out?",
+    "baseline": "The papers that study long-form or non-factoid answers include Fan et al. (2019), Krishna et al. (2021), Nakano et al. (2021), Su et al. (2022), and the current work in passage 1 and 6, as well as the work in passage 2 and 5 focusing on non-factoid questions (NFQs) and multi-document non-factoid QA (MD-NFQA) [1][2][5][6]. \n\nProblems pointed out include: \n- ROUGE is not a meaningful metric for LFQA due to the open-ended nature of long-form answers [1]. \n- Prior evaluation protocols are limited and cannot be easily adapted to general LFQA tasks, e.g., requiring disambiguated questions and answers which are often unavailable [1]. \n- Human evaluations often rely on non-expert annotators who may lack expertise to judge factuality reliably, and even experts disagree due to valuing different answer properties [1][6]. \n- There is a scarcity of datasets for MD-NFQA and challenges in grounding answers in supporting content, as well as overlap issues in datasets like ELI5 [5]. \n- Current QA systems struggle with NFQs that require aggregating information from multiple documents and sophisticated reasoning rather than simple summarization [2].",
+    "ours": "Several papers and communities study long-form or non-factoid question answering (QA), highlighting various challenges and problems in this area.\n\nThe ConditionalQA dataset focuses on complex reading comprehension questions with conditional answers that require compositional logical reasoning, clearly targeting non-factoid, long-form answers. A baseline method called DocHopper improves answer prediction by iteratively attending to conditions, underscoring the difficulty of jointly predicting answers and conditions in complex questions [C39]. Similarly, the CQA dataset benchmarks complex question answering involving challenging types like Quantitative and Comparative Reasoning, which some graph-based methods struggle to solve, pointing to difficulties in handling complex, potentially long-form answers [C36].\n\nSeveral communities emphasize evaluation challenges for long-form QA. Community C1 highlights factuality and coherence as key problems in long-form answers [C1]. Community C3 discusses the need for detailed answers and evaluates aspects such as factuality, completeness, and specificity, stressing the importance of human and expert judgments for reliable evaluation [C3]. Community C4 focuses on evaluation metrics and datasets for long-form QA, noting issues with faithfulness and factuality, and references datasets like HURDLES and expert-annotated data for evaluation purposes [C4]. Community C6 discusses the use of A/B testing as a human evaluation method for long-form QA, applied in studies like HURDLES and WEBGPT to compare answer quality [C6]. Community C13 also emphasizes reliable human evaluation frameworks and semantic similarity methods to assess answer correctness in multi-document non-factoid QA [C13].\n\nCommunity C7 centers on WEBGPT trained on the ELI5 dataset, which involves long-form QA addressing evidence-based and reasoning questions, inherently non-factoid in nature [C7]. Community C9 introduces WikiHowQA, a benchmark for multi-document non-factoid QA with human-written answers and evaluation methods focusing on answer quality and factual consistency [C9].\n\nFinally, communities C2 and C8 mention critical evaluations of evaluation methods for long-form QA, indicating ongoing scrutiny and identification of problems in how long-form answers are assessed [C2][C8].\n\nIn summary, the main problems pointed out in studies of long-form or non-factoid QA include challenges in compositional reasoning, factuality, coherence, completeness, specificity, faithfulness, and reliable human evaluation. Various datasets and benchmarks like ConditionalQA, CQA, HURDLES, WikiHowQA, and ELI5 support research in this area, while methods like DocHopper and WEBGPT attempt to address these challenges [C1][C3][C4][C6][C7][C9][C36][C39].",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "baseline",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents multiple perspectives including datasets, evaluation challenges, human evaluation methods, and specific QA systems, whereas B focuses mainly on evaluation and dataset issues.",
+      "Answer B offers a more varied perspective by discussing different datasets, evaluation methods, and specific challenges from multiple communities and papers."
+     ],
+     "directness": [
+      "Answer B directly lists papers and clearly enumerates specific problems pointed out, making it more straightforward in addressing the question.",
+      "Answer A directly lists the papers and explicitly states the problems they point out, making it clearer and more focused on the question asked."
+     ],
+     "empowerment": [
+      "Answer A explains the challenges and solutions in a way that helps the reader understand the scope of problems and the research efforts addressing them, enabling informed judgments.",
+      "Answer B helps the reader understand the topic by explaining specific datasets, evaluation challenges, and methods addressing long-form QA, enabling informed judgments."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of papers, datasets, communities, and specific problems related to long-form and non-factoid QA, providing detailed examples and references.",
+      "Answer B provides a broader range of papers, datasets, and communities studying long-form and non-factoid QA, covering multiple aspects and challenges in detail."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G15",
+    "question": "Which papers build their method around a pre-trained language model or an encoder-decoder Transformer, and for what?",
+    "baseline": "Paper 2022.emnlp-main.198 proposes a single language model YONO that generalizes retrieval, reranking, and reading as internal attention functions, trained end-to-end with a pre-trained encoder-decoder architecture adapted for retrieval and answer generation tasks [1][5]. Paper 2022.emnlp-main.10 uses a pretrained language model like BERT to encode concatenated question and KG artifact inputs, leveraging the cross-attention mechanism to align questions and knowledge graph artifacts for logical form generation in knowledge base question answering [2][4]. Paper 2023.emnlp-main.262 proposes GEMFormer, which augments a pre-trained language model with a memory module to store global information for multi-hop question answering over long documents, addressing limitations of attention-based token representations [6].",
+    "ours": "Several papers build their methods around pre-trained language models (PLMs) or encoder-decoder Transformer architectures, primarily for question answering (QA) tasks, often integrating knowledge graphs or retrieval components.\n\nThe KG-FiD method explicitly integrates knowledge graphs into the Fusion-in-Decoder (FiD) framework, which is an encoder-decoder Transformer based on T5. KG-FiD employs a two-stage reranking process—graph-based reranking and graph attention networks—before encoding passages with the FiD encoder to generate answers, improving open-domain QA performance [C37]. The FiD reading module itself uses T5 components (embedding, encoder, decoder) to process concatenated question and passage inputs and generate answers [C25].\n\nSimilarly, the YONO model is a unified encoder-decoder language model architecture designed for open-domain QA. It integrates retrieval, reranking, and reading layers into an end-to-end trainable system, leveraging the encoder-decoder Transformer framework for QA [C1].\n\nKGT5 uses a sequence-to-sequence encoder-decoder Transformer architecture based on T5-small for knowledge graph link prediction and question answering, evaluated on multiple benchmarks. This shows the use of pre-trained encoder-decoder models for both KG reasoning and QA [C23].\n\nThe OLTQA model applies a retrieve-then-rerank framework that mines knowledge from large pre-trained language models through a two-stage knowledge distillation process. It uses an encoder-decoder QA model to tackle long-tailed QA tasks, demonstrating the use of PLMs for specialized QA challenges [C22]. Similarly, a prompt-enhanced encoder-decoder QA model addresses long-tailed QA by leveraging knowledge prompts mined from large PLMs and dynamically combining meta prompts [C20].\n\nIn Faithful Question Answering, a controller model based on T5-large is trained on the EntailmentBank dataset for sequence generation, improving reasoning trajectories via behavior cloning and verifier fine-tuning. This highlights the use of a pre-trained encoder-decoder Transformer for reasoning and QA [C6].\n\nMore broadly, many KGQA methods use PLMs as text encoders for question understanding and integrate graph neural networks for reasoning over knowledge graphs [C3]. BART and T5 sequence-to-sequence models serve as foundational generators and readers across multiple QA formats, including multiple-choice, Boolean, and abstractive QA [C33].\n\nFinally, in multi-modal QA, multi-modal pre-training models—adapted PLMs capable of handling inputs from different modalities—are used for QA tasks, extending the encoder-decoder Transformer paradigm beyond text-only inputs [C38].\n\nIn summary, a variety of methods build on pre-trained encoder-decoder Transformers like T5 and BART for QA, often integrating retrieval, reranking, knowledge graphs, or multi-modal inputs to enhance performance across open-domain, long-tailed, and multi-modal QA tasks [C1][C3][C6][C20][C22][C23][C25][C33][C37][C38].",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides a wider range of perspectives including different QA tasks, integration with knowledge graphs, multi-modal inputs, and various model architectures, whereas Answer B focuses narrowly on a few examples.",
+      "Answer B provides multiple perspectives including different QA tasks, integration with knowledge graphs, retrieval, reranking, and multi-modal inputs, whereas A focuses on fewer examples."
+     ],
+     "directness": [
+      "Answer A directly addresses the question by explicitly naming papers, models, and their purposes related to pre-trained language models and encoder-decoder Transformers, while Answer B is less direct and more fragmented.",
+      "Answer A directly lists specific papers and their use of pre-trained models concisely, while B is more elaborate but less focused on directly answering the question."
+     ],
+     "empowerment": [
+      "Answer A explains how the models are used and their purposes, helping readers understand the applications and benefits of pre-trained models in QA, unlike Answer B which is more terse and less explanatory.",
+      "Answer B explains how different models leverage pre-trained Transformers for specific purposes, helping readers understand the applications and contexts better."
+     ],
+     "comprehensiveness": [
+      "Answer A covers multiple papers and details their use of pre-trained language models and encoder-decoder Transformers across various QA tasks, while Answer B mentions fewer papers with less detail.",
+      "Answer B covers a wider range of papers and details about their use of pre-trained language models and encoder-decoder Transformers across various QA tasks and methods."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G16",
+    "question": "Which papers handle special kinds of questions, such as temporal, numeric or conditional ones?",
+    "baseline": "The paper from 2022.acl-long.253 introduces ConditionalQA, which handles conditional questions where answers depend on specific conditions and complex internal logic in documents, particularly in the public policy domain [4][6]. The paper from 2023.acl-long.307 discusses handling numeric answers with symbolic equivalence and temporal or spatial granularity discrepancies in questions and answers [1]. The paper from 2022.emnlp-main.122 focuses on temporal question answering over knowledge graphs, addressing temporal relations and temporal intents in questions [5].",
+    "ours": "Several papers specifically address special kinds of questions such as temporal, numeric, and conditional ones, often focusing on complex reasoning and knowledge graph question answering (KGQA).\n\nFor conditional questions, the C7 community introduces the ConditionalQA dataset designed for complex reading comprehension tasks where answers depend on compositional logical reasoning. They evaluate models like DocHopper and ETC on this dataset, highlighting approaches tailored to conditional answer generation [C7].\n\nTemporal questions receive significant attention across multiple communities. The C1 community develops temporal question answering methods over knowledge graphs using Wikidata, incorporating logical restrictions and time-sensitive neural models to handle temporal queries effectively [C1]. Similarly, the C2 community uses TimeML annotations and interpretation structures (IS-1 and IS-2) to interpret temporal intents in KGQA, focusing on temporal constraints [C2]. The C10 community presents the TempQuestions dataset specifically for temporal intents in KGQA and proposes TEQUILA, a method that decomposes complex temporal relations using hand-crafted rules [C10]. The C16 community also targets temporal KGQA with the TimeQuestions benchmark and introduces EXAQT, a method that improves precision and Hit@1 metrics for temporal questions [C16].\n\nRegarding numeric and quantitative reasoning, the C4 community proposes a framework addressing complex quantitative and logical question answering. Their approach covers quantitative counting, comparative reasoning, verification, and logical reasoning question types, thus handling numeric questions comprehensively [C4]. The C24 community discusses multi-step quantitative reasoning in QA, focusing on datasets like FinQA and TAT-QA. They introduce models such as CompAQT that improve compositional generalization for quantitative reasoning tasks [C24].\n\nAdditionally, the CuratedTREC dataset provides gold standard answers in the form of regular expressions, enabling evaluation of QA models on special question types including temporal, numeric, and conditional questions [C36]. The C39 community proposes a prompt-enhanced encoder-decoder QA model that addresses open long-tailed QA problems, which often include rare or special question types like temporal, numeric, or conditional questions, by leveraging knowledge and meta prompts [C39].\n\nFinally, the C3 community employs BART and T5 models for diverse QA tasks including multiple-choice, Boolean, and abstractive QA, which can handle various question formats, potentially encompassing special question types [C3].\n\nIn summary, the literature covers a variety of special question types: conditional questions are addressed by ConditionalQA and related models [C7]; temporal questions are extensively studied with datasets and methods from C1, C2, C10, and C16 [C1][C2][C10][C16]; numeric and quantitative reasoning is tackled by C4 and C24 communities [C4][C24]; and broader approaches including prompt-based models and diverse QA architectures also contribute to handling these special questions [C36][C39][C3].",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides a wide range of perspectives including different datasets, models, and question types, whereas Answer B is limited to a few specific papers.",
+      "Answer B provides multiple perspectives including datasets, models, communities, and different QA approaches, whereas Answer A only briefly mentions three papers."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses the question by categorizing papers by question type and summarizing their contributions, while Answer B is less explicit and detailed.",
+      "Answer A directly and succinctly lists specific papers and their focus on special question types, while Answer B is more elaborate and less concise."
+     ],
+     "empowerment": [
+      "Answer A explains the approaches and datasets used for special question types, helping readers understand the scope and methods, unlike Answer B which is more cursory.",
+      "Answer B helps the reader understand the topic by explaining various approaches, datasets, and models, enabling informed judgments about handling special question types."
+     ],
+     "comprehensiveness": [
+      "Answer A covers multiple communities and datasets addressing conditional, temporal, and numeric questions in detail, while Answer B mentions only a few papers briefly.",
+      "Answer B covers a wider range of papers and details about temporal, numeric, and conditional questions, including datasets, methods, and communities involved."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G17",
+    "question": "Which papers improve the retriever-reader pipeline of open-domain question answering, and how?",
+    "baseline": "The paper \"2022.acl-long.340\" improves the retriever-reader pipeline by introducing KG-FiD, a knowledge-enhanced version of the Fusion-in-Decoder (FiD) model. KG-FiD uses a knowledge graph to establish structural relationships among retrieved passages and employs a graph neural network (GNN) to re-rank and select top passages, achieving comparable or better answer prediction performance with less computation cost [2]. Another paper \"2022.acl-long.113\" proposes UDT-QA, a unified verbalizer-retriever-reader framework that uses data-to-text generation to encode structured knowledge from tables and graphs as augmented knowledge sources. UDT-QA improves the verbalization effectiveness and benefits from the expanded knowledge index, leading to large gains over text-only baselines and achieving new state-of-the-art results on Natural Questions [3][5][6]. Additionally, the \"2023.acl-long.307\" paper discusses various retriever-reader models including DPR and FiD, highlighting the use of generative readers and dense retrievers as effective components in ODQA pipelines [4].",
+    "ours": "Several papers propose improvements to the retriever-reader pipeline in open-domain question answering (QA) by enhancing retrieval, reranking, and reading components, often integrating heterogeneous knowledge sources and advanced reasoning techniques.\n\nA notable unified approach is the YONO model, which combines retrieval, reranking, and reading into a single trainable architecture. It employs multiple losses targeting each stage—retrieval, reranking, and reading—to jointly optimize the pipeline, leading to improved overall QA performance [C4].\n\nBuilding on the Fusion-in-Decoder (FiD) framework, KG-FiD integrates knowledge graphs and introduces a two-stage graph-based reranking process. This enhances both passage retrieval and answer generation by leveraging structured knowledge, thus improving the retriever-reader pipeline [C2][C11]. The FiD method itself uses encoder-decoder architectures to generate answers from retrieved passages, serving as a strong reader component [C2].\n\nDense retrieval models improve the retriever's effectiveness by better passage retrieval, which directly benefits the retriever-reader pipeline [C1]. Similarly, REALM employs a dense index of Wikipedia passages combined with BERT-based retrieval and reading components, leveraging heterogeneous knowledge sources to enhance pipeline performance [C9]. UniK-QA further integrates Wikipedia tables and transforms knowledge graph triplets into text, enriching retrieval with multiple knowledge modalities [C9].\n\nReranking strategies also play a key role. Adaptive mutual knowledge distillation within a retrieve-then-rerank framework selectively transfers knowledge and jointly trains student models, improving performance especially on long-tailed QA datasets [C12][C20]. Another retrieve-then-rerank framework jointly trained with QA models enhances document selection and answer generation [C12]. The prompt-enhanced encoder-decoder QA model uses retrieve-then-rerank to select in-context examples and knowledge prompts, boosting performance on long-tailed QA [C10].\n\nGraph-based and neurosymbolic approaches enhance reasoning capabilities in the pipeline. Graph Neural Networks propagate information over entity graphs for multi-hop reading comprehension, improving reasoning across multiple text pieces [C36]. Neurosymbolic learning combines deep learning with logic programming to further enhance multi-hop reasoning [C36].\n\nFor knowledge graph QA, the ALCQA framework improves complex question answering by converting questions into sequences of predefined actions and using reward-guided selection based on support sets of similar question-answer pairs, enhancing retrieval and reasoning [C39]. It also employs BERT embeddings with cross-attention to improve semantic alignment between questions and knowledge graph artifacts [C35]. Verbalization techniques convert knowledge graph queries into textual sequences, enabling sequence-to-sequence modeling that benefits the retriever-reader pipeline [C40].\n\nFinally, methods like R2-D2 and EviGen combine extractive and generative approaches or jointly learn evidentiality and answer generation, improving open-domain QA performance by enhancing the retriever-reader pipeline [C8].\n\nIn summary, improvements to the retriever-reader pipeline come from unified architectures (YONO), integration of knowledge graphs (KG-FiD, ALCQA), dense retrieval and reranking frameworks, graph-based and neurosymbolic reasoning, and leveraging heterogeneous knowledge sources including tables and textualized knowledge graph data. These approaches collectively advance retrieval accuracy, reranking quality, and reading comprehension in open-domain QA systems.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "baseline",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides diverse perspectives including retrieval, reranking, reading, knowledge integration, graph-based reasoning, and neurosymbolic approaches, whereas Answer B focuses mainly on a few models and their improvements.",
+      "Answer B presents a variety of perspectives such as unified models, knowledge graph integration, dense retrieval, reranking strategies, neurosymbolic reasoning, and verbalization, offering richer insights."
+     ],
+     "directness": [
+      "Answer B directly names specific papers and their contributions to improving the retriever-reader pipeline, whereas Answer A is more general and less focused on specific papers.",
+      "Answer A directly names specific papers and succinctly explains their contributions to improving the retriever-reader pipeline, making it clearer and more focused on the question."
+     ],
+     "empowerment": [
+      "Answer A explains how different methods contribute to improving various pipeline components, helping readers understand the mechanisms and benefits, while Answer B is more descriptive and less explanatory.",
+      "Answer B explains how different methods contribute to improvements, helping readers understand the mechanisms and make informed judgments about the retriever-reader pipeline."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of papers and methods improving the retriever-reader pipeline, including unified architectures, knowledge graph integration, dense retrieval, reranking, and neurosymbolic reasoning, while Answer B mentions fewer papers and details.",
+      "Answer B covers a wider range of papers and techniques improving the retriever-reader pipeline, including unified architectures, dense retrieval, reranking, graph-based reasoning, and knowledge graph QA, providing a more complete overview."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G18",
+    "question": "Which papers rewrite or transform questions, text or data as a step in their method?",
+    "baseline": "The paper \"2022.emnlp-main.10\" proposes a question rewriting stage where a question rewriting model explicitly transforms a query into a set of utterances, each corresponding to a single action, thus reducing the complexity of the question [1][6]. This paper also mentions a novel question rewriting mechanism that rewrites a question into a more structured form without requiring a dataset or adding constraints [6]. The paper \"2023.emnlp-main.193\" introduces a framework for snippet decontextualization that decomposes the task into three stages: question generation, question answering, and rewriting, where rewriting receives the snippet and context to perform decontextualization [3][5].",
+    "ours": "Several papers incorporate rewriting or transforming questions, text, or data as a key step in their methods, often to improve clarity, context-independence, or downstream task performance.\n\nA prominent theme is **decontextualization**, where text snippets or questions are rewritten to be understandable without surrounding context. Community C1 discusses methods that rewrite text snippets and questions to be context-independent, employing rewriting modules and advanced language models like text-davinci-003 and gpt-4-0314 [C1]. Similarly, Community C37 highlights snippet decontextualization as a rewriting step to make snippets standalone and clearer [C37]. This approach is also implied in AI research assistants that surface attribution snippets needing decontextualization, indicating rewriting or transforming text as part of their method [C37]. Citation graph explorers preview citation contexts requiring decontextualization, again involving rewriting for clarity [C37]. Community C8’s QADECONTEXT framework explicitly decomposes decontextualization into stages including question generation, question answering, and rewriting, showing rewriting as an integral step [C8].\n\nAnother approach focuses on **question rewriting or decomposition** to simplify or transform complex questions. Community C2 describes a method using a rewrite model to decompose complex questions into simpler utterances, facilitating accurate action sequence generation [C2]. Community C29 similarly presents a question-to-action framework that rewrites complex natural language questions into action sequences [C29]. Community C14 introduces a retrieval-guided approach using QED-based decomposition to generate counterfactual questions, involving question rewriting [C14]. Community C27 discusses the Gold Agen-Qgen method for question generation that rewrites questions to improve model consistency [C27].\n\nBeyond text, some methods rewrite or transform data representations. Community C40 describes verbalization, which converts knowledge graph queries into textual sequences, effectively rewriting or transforming data as a step in question answering and link prediction tasks [C40].\n\nIn summary, rewriting or transforming questions, text, or data is a common and diverse methodological step across multiple papers. It appears in decontextualization of snippets and questions, decomposition and rewriting of complex questions into simpler forms or action sequences, and verbalization of structured data into text. These rewriting steps serve to improve clarity, context-independence, model consistency, and downstream task accuracy [C1][C2][C8][C14][C27][C29][C37][C40].",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents diverse perspectives including decontextualization, question rewriting, decomposition, and data verbalization, whereas Answer B focuses narrowly on two specific papers.",
+      "Answer B provides multiple perspectives such as decontextualization, question rewriting, decomposition, and data verbalization, whereas Answer A focuses mainly on question rewriting and snippet decontextualization."
+     ],
+     "directness": [
+      "Both answers directly address the question by identifying papers that rewrite or transform questions, text, or data, though Answer A is more detailed and Answer B is more concise.",
+      "Answer A directly names specific papers and their rewriting steps clearly and succinctly, while Answer B is more elaborate and less concise in directly answering the question."
+     ],
+     "empowerment": [
+      "Answer A provides a broader understanding of different rewriting methods and their purposes, enabling readers to grasp the topic comprehensively, unlike Answer B which is more limited.",
+      "Answer B helps the reader understand the various purposes and contexts of rewriting or transforming in different papers, enabling informed judgments about their roles and benefits."
+     ],
+     "comprehensiveness": [
+      "Answer A covers multiple papers and communities with detailed examples of rewriting or transforming questions, text, and data, while Answer B mentions only two papers with less detail.",
+      "Answer B covers a wider range of papers and methods involving rewriting or transforming questions, text, or data, including decontextualization, question decomposition, and data verbalization, while Answer A mentions only two papers."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G19",
+    "question": "Which papers point out weaknesses of existing models, metrics or practices, and which weaknesses?",
+    "baseline": "Paper 2022.acl-long.340 points out two weaknesses of the FiD model: (1) the independent assumption among passages is not justified because FiD cannot leverage semantic relationships among passages for embedding and answer generation, and (2) an efficiency bottleneck due to high computational cost when processing many retrieved passages [2]. Paper 2023.acl-long.290 discusses limitations including that not all documents are equally useful, the focus on highlighted relevant passages for human evaluation may miss some factual inconsistencies, and that evaluation of passage-level QA remains challenging due to difficulties in assessing factual correctness and consistency, especially when answers require complex reasoning [4]. Paper 2023.acl-long.290 also notes that standard automatic evaluation metrics like Rouge-X and BertScore poorly reflect actual model performance in NFQA [1]. Paper 2023.acl-long.181 highlights that existing automatic text generation metrics such as ROUGE were designed for other tasks and have not been validated for LFQA, with a major limitation being the huge space of valid output answers for any given question [5]. Additionally, it notes that metrics for faithfulness assume access to evidence documents and evaluates faithfulness by comparing answers to evidence, implying challenges in faithfulness evaluation [6]. Paper 2022.acl-long.201 points out that KGT5 sometimes falls behind baselines on small datasets due to Transformer models struggling when data is scarce, indicating a weakness in scalability and versatility [3].",
+    "ours": "Several papers highlight weaknesses in existing models, metrics, and practices across various QA tasks:\n\n1. **Weaknesses in Models and Reasoning Approaches:**\n   - The CQA dataset exposes challenges for graph-based methods in handling Quantitative and Comparative Reasoning questions, indicating these methods struggle with certain complex question types [C37].\n   - Multi-hop QA models suffer from \"disconnected reasoning,\" where models take shortcuts instead of performing genuine multi-step reasoning, revealing a fundamental weakness in current multi-hop QA practices [C15][C23].\n   - The HUG-Ind model fails at bridge-based reasoning because it assumes document independence, which is a flawed assumption for tasks requiring modeling of document dependencies. This points to weaknesses in document selection and reasoning methods that do not capture inter-document relationships [C26].\n   - Data-to-text generation models are prone to hallucination (generating incorrect or unsupported information), a known weakness addressed by customized loss functions to reduce such errors [C38].\n   - Existing models may lack robustness to input variations, as multi-task learning has been shown to improve robustness, implying that single-task models are vulnerable to input changes [C38].\n   - GPT-3 shows limitations in domain-specific knowledge, such as history, where human answers are preferred, highlighting weaknesses in large language models in certain specialized domains [C12].\n\n2. **Weaknesses in Evaluation Metrics and Practices:**\n   - Exact-Match and F1 metrics have notable failure cases in evaluating open-domain QA models, prompting the development of improved evaluation methods like InstructGPT-eval and GPT4-eval that better capture semantic equivalence and reduce evaluation errors [C3].\n   - Purely automated evaluation approaches for multi-document non-factoid QA are insufficient, necessitating human evaluation frameworks and semantic similarity methods to ensure reliable assessment [C14].\n   - Existing metrics for long-form QA, such as Length, Always Human, Random, and GPT2-PPL baselines, face challenges in accurately assessing factuality and coherence, indicating weaknesses in current evaluation metrics for long-form answers [C19][C24].\n   - Multilingual QA evaluation faces challenges, as seen in the use of Google Translate API for attribution evaluation, revealing weaknesses in cross-lingual attribution assessment practices [C18].\n\nIn summary, these papers collectively identify weaknesses in reasoning capabilities of models (especially multi-hop and graph-based methods), robustness to input variation, domain-specific knowledge, and hallucination in generation. On the evaluation side, they point out limitations of traditional metrics like Exact-Match and F1, the need for human-in-the-loop evaluation, and difficulties in multilingual and long-form QA assessment [C3][C15][C23][C26][C37][C38][C12][C14][C19][C24][C18].",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides a wider variety of perspectives including different model types, reasoning challenges, evaluation metrics, and domain-specific issues.",
+      "Answer B provides a wider variety of perspectives including different QA tasks, model types, reasoning challenges, and evaluation issues, whereas Answer A is more narrowly focused."
+     ],
+     "directness": [
+      "Answer A directly addresses the question by explicitly listing weaknesses and linking them to specific papers and contexts.",
+      "Answer A directly lists specific weaknesses from each paper with clear references, whereas Answer B is more general and synthesizes information, making A more directly responsive to the question."
+     ],
+     "empowerment": [
+      "Answer A helps the reader understand specific weaknesses and their implications, enabling informed judgments about model and metric limitations.",
+      "Answer B helps the reader understand the weaknesses in context and implications for evaluation and model design, enabling more informed judgments, while Answer A is more descriptive without broader insights."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a broader range of weaknesses across models, metrics, and practices with multiple examples and detailed explanations.",
+      "Answer B covers a broader range of weaknesses across models, metrics, and practices with multiple examples and detailed explanations, while Answer A focuses on fewer papers and specific weaknesses."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G20",
+    "question": "Which papers propose one unified or simplified model in place of a multi-stage pipeline?",
+    "baseline": "Passage [1] proposes ReasoningLM, a subgraph reasoning enhanced PLM that unifies question understanding and KG reasoning in a single model, aiming to simplify the traditional two-module approach that integrates PLM and GNN in a loose way. This approach replaces the complicated multi-module pipeline with a unified Transformer-based model that performs both semantic and structural reasoning [1].\n\nPassage [2] discusses that traditional KGE models often require multistage training and inference pipelines, sacrificing versatility and simplicity. It then states that their paper shows all desiderata (quality, versatility, simplicity) can be fulfilled by a simple sequence-to-sequence (seq2seq) model, implying a unified model approach instead of a multi-stage pipeline [2].\n\nPassage [3] mentions approaches that rely on a pipeline of LLMs to complete tasks, which is a multi-stage pipeline, but also references methods enabling flexible \"soft interfaces\" between models. However, it does not explicitly propose a unified or simplified single model replacing multi-stage pipelines [3].\n\nPassage [4] describes multi-stage pipelines such as ETC and DocHopper for reading comprehension and condition selection, indicating these are multi-stage rather than unified models [4].\n\nPassages [5] and [6] list various QA models and ablation studies but do not explicitly discuss unified or simplified models replacing multi-stage pipelines [5][6].\n\nTherefore, papers in passages [1] and [2] propose unified or simplified models in place of multi-stage pipelines.",
+    "ours": "Several papers propose unified or simplified models that replace traditional multi-stage pipelines in various question answering (QA) tasks.\n\nThe YONO model is a prominent example that unifies retrieval, reranking, and reading components into a single encoder-decoder architecture trained end-to-end. This approach replaces the conventional multi-stage pipeline in open-domain QA with one streamlined model [C2].\n\nSimilarly, the alignment-enhanced complex question answering framework offers a unified model that addresses semantic and structural gaps in complex QA. It achieves state-of-the-art results on the CQA dataset, indicating a simplified approach compared to multi-stage pipelines [C36].\n\nUDT-QA presents a semi-parametric unified framework integrating structured data and text for open-domain QA. It simplifies the pipeline by verbalizing structured data into natural language, enabling joint processing within a single model [C7].\n\nIn multi-hop reading comprehension, the Deep Inductive Logic Reasoning (DILR) framework integrates neural logic operators and attention mechanisms into one model, representing a unified reasoning approach rather than a multi-stage pipeline [C38].\n\nThe SQUIRE framework is another example that uses a sequence-to-sequence Transformer model for multi-hop knowledge graph reasoning. It replaces reinforcement learning-based multi-stage methods with an interpretable and unified approach. SQUIRE employs iterative training and Transformer encoders to generate contextualized representations, offering a unified sequence-to-sequence model instead of a multi-stage pipeline [C16][C26].\n\nKG-FiD integrates knowledge graphs into the Fusion-in-Decoder framework and combines retrieval and answer generation into a more unified architecture for open-domain QA, although it still involves a two-stage reranking process [C35].\n\nOther approaches focus on simplifying pipelines by modular decomposition with soft interfaces rather than full unification. For example, QADECONTEXT decomposes decontextualization into modular stages (question generation, answering, rewriting) but simplifies the pipeline compared to fully modular or end-to-end prompting methods [C21]. Another method uses a rewrite model to break down complex questions into simpler utterances to generate correct action sequences, simplifying the parsing pipeline by focusing on shorter question parts [C34].\n\nIn summary, multiple papers propose unified or simplified models that replace or streamline multi-stage pipelines, ranging from fully end-to-end architectures like YONO and UDT-QA to unified sequence-to-sequence models like SQUIRE and DILR, as well as frameworks that simplify modular pipelines [C2][C36][C7][C38][C16][C26][C35][C21][C34].",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents a variety of models and frameworks from different perspectives, including end-to-end architectures, sequence-to-sequence models, and modular simplifications, whereas B focuses mainly on two examples.",
+      "Answer B presents diverse models and frameworks from different QA tasks and approaches, including end-to-end architectures, sequence-to-sequence models, and modular simplifications."
+     ],
+     "directness": [
+      "Answer A directly lists and describes papers proposing unified or simplified models, while B is more indirect and less explicit about which papers propose such models.",
+      "Answer A directly identifies the specific passages and papers that propose unified models, clearly answering the question without extraneous detail."
+     ],
+     "empowerment": [
+      "Answer A explains how each model simplifies or unifies the pipeline, helping readers understand the approaches and their significance in replacing multi-stage pipelines.",
+      "Answer B helps the reader understand the topic by explaining how each model simplifies or unifies pipelines, enabling informed judgments about the approaches."
+     ],
+     "comprehensiveness": [
+      "Answer A provides multiple detailed examples of unified or simplified models across various QA tasks, covering a broad range of approaches and citing many papers.",
+      "Answer B covers a wider range of papers and models proposing unified or simplified approaches, providing multiple examples and detailed descriptions."
+     ]
+    },
+    "cost_usd": 0.0
+   }
+  ]
+ },
+ "no_selection": {
+  "rates": {
+   "comprehensiveness": {
+    "wins": 10,
+    "ties": 0,
+    "losses": 0,
+    "n": 10,
+    "win_rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "diversity": {
+    "wins": 10,
+    "ties": 0,
+    "losses": 0,
+    "n": 10,
+    "win_rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "empowerment": {
+    "wins": 10,
+    "ties": 0,
+    "losses": 0,
+    "n": 10,
+    "win_rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "directness": {
+    "wins": 0,
+    "ties": 8,
+    "losses": 2,
+    "n": 10,
+    "win_rate": 0.4,
+    "ci95": [
+     0.168,
+     0.687
+    ]
+   }
+  },
+  "cost_usd": 0.0,
+  "results": [
+   {
+    "id": "G01",
+    "question": "What are the main research directions in this corpus?",
+    "baseline": "The main research directions in the corpus include improving open-domain question answering (ODQA) systems by enhancing retrievers and readers, such as moving from sparse retrieval methods like TF-IDF or BM25 to dense retrieval based on contextualized embeddings from pre-trained language models (PLMs), and improving readers by adopting PLMs like BERT, BART, and T5 [5]. Another direction is the development and evaluation of modules in QA frameworks, such as question rewriting, action sequence selection, and cross-attention mechanisms, which have been shown to significantly impact performance [1]. Additionally, research addresses challenges in handling references within and across documents, particularly in scientific documents, and the task of decontextualization to improve snippet utility and passage retrieval [4][6]. There is also a focus on user-centered explainability in NLP, aiming to provide users with relevant information to assess model predictions rather than just explaining model internals [3]. Lastly, memory-enhanced input processing using models like RoBERTa for document comprehension and task prediction is another explored area [2].",
+    "ours": "The main research directions in this corpus revolve around advancing question answering (QA) systems through diverse methodologies, datasets, and evaluation frameworks.\n\n1. **Open-Domain and Multi-Modal QA**: A significant focus is on open-domain QA that integrates heterogeneous knowledge sources such as Wikipedia passages, tables, and knowledge graphs. Techniques include data-to-text verbalization and unified frameworks combining structured data and text to enhance retrieval and answer inference [C39][C51]. Multi-modal pre-training models are also developed for QA tasks involving multiple data types, optimized via cross-entropy loss on labeled data and adapted to target domains with unlabeled data [C72].\n\n2. **Explainability and Multi-Hop Reasoning**: Research emphasizes explainable multi-hop QA systems that predict answers while identifying minimal rationale sentences, employing both supervised and unsupervised methods to improve interpretability [C45]. Multi-hop reasoning over knowledge graphs uses reinforcement learning, symbolic rule-based models, and frameworks like SQUIRE to infer reasoning paths, enhancing both performance and explainability [C85][C89][C98]. Neurosymbolic learning combines deep learning with logic reasoning for complex multi-hop reading comprehension [C61].\n\n3. **Semantic Parsing and Neuro-Symbolic Methods**: Semantic parsing is explored extensively, focusing on mapping natural language to formal representations. Approaches include graph-based query graph construction and refinement, sequence-based action sequence generation with seq2seq models, and sketch decoding for hierarchical logical forms [C73][C6]. Explicit human feedback and attention supervision are used to improve parsing accuracy [C4]. Neuro-symbolic learning techniques integrate symbolic reasoning with neural models to improve knowledge-base completion, employing logic embeddings and adversarial learning [C78].\n\n4. **Knowledge Graph Integration and Embeddings**: Enhancing QA over knowledge graphs is pursued by integrating pre-trained language models with graph neural networks to improve text understanding and multi-hop reasoning [C48]. Knowledge graph embeddings represent entities and relations as dense vectors for graph completion and link prediction tasks [C74]. Generative QA readers and graph-based reranking methods, such as KG-FiD, combine knowledge graphs and graph neural networks to boost performance [C77][C90].\n\n5. **Robustness and Counterfactual Reasoning**: Counterfactual data augmentation methods generate altered question-context-answer triples to improve robustness and reduce disconnected reasoning in QA models [C44][C64][C76]. Retrieval-guided counterfactual generation uses decomposition and T5-based models to create label-changing counterfactual questions and explanations [C3].\n\n6. **Cross-Lingual and Temporal QA**: Cross-lingual QA systems integrate multilingual retrieval and generation models, evaluated on multiple languages, with attribution detection enhanced by fine-tuned large language models and NLI models [C38][C10]. Temporal QA research models temporal constraints and intents in knowledge graph QA, using semantic frameworks and interpretation structures, evaluated on datasets like TempQuestions and TimeQuestions [C81][C82][C86][C91].\n\n7. **Evaluation and Benchmarking**: The corpus includes comparative performance analyses and benchmarking of various QA methods across multiple datasets [C36]. Long-form QA evaluation employs multiple automatic and human metrics assessing faithfulness, diversity, fluency, and factuality, using datasets such as HURDLES [C9]. Additionally, evaluation of non-large language models on datasets like CuratedTREC highlights improvements in QA accuracy [C2].\n\n8. **Additional Directions**: Other notable areas include prompt-enhanced encoder-decoder QA models addressing long-tailed QA problems via knowledge prompts and retrieve-then-rerank frameworks [C37], adaptive mutual knowledge distillation for selective knowledge transfer between student models [C79][C96], document retrieval strategies for multi-hop QA using knowledge graphs and entity-centric queries [C7], and snippet decontextualization tools to make extracted snippets understandable without original context [C5]. Data-to-text generation research aims to improve text quality and reduce hallucination through multi-task learning and customized loss functions [C8].\n\nIn summary, the corpus covers a broad spectrum of QA research, emphasizing integration of heterogeneous knowledge sources, explainability, semantic parsing, robustness, multilingual and temporal aspects, and rigorous evaluation methodologies. These directions collectively push the boundaries of QA system capabilities and understanding.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A covers a wide range of perspectives including multi-modal QA, explainability, semantic parsing, knowledge graph integration, robustness, cross-lingual and temporal QA, and evaluation, whereas Answer B focuses mainly on retrieval improvements, module development, and explainability.",
+      "Answer B presents a more varied set of perspectives including multi-modal QA, explainability, semantic parsing, knowledge graphs, robustness, cross-lingual and temporal QA, and evaluation, whereas Answer A is more limited in scope."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses the main research directions with clear categorization and examples, whereas Answer B is more general and less explicitly structured around the question.",
+      "Answer A directly lists main research directions succinctly and clearly, while Answer B, though comprehensive, is more elaborate and less concise in addressing the question."
+     ],
+     "empowerment": [
+      "Answer A equips the reader with a thorough understanding of the different research areas and techniques, enabling informed judgments about the field, while Answer B provides less context and fewer insights.",
+      "Answer B provides detailed explanations and categorizes research directions clearly, enabling readers to understand and make informed judgments about the corpus' research areas."
+     ],
+     "comprehensiveness": [
+      "Answer A provides a detailed and extensive overview of multiple research directions, covering various methodologies, datasets, and evaluation frameworks, while Answer B offers a more limited and less detailed summary.",
+      "Answer B covers a wider range of research directions with detailed examples and references, addressing multiple facets of QA research comprehensively."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G02",
+    "question": "Which papers in the corpus work with knowledge graphs, and for which tasks?",
+    "baseline": "The papers working with knowledge graphs and their tasks are as follows:\n\n1. Paper 2023.emnlp-main.228 focuses on Knowledge Graph Question Answering (KGQA). It defines a knowledge graph as a collection of triples and addresses the KGQA task of finding answer entities to natural language questions using a retrieval-then-reasoning framework over the KG [1].\n\n2. Paper 2022.acl-long.340 discusses the use of knowledge graphs in Open-Domain Question Answering (ODQA). It mentions leveraging knowledge graphs to improve passage retrieval and reasoning, including methods that transform KG triplets into text or use passage graphs to propagate retrieval scores [3].\n\n3. Paper 2022.acl-long.201 covers knowledge graph embeddings (KGEs) and their use in KGQA. It describes KGQA as answering natural language questions using a KG, including both simple fact retrieval and complex multi-hop reasoning questions [4].\n\n4. Paper 2022.acl-long.113 mentions generating text from knowledge bases (KBs) as part of data-to-text generation and discusses verbalizing knowledge graphs for ODQA tasks [2].\n\nThus, the corpus includes papers working with knowledge graphs primarily for KGQA and ODQA tasks, involving question answering, retrieval, reasoning, and text generation from KG data [1][2][3][4].",
+    "ours": "Several papers in the corpus work with knowledge graphs (KGs) across a variety of tasks, primarily focusing on question answering (QA), link prediction, and knowledge graph completion.\n\n**Knowledge Graph Question Answering (KGQA):**  \nMany communities address KGQA by transforming natural language questions into structured queries or logical forms that can be executed over knowledge graphs. For example, C36 proposes a framework for complex KBQA that aligns questions to actions, leveraging KG artifacts for structured reasoning [C36]. Similarly, C47 introduces ALCQA, which converts questions into sequences of predefined actions and uses alignment and reward-guided strategies to bridge semantic and structural gaps in KGQA [C47]. Semantic parsing approaches for KBQA are discussed in C10, which includes graph-based query graph construction and sequence-based action generation [C10].\n\nPre-trained language models and graph neural networks are also employed for KGQA. C3 focuses on multi-hop reasoning over KG subgraphs using these models [C3], while C7 presents ReasoningLM, a language model with subgraph-aware self-attention designed for structured reasoning over KG subgraphs in QA tasks [C7]. C48 proposes UDT-QA, a unified framework integrating structured KG data with text via verbalization to enhance open-domain QA [C48]. Temporal KGQA is addressed by C9, which introduces the TimeQuestions dataset and methods like EXAQT using relational graph convolutional networks (RGCNs) for temporal reasoning [C9].\n\n**Link Prediction and Knowledge Graph Completion:**  \nSeveral papers focus on link prediction and KG completion, which involve predicting missing facts or links in KGs. C1 discusses methods including verbalization and KG embedding models for QA and link prediction [C1]. C2 centers on embedding-based methods such as TransE, RotatE, ConvE, and TuckER applied to datasets like FB15K237 and NELL995 for link prediction and reasoning [C2]. C4 also focuses on KG embeddings for KG completion [C4]. C5 introduces KGT5, a sequence-to-sequence Transformer model evaluated on multiple benchmarks for link prediction and QA [C5]. C6 discusses multi-hop reasoning methods including walk-based reinforcement learning and symbolic rule-based models for KG completion [C6]. Neuro-symbolic learning techniques combining logic embeddings and adversarial learning for knowledge base completion are presented in C52 [C52].\n\n**Reasoning and Explainability in KG Tasks:**  \nExplainable and interpretable reasoning over KGs is another theme. C11 presents SQUIRE, a Transformer-based framework with rule-enhanced learning for interpretable multi-hop KG reasoning [C11]. C49 introduces a Monte-Carlo planning approach for faithful QA over entailment trees representing KGs [C49]. C82 and C85 discuss explainable multi-hop QA and faithful reasoning methods applicable to KG-based QA systems [C82][C85].\n\n**Additional KG-related Methods:**  \nSome papers explore clause generation and invented predicates to enhance KG expressiveness and reasoning. C86 and C95 discuss clause generation involving existential and invented predicates, which relate to KG reasoning by defining relations and target atoms [C86][C95]. Knowledge distillation within knowledge mining frameworks that potentially involve KGs is covered by C92 [C92].\n\nIn summary, the corpus includes a rich variety of approaches working with knowledge graphs for tasks such as question answering (including complex, temporal, and open-domain QA), link prediction, knowledge graph completion, and interpretable multi-hop reasoning. Methods range from embedding models and graph neural networks to symbolic and neuro-symbolic techniques, often leveraging pre-trained language models and structured logical forms.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A discusses a wide range of perspectives including different KG tasks, methods like embeddings, neural networks, symbolic reasoning, temporal reasoning, and explainability, whereas Answer B focuses mainly on KGQA and ODQA with limited methodological diversity.",
+      "Answer B provides a more varied perspective by discussing different approaches such as semantic parsing, pre-trained language models, graph neural networks, neuro-symbolic learning, and explainability, whereas Answer A is more limited in scope."
+     ],
+     "directness": [
+      "Both answers directly address which papers work with knowledge graphs and for which tasks, though Answer A is more detailed and Answer B is more concise; both are clear in their focus.",
+      "Answer A directly lists the papers and their associated tasks related to knowledge graphs in a clear and straightforward manner, whereas Answer B, though comprehensive, is more elaborate and less directly tied to specific papers in the corpus."
+     ],
+     "empowerment": [
+      "Answer A equips the reader with a broad understanding of the different KG-related tasks and approaches, enabling informed judgments about the scope and methods in the corpus, while Answer B provides a more superficial summary.",
+      "Answer B offers detailed explanations of various methods and tasks, helping readers understand the breadth of KG applications and enabling informed judgments, while Answer A is more concise and less explanatory."
+     ],
+     "comprehensiveness": [
+      "Answer A provides a detailed and extensive overview of various papers working with knowledge graphs, covering multiple tasks such as KGQA, link prediction, KG completion, reasoning, and explainability, while Answer B lists fewer papers with less detail.",
+      "Answer B covers a wider range of tasks and methods related to knowledge graphs, including question answering, link prediction, knowledge graph completion, reasoning, explainability, and additional KG-related methods, while Answer A focuses mainly on KGQA and ODQA."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G03",
+    "question": "How do the papers in the corpus approach multi-hop reasoning?",
+    "baseline": "The papers approach multi-hop reasoning through various methods including explainable multi-hop QA systems that identify rationales leading to answers, either within single or multiple documents, often relying on supervised settings with rationale and answer annotations or exploring approaches without rationale annotations due to their scarcity and cost [1]. Another approach formalizes a causal graph to disentangle disconnected reasoning from true multi-hop reasoning by modeling direct causal effects and applying counterfactual multi-hop QA to improve reasoning capabilities [2]. Some methods break down questions into smaller modules or use modular designs with retrievers and entailment modules to adaptively update facts and provide detailed explanations [3]. Deep learning methods include memory-based models with attention mechanisms, graph neural networks for entity connections, path-finding formulations, and neurosymbolic learning integrating deep learning with logic programming to handle uncertainty and reasoning [5][6]. Additionally, multi-hop reasoning models are evaluated using benchmarks and metrics like Mean Reciprocal Rank and Hits at N, with training involving techniques such as beam search and inverse edges to generate multi-hop paths [4].",
+    "ours": "The papers in the corpus approach multi-hop reasoning through a diverse set of methods spanning neural networks, symbolic logic, graph-based models, and hybrid frameworks integrating deep learning with structured reasoning.\n\nA prominent theme is the use of graph-based approaches that build and reason over knowledge graphs (KGs). Methods like KG-FiD integrate knowledge graphs into Fusion-in-Decoder architectures with two-stage reranking to connect passages and enable multi-hop inference [C80][C35]. Reinforcement learning agents navigate KG walks to find multi-step relations, while symbolic rule-based models enhance interpretability and address sparse graphs [C5]. Transformer-based models such as KGT5 generate sequences over KG paths for link prediction and QA, supporting multi-hop reasoning [C92]. Other works improve KG reasoning by combining pre-trained language models (PLMs) with graph neural networks (GNNs) to encode questions and model reasoning modules over subgraphs [C14], and introduce subgraph-aware self-attention mechanisms to enhance structured reasoning [C15]. Temporal KGQA methods use GNNs and Group Steiner Trees to handle temporal relations in multi-hop queries [C50].\n\nAnother key approach integrates deep learning with inductive logic reasoning. The Deep Inductive Logic Reasoning (DILR) framework combines attention mechanisms, neural logic operators, and clause instantiation to select and refine candidate rules for multi-hop reading comprehension [C4][C7]. This hybrid approach leverages hierarchical attentive readers to filter relevant information and perform multi-step logical inference.\n\nSeveral papers focus on decomposing complex questions into simpler components or action sequences to facilitate multi-hop reasoning. For example, a method in C83 generates correct action sequences and uses a rewrite model to break down complex questions into simpler utterances [C83]. Similarly, a question-to-action framework decomposes questions into sequences of actions selected via reward-guided strategies over knowledge bases [C67]. Sequence-to-tree models improve semantic parsing by capturing hierarchical logical forms, supporting compositional multi-hop reasoning [C49].\n\nCounterfactual reasoning and causal inference are also explored to reduce shortcut learning and improve multi-hop reasoning across paragraphs. Counterfactual multi-hop methods based on BERT disentangle shortcut impacts using adversarial examples, enhancing reasoning robustness [C3]. Counterfactual data augmentation further improves model robustness and local consistency in QA tasks [C91].\n\nOther notable approaches include multi-hop QA systems that predict answers alongside minimal rationale sentences for explainability, using multi-task learning and specialized architectures [C2]. GEMFormer collects relevant information across entire documents using uncertainty-based global explicit memory and contextual embeddings to enhance reasoning [C8]. Monte-Carlo planning methods use state verifiers to guide multi-step inference effectively [C54].\n\nFinally, frameworks like UDT-QA verbalize structured data into natural language to unify retrieval and answer inference, supporting multi-hop reasoning by integrating data and text [C73]. Alignment-enhanced QA frameworks address semantic and structural gaps in complex questions to improve multi-hop reasoning performance [C51].\n\nIn summary, the corpus covers a rich variety of multi-hop reasoning approaches including graph-based reasoning with KGs and GNNs, neural-symbolic logic integration, question decomposition into action sequences, counterfactual and causal methods, explainable QA architectures, and hybrid retrieval-generation frameworks. These methods collectively advance multi-hop reasoning by modeling dependencies across documents, leveraging structured knowledge, and improving interpretability and robustness.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents a broader variety of perspectives including graph-based models, neural-symbolic integration, question decomposition, counterfactual reasoning, explainability, and hybrid frameworks, whereas B is more general and less varied.",
+      "Answer B presents a broader variety of perspectives including graph-based models, neural-symbolic integration, question decomposition, counterfactual reasoning, and hybrid frameworks, whereas Answer A is more limited in scope."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses how the papers approach multi-hop reasoning with clear examples and methods, while B is more general and less focused on specifics.",
+      "Answer A directly addresses the question with concise summaries of approaches, while Answer B, though comprehensive, is more elaborate and less succinct in its response."
+     ],
+     "empowerment": [
+      "Answer A offers concrete examples, references, and explanations that help the reader understand different multi-hop reasoning techniques and their applications, enabling informed judgments.",
+      "Answer B better equips the reader to understand the topic by explaining different methodologies and their purposes, enabling informed judgments about multi-hop reasoning approaches."
+     ],
+     "comprehensiveness": [
+      "Answer A provides a detailed and extensive overview of multiple specific methods, frameworks, and examples from the corpus, covering a wide range of approaches to multi-hop reasoning.",
+      "Answer B provides a more detailed and extensive overview of various multi-hop reasoning approaches, covering a wider range of methods and specific examples from the corpus."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G04",
+    "question": "What new datasets or benchmarks are introduced in the corpus?",
+    "baseline": "The corpus introduces a new dataset and benchmark called WIKI HOWQA, sourced from the WikiHow website, which consists of passage-level answers to \"how to\" questions [2]. This dataset fills a critical gap in resources for multi-document non-factoid question answering (MD-NFQA) [2]. Unlike previous datasets such as ELI5, which rely on automated methods for curating reference content, WIKI HOWQA uses texts parsed from relevant HTML pages chosen by the author of the corresponding WikiHow article [1]. The benchmark also includes a novel human-evaluation framework that leverages highlighted relevant passages to improve the quality and factual accuracy of NFQA assessments [3].",
+    "ours": "The corpus introduces several new datasets and benchmarks across various question answering (QA) domains, reflecting a broad range of challenges and evaluation focuses.\n\nIn open long-tailed QA, the OLTQA community presents datasets and benchmarks specifically designed to evaluate performance on long-tailed question distributions [C46]. For complex reading comprehension requiring compositional logical reasoning, the ConditionalQA dataset is introduced, featuring questions with conditional answers [C10]. WikiHowQA is a large-scale benchmark derived from WikiHow articles, targeting multi-document non-factoid QA tasks [C5].\n\nTemporal question answering is addressed with new benchmarks such as TempQuestions and TimeQuestions, both focusing on temporal intents in knowledge graph question answering (KGQA) [C19][C27]. The SF-TQA method is evaluated on two temporal KGQA benchmarks, achieving state-of-the-art results [C69].\n\nMultilingual and cross-lingual QA attribution is explored through the XOR-AttriQA and XOR-TyDiQA datasets, designed to evaluate attribution in multilingual QA systems [C7][C15].\n\nFor faithful and explainable QA, FAME is evaluated on datasets including EntailmentBankQA, OBQA, and WorldTreeQA, which serve as benchmarks for faithful question answering using structured entailment trees and Monte-Carlo planning [C74]. The EntailmentBank test split is also introduced as a benchmark for entailment tree generation methods [C23]. The HUG framework and its variant HUG-Small provide benchmarks for explainable multi-hop QA without rationale supervision, evaluated on datasets like FEVER and MultiRC [C83].\n\nMulti-hop knowledge graph reasoning benchmarks include FB100K, KACC-M, NELL9954, and others, used to evaluate frameworks such as SQUIRE and ReasoningLM, which demonstrate improved performance in multi-hop KGQA tasks [C79][C60][C80]. The KGT5 method is evaluated on multiple benchmark datasets including Freebase, ComplexWebQuestions, MetaQA, WN18RR, and YAGO3-10, highlighting its applicability to knowledge graph link prediction and QA [C67].\n\nAdditional benchmarks include HotpotQA for multi-hop QA [C53], CuratedTREC providing gold standard answers in regex form [C4], and the CQA dataset focusing on complex quantitative and comparative reasoning questions [C14]. The ELI5 dataset offers long-form QA challenges with questions and supporting documents from Reddit, used to train models like WEBGPT [C28].\n\nFinally, datasets such as FinQA, TAT-QA, HiTab, and MULTIHIERTT present challenges in quantitative reasoning over financial and tabular data, supporting evaluation of compositional generalization methods [C39].\n\nIn summary, the corpus introduces a rich variety of new datasets and benchmarks spanning open long-tailed QA, complex reasoning, temporal QA, multilingual attribution, faithful and explainable QA, multi-hop KG reasoning, and quantitative reasoning, reflecting diverse approaches and evaluation needs in the QA research community.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "baseline",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents diverse datasets spanning various QA challenges including temporal, multilingual, explainable, multi-hop reasoning, and quantitative reasoning, while Answer B discusses only the WikiHowQA dataset.",
+      "Answer B presents a diverse set of datasets addressing various QA challenges including temporal, multilingual, explainable, multi-hop reasoning, and quantitative reasoning, whereas Answer A focuses only on one dataset."
+     ],
+     "directness": [
+      "Answer B directly and clearly addresses the question by specifying the new dataset introduced and its unique features, whereas Answer A, while comprehensive, is more elaborate and less concise.",
+      "Answer A directly and clearly answers the question by specifying the new dataset and benchmark introduced, while Answer B, though comprehensive, is less concise and more elaborate."
+     ],
+     "empowerment": [
+      "Answer A equips the reader with extensive knowledge about different datasets and their specific evaluation focuses, enabling informed understanding of the QA research landscape, unlike Answer B which is limited to one dataset.",
+      "Answer B equips the reader with a broad understanding of different datasets and their specific purposes, enabling informed judgments about the QA research landscape, unlike Answer A which is limited to one dataset."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of new datasets and benchmarks across multiple QA domains, providing detailed examples and contexts, whereas Answer B focuses only on one dataset.",
+      "Answer B covers a wide range of new datasets and benchmarks across multiple QA domains, providing extensive detail beyond the single dataset mentioned in Answer A."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G05",
+    "question": "How is the evaluation of question answering systems discussed across the corpus?",
+    "baseline": "The evaluation of question answering (QA) systems is discussed with a focus on different methods and challenges across the corpus. Passage 1 highlights the use of regex matching and multiple evaluation mechanisms, including exact match (EM) accuracy, BEM, InstructGPT-eval, and human judgment, to assess QA models on the CuratedTREC 2002 dataset, noting that large language models often answer from memory rather than using the knowledge source [1]. Passage 6 discusses the challenges in evaluating long-form question answering (LFQA), emphasizing that no existing automatic metrics reliably predict human preference judgments, and suggests adopting multi-faceted evaluation approaches targeting aspects like factuality and completeness rather than a single overall score [6]. Passage 3 mentions a Wizard-of-Oz experiment to study user reliance on QA predictions and the effects of background information, acknowledging limitations due to dataset noise and the controlled experimental setting [3]. Overall, the corpus underscores the complexity of QA evaluation, the need for human judgment, and the limitations of current automatic metrics [1][3][6].",
+    "ours": "The evaluation of question answering (QA) systems across the corpus reveals a rich diversity of approaches tailored to different QA tasks, datasets, and desired answer qualities.\n\nFor open-domain QA, traditional metrics such as Exact Match and F1 score remain foundational for assessing answer correctness by comparing candidate answers to gold standards [C1][C15][C37]. However, newer automated metrics like BEM, InstructGPT-eval, and GPT4-eval have been introduced to better capture semantic equivalence and reduce failure cases inherent in string-matching metrics [C1][C29]. Benchmark datasets such as NQ-OPEN, SQuAD, AmbigQA, and TREC are commonly used to evaluate model performance and robustness [C44][C29][C5].\n\nLong-form QA evaluation emphasizes not only factual correctness but also answer faithfulness, completeness, conciseness, fluency, and ease of understanding. This is achieved through a combination of automatic metrics (e.g., QAFactEval, RankGen, BERTScore, BLEURT, ROUGE) and human evaluation frameworks including expert judgments, A/B testing, and human preference data [C2][C11][C17][C33][C10][C60]. The use of learned evaluation metrics trained on datasets like ELI5 further enhances answer quality assessment in long-form QA [C60].\n\nMulti-hop and explainable QA systems are evaluated with specialized benchmarks and metrics that assess reasoning validity and explainability. For example, entailment tree generation methods use the EntailmentBank dataset to benchmark reasoning performance [C70], while methods like Selection-Inference (SI) ensure valid entailment steps and are evaluated using beam search and large language models [C43]. Counterfactual reasoning approaches employ causal inference and metrics like DiRe to measure reductions in disconnected reasoning, improving multi-step reasoning evaluation [C74]. Monte-Carlo planning with state verifiers is another approach to evaluate reasoning steps, outperforming other planning algorithms [C87].\n\nKnowledge graph QA methods are evaluated on datasets such as TempQuestions and use metrics like Hits@1 to assess multi-hop reasoning capabilities [C45][C76][C91]. Sequence-to-sequence Transformer models like KGT5 are benchmarked across multiple datasets to demonstrate broad applicability [C76].\n\nDomain adaptation and robustness are also key evaluation themes. Methods like adaptive mutual knowledge distillation and counterfactual data augmentation are assessed on diverse datasets to demonstrate improvements in generalization, local consistency, and robustness [C35][C44][C71]. The QADA framework evaluates domain adaptation effectiveness across datasets like SQuAD and NewsQA [C63].\n\nOverall, the corpus highlights a multi-faceted evaluation landscape combining traditional accuracy metrics, semantic similarity measures, human judgments, reasoning validity checks, and robustness assessments across a wide range of QA tasks and datasets. This comprehensive evaluation ecosystem supports the development of QA systems that are not only accurate but also faithful, explainable, and robust in diverse settings.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents multiple perspectives including traditional metrics, human evaluation, reasoning validity, domain adaptation, and robustness, whereas Answer B focuses mainly on a few passages and general challenges.",
+      "Answer B presents multiple perspectives including traditional metrics, human evaluation, reasoning validity, domain adaptation, and robustness, whereas Answer A focuses mainly on a few evaluation challenges and methods."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses how evaluation is discussed across the corpus with structured detail, while Answer B is more general and less specific.",
+      "Answer A directly summarizes the evaluation discussion across the corpus succinctly, while Answer B, though comprehensive, is more elaborate and less concise in directly addressing the question."
+     ],
+     "empowerment": [
+      "Answer A equips the reader with specific knowledge about various evaluation techniques and datasets, enabling informed understanding of QA evaluation complexities.",
+      "Answer B equips the reader with detailed knowledge of various evaluation approaches and metrics, enabling informed judgments about QA system evaluation, unlike Answer A which is more general."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of evaluation methods, datasets, metrics, and QA system types, providing detailed examples and references across the corpus.",
+      "Answer B covers a wider range of evaluation methods, datasets, QA tasks, and specific metrics, providing a more detailed and thorough overview than Answer A."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G06",
+    "question": "Which papers address factuality, faithfulness or attribution problems of language model answers?",
+    "baseline": "Papers 2023.emnlp-main.10 (passages 1, 2, 3, 5, 6) address attribution and factuality problems of language model answers. They find that state-of-the-art cross-lingual QA systems lack attribution and that raw generations often fall short in factuality, proposing attribution detection techniques using models like PaLM 2 to improve attribution levels [1][2][3][5][6]. Paper 2023.acl-long.218 (passage 4) addresses faithfulness by proposing FAME, a method to produce faithful reasoning steps in question answering, organizing reasoning as entailment trees to prove answer correctness [4]. Thus, both papers 2023.emnlp-main.10 and 2023.acl-long.218 focus on factuality, faithfulness, or attribution issues in language model answers.",
+    "ours": "Several papers explicitly address factuality, faithfulness, and attribution problems in language model answers through diverse approaches, including fine-tuning, reasoning structuring, evaluation metrics, and user feedback integration.\n\nA prominent theme is the use of Natural Language Inference (NLI) models to detect and improve attribution. Community C2 fine-tunes PaLM 2 on attribution data and employs NLI models to rerank passages, ensuring QA predictions are supported by human-written text for safer deployment [C2]. Similarly, the CORA system uses an NLI-based attribution detection model to rerank retrieved passages and assess the attribution level of answers and supporting documents [C52]. Community C3 also highlights that NLI fine-tuned models outperform other methods in attribution detection on the TyDi QA dataset, underscoring the importance of fine-tuning for this task [C3].\n\nFaithfulness is addressed by structuring reasoning steps and verifying entailment. Community C11 introduces FAME, which formulates faithful question answering as a discrete decision-making problem using Monte-Carlo planning and organizes reasoning into structured entailment trees, evaluated across datasets [C11]. Community C5 presents the Selection-Inference (SI) method and Faithful Question Answering (FQA) approach, ensuring each reasoning step is a valid entailment supporting the final answer, thus enhancing faithfulness and explainability [C5]. Community C8 describes a controller model trained on EntailmentBank that uses behavior cloning and a verifier to improve reasoning trajectories, supported by planning algorithms to boost faithfulness [C8]. Monte-Carlo planning methods also use state verifiers to validate reasoning steps and entailment, improving faithfulness and correctness [C77]. The reasoning state in entailment methods includes a target hypothesis and candidate premises to structure reasoning and improve faithfulness and attribution [C95].\n\nEvaluation and metrics for factuality and faithfulness are also a focus. Community C1 proposes AIS, a novel evaluation metric for attribution in cross-lingual QA, and XOR-AttriQA to enhance attribution detection in closed-book QA [C1]. Communities C9 and C34 discuss evaluation methods and metrics like QAFactEval for long-form QA, assessing faithfulness and factuality comprehensively [C9][C34]. Community C35 emphasizes the importance of human and expert judgments in evaluating long-form QA answers for factuality and completeness [C35].\n\nOther approaches include improving snippet rewriting to address factuality and faithfulness by making snippets understandable without original context [C36], integrating knowledge graphs into QA frameworks to enhance answer attribution and faithfulness [C94], and using user feedback through bandit learning or explicit corrections to improve factuality and faithfulness [C54][C93][C46].\n\nMethods combining extractive and generative approaches, such as R2-D2 and EviGen, jointly learn evidentiality and answer generation to improve factuality [C55]. Additionally, semantic parsing with explicit human feedback supervises attention weights to enhance faithfulness and attribution [C43].\n\nIn summary, the addressed papers cover a range of strategies: fine-tuning on attribution data, structured reasoning with entailment verification, novel evaluation metrics, snippet rewriting, knowledge graph integration, and leveraging user feedback—all aimed at improving the factuality, faithfulness, and attribution of language model answers.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides diverse perspectives such as NLI models, Monte-Carlo planning, evaluation metrics, snippet rewriting, and user feedback, whereas Answer B focuses narrowly on two papers and their main contributions.",
+      "Answer B provides multiple perspectives and methods from different communities and papers, offering a richer variety of insights compared to the more focused summary in Answer A."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses the question by listing multiple papers and their contributions to factuality, faithfulness, and attribution problems, while Answer B is less detailed and less direct in covering the full scope.",
+      "Answer A directly and succinctly identifies the specific papers addressing the question, clearly linking them to factuality, faithfulness, and attribution problems without extraneous detail."
+     ],
+     "empowerment": [
+      "Answer A explains various methods and their purposes in improving factuality and faithfulness, enabling readers to understand different strategies and make informed judgments, unlike Answer B which is brief and less explanatory.",
+      "Answer B helps the reader understand the topic deeply by explaining various techniques and their purposes, enabling informed judgments about the approaches to factuality and faithfulness."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of papers and approaches addressing factuality, faithfulness, and attribution, including fine-tuning, reasoning structuring, evaluation metrics, snippet rewriting, knowledge graph integration, and user feedback, while Answer B mentions only two papers with limited detail.",
+      "Answer B covers a wider range of papers and approaches addressing factuality, faithfulness, and attribution, including fine-tuning, reasoning structuring, evaluation metrics, snippet rewriting, knowledge graph integration, and user feedback."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G07",
+    "question": "Which approaches aim to make question answering systems smaller or cheaper to run?",
+    "baseline": "The ReasoningLM model can accomplish adaptation tuning at a smaller cost by updating fewer parameters or using cheaper constructed data, as shown by its variants that update either the full parameters or only an added adapter while freezing the model parameters [1][4]. KG-FiD improves efficiency by reranking passages in two stages using GNNs and only passing a few top reranked passages into higher layers for answer generation, significantly reducing computation cost to 40% of FiD while maintaining good QA performance [6].",
+    "ours": "Several approaches aim to make question answering (QA) systems smaller or cheaper to run by focusing on model size reduction, knowledge distillation, efficient architectures, and improved training or retrieval strategies.\n\nA prominent strategy is knowledge distillation, where larger models transfer knowledge to smaller ones to maintain performance while reducing computational cost. For example, a two-stage knowledge distillation approach with adaptive mutual KD loss improves QA performance by making models smaller and cheaper to run [C95]. Similarly, the OLTQA model uses a two-stage knowledge distillation process within a retrieve-then-rerank framework to enhance efficiency in long-tailed QA tasks [C34]. Adaptive mutual knowledge distillation selectively transfers knowledge from better-performing models to improve training efficiency and performance [C14].\n\nUsing smaller model architectures is another key approach. KGT5 employs a T5-small based sequence-to-sequence Transformer for knowledge graph link prediction and QA, explicitly targeting smaller, more efficient models [C70]. The HUG-Small variant of the HUG multi-hop QA method is a smaller model that outperforms competing unsupervised methods, demonstrating that smaller models can still achieve strong results [C15]. The vanilla Fusion-in-Decoder (FiD) reading module, which uses T5 components, can be adapted to smaller T5 variants to build more efficient QA systems [C97].\n\nEfficiency is also improved by integrating components or optimizing training. The YONO model unifies retrieval, reranking, and reading into a single trainable encoder-decoder architecture, potentially reducing complexity and resource requirements [C13]. The SQUIRE framework uses iterative training with a sequence-to-sequence Transformer to improve multi-hop reasoning efficiency and faster convergence compared to prior methods [C87][C88]. Bandit learning methods leverage user feedback to improve extractive QA model performance without requiring large-scale annotations, enhancing learning efficiency [C3][C8].\n\nEmbedding-based methods such as TransE, RotatE, ConvE, and TuckER provide lightweight baselines for knowledge graph reasoning, aiming for efficient QA over structured data [C86]. Retriever-reader frameworks that combine dense retrieval with explicit knowledge sources improve efficiency and effectiveness, contributing to smaller or cheaper QA systems [C35]. REALM uses a dense index and BERT-based components for efficient retrieval and reading comprehension, reducing computational cost in open-domain QA [C42].\n\nOther approaches focus on data efficiency and domain adaptation to reduce training costs. The prompt-enhanced encoder-decoder QA model uses knowledge and meta prompts within a retrieve-then-rerank framework to address low-resource scenarios, facilitating knowledge transfer and potentially lowering training expenses [C6]. The QADA framework improves domain adaptation through hidden space augmentation and attention-based contrastive adaptation, enabling smaller or more efficient models by better generalization [C45].\n\nIn summary, the main approaches to making QA systems smaller or cheaper include knowledge distillation, using smaller Transformer variants, integrating components to reduce complexity, leveraging efficient retrieval and embedding methods, and improving training efficiency through data augmentation and domain adaptation techniques. These strategies collectively contribute to building more resource-efficient QA systems without sacrificing performance.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides multiple perspectives such as model size reduction, retrieval optimization, embedding techniques, and domain adaptation, whereas Answer B focuses narrowly on two examples.",
+      "Answer B provides multiple perspectives such as model size reduction, knowledge distillation, efficient architectures, retrieval strategies, and domain adaptation, whereas Answer A focuses narrowly on two examples."
+     ],
+     "directness": [
+      "Answer A directly and clearly addresses the question by listing and explaining multiple approaches, whereas Answer B provides less direct and less comprehensive information.",
+      "Answer A directly addresses the question with specific examples of models designed to reduce cost and size, while Answer B is more general and broad, making A more focused on the question."
+     ],
+     "empowerment": [
+      "Answer A explains various strategies and their benefits in detail, helping readers understand how to make QA systems smaller or cheaper, while Answer B offers limited insight with less explanation.",
+      "Answer B explains various methods and their impacts, enabling readers to understand and evaluate different strategies for making QA systems smaller or cheaper, unlike Answer A which is more limited in scope."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of approaches including knowledge distillation, smaller architectures, integrated components, embedding methods, and training efficiency, while Answer B mentions only two specific methods.",
+      "Answer B covers a wide range of approaches including knowledge distillation, smaller architectures, integrated components, embedding methods, and training efficiency, while Answer A only mentions two specific models."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G08",
+    "question": "How do the papers handle robustness and adapting QA models to new domains or unseen tasks?",
+    "baseline": "The papers address robustness and adaptation of QA models to new domains or unseen tasks primarily through domain adaptation and augmentation techniques. One approach is unsupervised QA domain adaptation, where models adapt to target domains without access to labeled answers, using pseudo labeling, hidden space augmentation, and self-supervised domain adaptation, as proposed in the QADA framework [1][2][4]. QADA enriches training data by augmenting hidden representations of questions and contexts and employs attention-based contrastive learning to improve generalization across domains [2][4]. Other methods include semi-supervised adaptation with partially labeled target data and unsupervised adaptation with question generation to create synthetic QA samples for training [1][3]. Additionally, handling long-tailed and open-ended distributions of QA tasks involves sharing knowledge between head, tail, and unseen tasks and mining external resources to improve performance under low-resource conditions [6].",
+    "ours": "The papers address robustness and adaptation of QA models to new domains or unseen tasks through a variety of innovative strategies, often combining learning paradigms, data augmentation, and structured reasoning.\n\nA common approach involves leveraging user feedback and self-supervised learning to adapt models without extensive labeled data in the target domain. For example, explicit user feedback and self-supervised learning on unlabeled target data allow models to optimize on source data and update parameters during adaptation, enhancing domain transfer [C1]. Similarly, contextual bandit learning and bandit methods use binary user feedback signals to improve extractive QA models and support supervised, semi-supervised, and unsupervised domain adaptation [C4][C7].\n\nData augmentation techniques, especially counterfactual data generation, are widely used to improve robustness by simulating interventions or creating label-changing examples. Counterfactual multi-hop QA employs causal inference and counterfactual examples during training to reduce disconnected reasoning and improve robustness in multi-hop QA [C39]. Retrieval-guided counterfactual generation creates counterfactual questions and explanations to enhance robustness across datasets [C40]. Other methods like Counterfactual Data Augmentation (CDA) and RGF generate counterfactual triples or simulate attribute interventions to improve local consistency and robustness [C9][C22].\n\nDomain-invariant feature learning and knowledge distillation also play key roles. The QADA framework uses hidden space augmentation and attention-based contrastive adaptation to learn domain-invariant features, improving generalization across QA domains [C2]. Adaptive mutual knowledge distillation selectively transfers knowledge between student models trained with retrieve-then-rerank frameworks, boosting performance on domain-specific and adversarial datasets [C14][C93]. The OLTQA model addresses long-tailed QA and unseen tasks by combining retrieve-then-rerank with adaptive mutual knowledge distillation from large pre-trained language models [C12].\n\nIntegration of structured knowledge and reasoning mechanisms enhances robustness and domain adaptation. ReasoningLM introduces subgraph-aware self-attention and adaptation tuning for structured reasoning over knowledge graph subgraphs [C58]. KG-FiD incorporates knowledge graphs into Fusion-in-Decoder with two-stage reranking to improve passage retrieval for open-domain QA [C76]. Multi-hop reasoning methods leverage reinforcement learning, symbolic rules, and graph neural networks to improve interpretability and robustness over sparse knowledge graphs [C52][C65][C71][C96].\n\nOther notable approaches include Monte-Carlo planning with state verifiers to validate reasoning steps and entailment, improving robustness in reasoning tasks [C75][C63], and frameworks like YONO that integrate retrieval, reranking, and reading layers in an end-to-end trainable architecture for effective adaptation [C41]. Semantic parsing methods, including sequence-to-sequence and sequence-to-tree models with attention and sketch decoding, support adaptation to complex or unseen tasks [C74][C95]. Neuro-symbolic learning combining logic embeddings and adversarial learning also contributes to robustness and adaptability [C89].\n\nIn summary, the papers collectively emphasize multi-faceted strategies—user feedback, counterfactual data augmentation, domain-invariant feature learning, knowledge distillation, structured reasoning, and integration of external knowledge—to enhance robustness and facilitate QA model adaptation to new domains and unseen tasks.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A presents multiple diverse perspectives such as causal inference, reinforcement learning, knowledge graphs, and semantic parsing, whereas Answer B focuses mainly on domain adaptation and augmentation techniques.",
+      "Answer B presents a more varied set of perspectives and techniques such as causal inference, reinforcement learning, neuro-symbolic learning, and Monte-Carlo planning, whereas Answer A focuses mainly on domain adaptation and augmentation."
+     ],
+     "directness": [
+      "Both answers directly address how the papers handle robustness and adaptation, but Answer A is more detailed while Answer B is concise; neither is unclear or off-topic.",
+      "Answer A directly and succinctly addresses the question by focusing specifically on domain adaptation and augmentation techniques, while Answer B, though comprehensive, is more elaborate and less concise."
+     ],
+     "empowerment": [
+      "Answer A equips the reader with detailed insights into various strategies and their mechanisms, enabling a deeper understanding and informed judgment about robustness and adaptation in QA models.",
+      "Answer B better equips the reader to understand and evaluate different approaches by explaining multiple strategies and their roles in robustness and adaptation, enabling more informed judgments."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of methods including user feedback, self-supervised learning, counterfactual data augmentation, domain-invariant feature learning, knowledge distillation, structured reasoning, and neuro-symbolic learning, providing a thorough overview.",
+      "Answer B covers a wider range of methods including user feedback, self-supervised learning, counterfactual data augmentation, knowledge distillation, structured reasoning, and semantic parsing, providing a more detailed and thorough overview."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G09",
+    "question": "How are human users or human judges involved in the studies in this corpus?",
+    "baseline": "Human users participate in an online user-study where they answer questions by indicating agreement or disagreement with model predicted answers and their confidence level on a 5-point Likert scale; they also provide aggregate ratings on the utility of background information, confidence in the model, and self-confidence in their responses, along with optional free-text feedback and demographic information [1][4]. Human annotators are involved in judging the correctness of answers in open-domain QA by evaluating question/answer pairs without knowing the model source or gold status, using search engines to find supporting evidence, with disagreements resolved by a third annotator [6]. Non-expert crowdworkers are used to evaluate long-form answers, sometimes with access to evidence documents and optional justifications, though their reliability in judging correctness without domain expertise or full evidence access is questioned [3]. Human evaluators also assess model answers in comparison to human-written answers, as in the WebGPT dataset, where assessors prefer model answers 69% of the time, though supporting documents are not always released [5]. Simulation studies use simulated user feedback as a learning signal for QA systems, but actual human feedback is suggested as future work beyond simulation [2].",
+    "ours": "Human users and judges play a significant role in various studies within this corpus, primarily in evaluation, feedback, and supervision tasks related to question answering (QA) systems.\n\n**Human Evaluation and Judging:**  \nMany studies rely on human judges to assess the quality of QA outputs. For example, long-form QA (LFQA) systems are evaluated by human annotators who compare answer pairs in A/B testing to select the better response [C3]. Human and expert judgments are crucial for assessing multiple answer aspects such as factuality, completeness, and conciseness [C13]. Similarly, multi-document non-factoid QA systems use human evaluation frameworks to ensure reliable assessment of answer correctness and attentiveness [C2][C18]. Human preference data also serves as a benchmark for evaluating factuality and coherence in LFQA [C6]. Human judges provide rationale supervision in explainable multi-hop QA systems by annotating minimal rationale sentences that explain answers [C65]. Datasets like EntailmentBank and CuratedTREC involve human annotation and verification to create gold standard answers and reasoning trees [C72][C74][C37]. Multi-hop reading comprehension and knowledge graph QA methods are evaluated on human-annotated datasets, with human judges involved in performance assessment [C75][C86][C88][C98][C99].\n\n**Human Feedback in Model Training and Adaptation:**  \nExplicit user feedback is used as a learning signal in bandit learning methods to improve extractive QA models, where human users provide binary or explicit feedback that guides model updates [C41][C30][C44]. Semantic parsing and related NLP tasks also leverage explicit human feedback to supervise model attention and enhance performance [C4]. Some domain adaptation techniques incorporate human feedback to update model parameters during training [C44].\n\n**Human-Involved Experimental Designs:**  \nWizard-of-Oz experiments and online user studies involve human participants under controlled conditions to analyze user reliance and confidence in QA systems [C1]. Human annotation is used to estimate oracle outputs for computing learner regret, indicating human involvement in performance evaluation metrics [C12].\n\n**Human-Curated Datasets and Counterfactual Reasoning:**  \nSeveral methods use human-designed datasets and annotations for training and evaluation. Counterfactual reasoning approaches generate counterfactual examples during training to reduce disconnected reasoning in multi-hop QA, implying human-designed causal inference methods and specialized evaluation [C97][C90][C57][C82]. Reward-guided strategies and alignment techniques rely on support sets of question-answer pairs curated or validated by humans [C61].\n\n**Explainability and Supervision:**  \nFaithful QA methods ensure each reasoning step is a valid entailment, potentially involving human judges to verify these entailments [C64]. Some explainable multi-hop QA methods use supervised learning with human-labeled data, while others aim for explainability without direct human annotation [C65][C58].\n\nIn summary, human users and judges are deeply integrated into the QA research lifecycle in this corpus, from providing explicit feedback and annotations to evaluating answer quality, supervising reasoning steps, and designing datasets and evaluation protocols. This human involvement ensures the reliability, factuality, and explainability of QA systems across diverse tasks and domains.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "baseline",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A provides diverse perspectives such as human evaluation, feedback in training, experimental designs, dataset curation, and explainability, whereas Answer B mainly discusses user studies and annotator evaluations.",
+      "Answer B presents multiple perspectives such as human evaluation, feedback in training, experimental designs, dataset curation, and explainability, showing richer insights."
+     ],
+     "directness": [
+      "Answer B directly describes specific human roles and activities in studies with concrete examples, whereas Answer A is more elaborate and broad, making B more straightforward in addressing the question.",
+      "Answer A directly and succinctly addresses how humans are involved with specific examples, while Answer B is more elaborate but less concise."
+     ],
+     "empowerment": [
+      "Answer A offers detailed explanations and examples that help readers understand the various roles humans play in QA research, enabling informed judgments, while Answer B is more descriptive and less explanatory.",
+      "Answer B helps the reader understand various roles humans play in QA research, enabling informed judgments about human involvement in the studies."
+     ],
+     "comprehensiveness": [
+      "Answer A covers a wide range of human involvement including evaluation, feedback, supervision, dataset curation, experimental designs, and explainability across multiple studies, while Answer B focuses mainly on user studies and annotator roles in evaluation.",
+      "Answer B covers a wider range of human involvement including evaluation, feedback, supervision, experimental designs, dataset curation, and explainability, providing a more detailed overview."
+     ]
+    },
+    "cost_usd": 0.0
+   },
+   {
+    "id": "G10",
+    "question": "Which retrieval techniques appear in the corpus papers?",
+    "baseline": "The retrieval techniques mentioned in the corpus papers include sparse retrieval based on TF-IDF or BM25 and dense retrieval based on contextualized embeddings generated by pre-trained language models (PLMs) [1]. Additionally, cross-lingual retrieval of passages in multiple languages is noted as a recent advancement in Open-Retrieval Question Answering (ORQA) [5]. There is also mention of retrievers that retrieve documents from a large corpus, such as Wikipedia, to support answer generation [1][5]. Furthermore, some works propose improvements like better training strategies, reranking based on retrieved passages, and knowledge distillation from reader to retriever [1]. Finally, one paper discusses the limitation of retrieving facts from a fixed corpus and suggests the potential of retrieving up-to-date information using a modern search engine as a retriever [6].",
+    "ours": "The corpus papers present a diverse range of retrieval techniques applied across various question answering (QA) and knowledge graph reasoning tasks.\n\nFor multi-hop document retrieval, several methods leverage knowledge graphs and entity-centric approaches. HotpotQA fullwiki setting includes Path-Retriever, CogQA, Entitycentric, Golden Retriever, HopRetriever, and SMRS, which utilize knowledge graphs, entity queries, iterative document selection, and semantic importance to retrieve relevant documents across multiple hops [C1]. Path-Retriever specifically uses graph information to iteratively select documents forming reasoning paths [C1]. CogQA, Entitycentric, and Golden Retriever explicitly use entities from query keywords to guide next-hop document retrieval [C1]. Walk-based methods like DeepPath employ reinforcement learning to navigate knowledge graphs for multi-hop reasoning [C95].\n\nDense retrieval models are prominent in open-domain QA (ODQA). Techniques such as TF-IDF, BM25, and dense passage retrievers (DPR) are widely used to select relevant Wikipedia passages [C2]. REALM uses a dense index of Wikipedia passages combined with BERT-based components for retrieval and reading comprehension [C8]. The RAG method integrates DPR with BART for document-level retrieval and generation [C17]. YONO integrates retrieval, reranking, and reading in an end-to-end encoder-decoder architecture [C24]. WikiHowQA benchmarks DPR combined with BART and GPT-3 variants as baseline retrieval models [C39]. Dense retrieval models improve passage selection effectiveness in ODQA [C2].\n\nKnowledge graph embedding methods such as TransE, RotatE, ConvE, and TuckER serve as retrieval techniques for link prediction and reasoning over knowledge graphs [C71]. KG-FiD integrates knowledge graphs into the Fusion-in-Decoder framework and applies a two-stage reranking approach with a graph-based reranker and graph attention network to enhance passage retrieval [C37][C53]. Sequence-to-sequence Transformer models like KGT5 and SQUIRE are used for knowledge graph link prediction and multi-hop reasoning, effectively retrieving paths and entities [C87][C88][C92].\n\nOther retrieval approaches include the retriever-generator architecture for QA over tabular data, where a retriever identifies relevant table cells and a generator produces answer programs [C25]. Multi-hop QA methods like GEMFormer use RoBERTa embeddings and uncertainty estimation to select important tokens for memory storage, aiding retrieval [C36][C42]. HUG performs staged selection of relevant documents and sentences without rationale supervision [C61]. Monte-Carlo planning with a state verifier explores reasoning states and selects actions as a retrieval and reasoning technique [C94]. The Selection-Inference method iteratively generates reasoning trees using beam search to select reasoning steps [C76].\n\nAdditional techniques include Siamese Network encoders fine-tuned with contrastive loss for passage retrieval [C40], contextual bandit learning to improve retrieval via user feedback [C43], and semantic parsing methods that construct graph-based query graphs or generate action sequences for knowledge base QA [C47]. Rule-based symbolic methods like AnyBURL and MINERVA perform retrieval and reasoning over knowledge graphs using symbolic and reinforcement learning approaches [C71]. Counterfactual data augmentation methods retrieve counterfactual examples to improve robustness in multi-hop QA [C80][C91][C100]. Finally, some QA models adapt to target domains by retrieving relevant documents or contexts using explicit user feedback and self-supervised learning [C81].\n\nIn summary, the corpus covers a broad spectrum of retrieval techniques including knowledge graph-based iterative retrieval, dense passage retrieval, embedding-based link prediction, retriever-generator architectures, reinforcement learning navigation, reranking strategies, and symbolic methods, reflecting the rich methodological diversity in retrieval for QA and knowledge reasoning tasks.",
+    "partial": false,
+    "failed": "",
+    "outcome": {
+     "diversity": "ours",
+     "directness": "tie",
+     "empowerment": "ours",
+     "comprehensiveness": "ours"
+    },
+    "reasons": {
+     "diversity": [
+      "Answer A includes a wide variety of retrieval methods such as knowledge graph-based, dense retrieval, reinforcement learning, symbolic methods, and more, offering multiple perspectives.",
+      "Answer B presents a wide variety of retrieval techniques from different perspectives such as knowledge graphs, dense retrieval, reinforcement learning, symbolic methods, and domain adaptation, whereas Answer A focuses mainly on sparse and dense retrieval with some improvements."
+     ],
+     "directness": [
+      "Answer A directly and specifically addresses the question by enumerating and describing the retrieval techniques appearing in the corpus papers, whereas Answer B is more general and less specific.",
+      "Answer A directly lists retrieval techniques mentioned in the corpus papers in a concise manner, while Answer B, although comprehensive, is more elaborate and less succinct in directly answering the question."
+     ],
+     "empowerment": [
+      "Answer A explains different retrieval techniques with examples and contexts, helping the reader understand the scope and applications of each method.",
+      "Answer B equips the reader with a deeper understanding of the retrieval landscape by explaining different methods, their applications, and examples, enabling informed judgments, unlike Answer A which is more general."
+     ],
+     "comprehensiveness": [
+      "Answer A provides a detailed and extensive list of retrieval techniques across various tasks and methods, covering many specific models and approaches mentioned in the corpus.",
+      "Answer B provides a detailed and extensive overview of various retrieval techniques across multiple tasks, including specific methods, models, and references, covering a broader range of approaches than Answer A."
+     ]
+    },
+    "cost_usd": 0.0
+   }
+  ]
+ }
+}
