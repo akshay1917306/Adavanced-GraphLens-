@@ -14,6 +14,7 @@ from graphlens_pipeline.embed import MAX_INPUT_TOKENS
 from graphlens_pipeline.ingest import ingest_manifest
 
 DEFAULT_CORPUS = "qa_v0 (ACL Anthology QA papers)"
+DEFAULT_ONTOLOGY = Path("/ontology/research_v2.yaml")  # version 2: see decision D24
 DEFAULT_DESCRIPTION = "Question answering papers, ACL and EMNLP 2022-2023, CC BY 4.0"
 
 
@@ -60,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
     extract.add_argument("--max-cost-usd", type=float, default=0.25, help="stop when spent")
     extract.add_argument("--workers", type=int, default=4)
     extract.add_argument("--index-version", default="idx-sample-1")
-    extract.add_argument("--ontology", type=Path, default=Path("/ontology/research_v1.yaml"))
+    extract.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
@@ -208,7 +209,7 @@ def _extract_estimate(engine, args) -> int:
 
     model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
     units = load_units(engine, args.corpus_name)
-    rows = estimate_cost(units, load_ontology(Path("/ontology/research_v1.yaml")), model)
+    rows = estimate_cost(units, load_ontology(DEFAULT_ONTOLOGY), model)
     print(json.dumps({"model": model, "estimates": rows}, indent=2))
     print("Prompt tokens are counted exactly; answer sizes are assumptions. Nothing was spent.")
     return 0

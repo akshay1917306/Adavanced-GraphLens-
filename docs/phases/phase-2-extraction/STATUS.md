@@ -75,6 +75,28 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
   3 GB); the tests wait up to 120 s now (`PREFECT_SERVER_EPHEMERAL_STARTUP_TIMEOUT_SECONDS` and
   `server_startup_timeout`). 153 tests pass. `ruff` clean.
 
+## Ontology v2 and the full extraction (2026-10-24, owner approved up to $3)
+
+- Ontology v2 (`ontology/research_v2.yaml`): only `USES` changed (Paper or Method to Method or
+  Dataset), decision D24. v1 stays as history. The CLI default is v2.
+- Sample under v2 (43 units): relations 157 -> 191 for gleaning 0 (+22%), type-mismatch rejections
+  25 -> 12. Under v2 gleaning 2 gave 193 relations against 191, so gleaning barely helps there.
+- **Full run, 751 units, `gpt-4.1-mini`, ontology v2** (raw, before entity resolution):
+
+| | Gleaning 0 (`idx2-full-g0`) | Gleaning 2 (`idx2-full-g2`) |
+|---|---|---|
+| Entity mentions | 4,591 | 4,781 (+4%) |
+| Relations kept | 3,611 | 3,763 (+4%) |
+| Rejected by the ontology rules | 377 type mismatch, 196 loose ends | 495 and 135 |
+| Cost | $0.766 | $1.249 (+63%) |
+| Failed units | 0 (one network error, finished in a second call for $0.0006) | 0 |
+
+- **Reading:** on the whole corpus gleaning adds about 4% more items for 63% more money. Whether
+  the extra items are correct is **not measured**; that needs the labeled units. For now gleaning
+  0 is the working choice (decision D6 stays open until precision is measured).
+- Money spent in Phase 2 so far (from `index_runs`): **$2.24**.
+- Run records: `idx2-full-g0` and `idx2-full-g2` stay `running` until the quality gate decides.
+
 ## Things that went wrong and were fixed (so the next session knows)
 
 - Docker's engine was stopped after a reboot. Quitting Docker Desktop, running `wsl --shutdown`
@@ -93,17 +115,11 @@ None.
 
 ## Exact next action
 
-The owner decides two things (asked in chat):
-1. Widen `USES` (ontology version 2: Paper or Method to Method or Dataset)? If yes, Claude edits
-   `ontology/research_v1.yaml` into a v2 file, records the decision, and the sample is re-run
-   with the new ontology (cache keys change; about $0.12 more).
-2. Full extraction on all 751 units, which gleaning setting, and the cost cap. Suggested: run
-   gleaning 0 and gleaning 2 both (about $0.8 and $1.3, cap $3 in total), so the labeled units can
-   decide D6 by measured precision instead of a guess.
-
-Then build steps 6 to 10 in BRIEF.md: entity resolution, Neo4j load, quality report, labeled
-sets, tests and docs. Command for the full run:
-`docker compose run --rm pipeline extract --sample 1 --gleaning 0 --max-cost-usd 1.5 --index-version idx-1-g0`.
+Build step 6 (entity resolution) on the cached results of `idx2-full-g0`: normalise names, merge
+exact duplicates, find near-duplicate candidates (string and embedding similarity, same type
+only), auto-merge only when very sure, ask the model for the gray zone with a small cost cap,
+store every decision in `resolution_decisions`. Then step 7 (Neo4j load), 8 (quality report),
+9 (labeled sets, owner review), 10 (tests, docs, README, CI).
 
 ## Notes for the next session
 

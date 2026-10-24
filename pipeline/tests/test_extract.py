@@ -193,12 +193,21 @@ def test_ontology_fingerprint_changes_when_the_ontology_changes():
     assert ONTOLOGY.fingerprint() == ONTOLOGY.fingerprint() != changed.fingerprint()
 
 
-def test_the_real_ontology_file_loads():
-    path = Path("/ontology/research_v1.yaml")
-    if not path.exists():
+def test_the_real_ontology_files_load_and_v2_only_widens_uses():
+    v1, v2 = Path("/ontology/research_v1.yaml"), Path("/ontology/research_v2.yaml")
+    if not v1.exists() or not v2.exists():
         pytest.skip("ontology folder is not mounted")
-    ontology = load_ontology(path)
-    assert "Method" in ontology.type_names and "IMPROVES_ON" in ontology.predicate_names
+    old, new = load_ontology(v1), load_ontology(v2)
+    assert "Method" in new.type_names and "IMPROVES_ON" in new.predicate_names
+    assert (old.version, new.version) == (1, 2) and old.fingerprint() != new.fingerprint()
+    assert new.type_names == old.type_names and new.predicate_names == old.predicate_names
+    assert not old.allows("USES", "Method", "Method") and new.allows("USES", "Method", "Method")
+    assert new.allows("USES", "Method", "Dataset") and new.allows("USES", "Paper", "Dataset")
+    for predicate in set(old.predicate_names) - {"USES"}:  # nothing else changed
+        old_p = next(p for p in old.predicates if p.name == predicate)
+        new_p = next(p for p in new.predicates if p.name == predicate)
+        assert (old_p.from_types, old_p.to_types) == (new_p.from_types, new_p.to_types)
+    assert not new.allows("USES", "Dataset", "Method")  # still not everything goes
 
 
 # --- one unit ---------------------------------------------------------------------------------

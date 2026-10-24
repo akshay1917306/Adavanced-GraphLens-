@@ -15,6 +15,8 @@ the phase exit is "measured", so a missed target is reported, not hidden.
 - [ ] Entity resolution precision, recall and F1 measured on labeled pairs (target F1 0.85)
 - [ ] Duplicate entities in a sample audit (target at most 5%); orphan entities (at most 10%)
 - [ ] Second run makes zero model calls (cache) and the graph is unchanged
+      (extraction part done: the repeated `idx2-full-g0` run took 750 units from the cache and
+      called the model only for the one unit that had failed; the graph part waits for step 7)
 - [x] The cost cap stops a run cleanly and it can resume
       (tested with a mock model against the real database: a capped run stopped, the next run
       took finished units from the cache and did only the rest)

@@ -1,0 +1,62 @@
+# GraphLens ontology for the research-literature reference domain, version 2.
+# Source: blueprint v1.0 section 2.4, widened after the Phase 2 sample run (decision D24).
+# Change from version 1: USES may start at a Method as well as a Paper, and may end at a Method or
+# a Dataset. The 5% sample showed that true statements such as "SQUIRE uses a Transformer" and
+# "a method uses a dataset" were being dropped. Everything else is unchanged.
+# Extraction output that does not match this file is rejected or sent to review.
+name: research
+version: 2
+
+entity_types:
+  - name: Paper
+    description: A publication
+    example: A paper introducing a retrieval method
+  - name: Author
+    description: A person who wrote papers
+    example: A named researcher
+  - name: Method
+    description: A technique, model, or algorithm
+    example: A reranking approach
+  - name: Dataset
+    description: A benchmark or corpus
+    example: A question answering benchmark
+  - name: Task
+    description: A problem a method addresses
+    example: Multi-hop question answering
+  - name: Organization
+    description: A lab, university, or company
+    example: A research lab
+
+predicates:
+  - name: PROPOSES
+    from: [Paper]
+    to: [Method]
+    description: The paper introduces the method
+  - name: USES
+    from: [Paper, Method]
+    to: [Method, Dataset]
+    description: The paper or method relies on it
+  - name: EVALUATED_ON
+    from: [Method]
+    to: [Dataset]
+    description: The method was tested on the dataset
+  - name: ADDRESSES
+    from: [Method]
+    to: [Task]
+    description: The method targets the task
+  - name: IMPROVES_ON
+    from: [Method]
+    to: [Method]
+    description: Reported to outperform or extend
+  - name: CITES
+    from: [Paper]
+    to: [Paper]
+    description: Citation link
+  - name: AUTHORED_BY
+    from: [Paper]
+    to: [Author]
+    description: Authorship
+  - name: AFFILIATED_WITH
+    from: [Author]
+    to: [Organization]
+    description: Affiliation
