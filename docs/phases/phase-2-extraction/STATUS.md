@@ -101,20 +101,23 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
 
 - Code: `pipeline/graphlens_pipeline/resolve.py`, CLI `resolve`, 46 tests in `tests/test_resolve.py`.
   Whole suite: 198 passed (1 model test deselected); ruff check and format clean.
-- Result on the `idx2-full-g0` results (4,591 mentions): **1,738 entities**, 2,642 relations.
-  Decisions stored in `resolution_decisions`: 80 auto merges, 164 model merges, 414 model "keep
-  separate", 63 rule-blocked. 432 model calls, about $0.079; one call failed and stayed separate.
-  Judge calls now run 8 at a time: 2 min 19 s instead of 25+ min.
-- Rules alone give 1,884 entities, so the model adds about 146 more merges.
-- **Honest quality note:** I read the first 100 model merges. Most are right (RGF, DPR, RNN,
-  EM variants, beam search wording), but roughly 15 to 20 of them look wrong or too broad
-  (`ROUGE` with `Rouge-X`, `Step Verifier` with `verifier`, `bandit feedback` with `simulated
-  bandit feedback`, `WorldTreeQA` with `WorldTreeV2`, `Dense Passage Retrieval` with `dense
-  retrieval`). That is my reading only, not a measurement. The real number comes from the
-  labeled pairs in step 9 (gate: ER F1 at least 0.85). If it fails, options are a stricter
-  rule (model merges only when a rule agrees) or a stronger judge model (needs your cost OK).
+- Result on the `idx2-full-g0` results (4,591 mentions): **1,848 entities**, 2,695 relations.
+  Decisions stored in `resolution_decisions`: 80 auto merges, 52 model merges, 527 model "keep
+  separate" (includes the merges the guard overruled), 62 rule-blocked. Judge calls run 8 at a
+  time: 2 min 19 s instead of 25+ min. Judge answers are cached, so re-runs cost nothing.
+- Rules alone give 1,884 entities.
+- **Merge guard (`merge_veto`)**: the first model pass said "same" 164 times, and in the first
+  100 I read about 15 to 20 were wrong or too broad (`ROUGE` with `Rouge-X`, `Step Verifier`
+  with `verifier`, `bandit feedback` with `simulated bandit feedback`, `WorldTreeQA` with
+  `WorldTreeV2`). A model "same" now stands only when one name is an acronym of the other or
+  the names differ by nothing but generic words, plurals or word order. That left 52 merges; I
+  read all 52 and nearly all look right (RGF, DPR, ILP, beam search, MHQA, ODQA). Cost: some
+  correct merges are lost (`claude` with `claude-v1`), by design: a wrong merge hurts more than
+  a missed one.
+- This is my reading only, not a measurement. The real number comes from the labeled pairs in
+  step 9 (gate: ER F1 at least 0.85).
 - Money spent in Phase 2 so far: about **$2.40** of the $3 cap (extraction $2.24, resolution
-  runs $0.16).
+  runs $0.16). The guard cost nothing.
 
 ## Things that went wrong and were fixed (so the next session knows)
 

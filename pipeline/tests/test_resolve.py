@@ -12,6 +12,7 @@ from graphlens_pipeline.resolve import (
     blocked_by_rules,
     build_clusters,
     is_noise,
+    merge_veto,
     parenthetical_acronym,
     resolve,
     save_decisions,
@@ -253,12 +254,47 @@ def test_the_gray_zone_is_not_merged_without_a_model():
     assert [d.method for d in outcome.decisions] == ["rejected"]
 
 
+ACRONYM = {
+    "u1": unit("u1", [("Dense Passage Retrieval", "Method")]),
+    "u2": unit("u2", [("DPR", "Method")]),
+}
+
+
 def test_the_model_can_merge_and_can_refuse():
-    names = ("NQ reading comprehension task", "reading comprehension task")
-    yes = run(GRAY, llm=Judge({names: True}))
+    names = ("Dense Passage Retrieval", "DPR")
+    yes = run(ACRONYM, llm=Judge({names: True, names[::-1]: True}))
     assert len(yes.entities) == 1 and yes.decisions[0].method == "llm" and yes.model_calls == 1
-    no = run(GRAY, llm=Judge())
+    no = run(ACRONYM, llm=Judge())
     assert len(no.entities) == 2 and no.decisions[0].decision == "keep_separate"
+
+
+def test_a_model_merge_is_overruled_when_the_names_really_differ():
+    names = ("NQ reading comprehension task", "reading comprehension task")
+    outcome = run(GRAY, llm=Judge({names: True, names[::-1]: True}))
+    assert len(outcome.entities) == 2
+    assert outcome.decisions[0].decision == "keep_separate"
+    assert "model said" in outcome.decisions[0].rationale
+
+
+@pytest.mark.parametrize(
+    ("a", "b", "allowed"),
+    [
+        ("Dense Passage Retrieval", "DPR", True),
+        ("Retrieve, Generate, and Filter (RGF)", "RGF", True),
+        ("beam search", "beam search algorithm", True),
+        ("Transformer encoder-decoder model", "encoder-decoder Transformer", True),
+        ("Wikipedia passages", "passages from Wikipedia", True),
+        ("Lexical Match", "lexical matching", True),
+        ("ROUGE", "Rouge-X", False),
+        ("Step Verifier", "verifier", False),
+        ("bandit feedback", "simulated bandit feedback", False),
+        ("WorldTreeQA", "WorldTreeV2", False),
+        ("Dense Passage Retrieval", "dense retrieval", False),
+        ("model", "models", False),  # nothing is left to compare: never trust it
+    ],
+)
+def test_merge_veto_only_lets_harmless_differences_through(a, b, allowed):
+    assert (merge_veto(a, b) is None) is allowed
 
 
 def test_the_cost_cap_leaves_remaining_pairs_unmerged():

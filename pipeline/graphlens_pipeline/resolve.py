@@ -202,6 +202,51 @@ def blocked_by_rules(a: str, b: str) -> str | None:
     return None
 
 
+HARMLESS_WORDS = GENERIC_TAILS | EMPTY_WORDS | {
+    "algorithm", "algorithms", "mechanism", "mechanisms", "strategy", "strategies", "structure",
+    "pipeline", "tool", "tools", "technique", "techniques", "process", "architecture",
+    "of", "from", "for", "and", "in", "on", "with", "to",
+}  # fmt: skip
+
+
+def _core_tokens(name: str) -> frozenset[str]:
+    """The words that make a name different: no generic words, one-letter variables or plurals."""
+    core = set()
+    # a lone letter between spaces is a variable ("state verifier V"); "Rouge-X" is a name
+    for token in tokens(re.sub(r"(?<![\w-])[A-Za-z](?![\w-])", " ", name)):
+        if token in HARMLESS_WORDS:
+            continue
+        if len(token) > 5 and token.endswith("ing"):
+            token = token[:-3]
+        elif len(token) > 3 and token.endswith("s") and not token.endswith("ss"):
+            token = token[:-1]
+        core.add(token)
+    return frozenset(core)
+
+
+def _is_acronym_of(short: str, long_: str) -> bool:
+    letters = re.sub(r"[^0-9a-z]+", "", short.casefold())
+    inside = parenthetical_acronym(long_)
+    if inside and re.sub(r"[^0-9a-z]+", "", inside.casefold()) == letters:
+        return True
+    return 2 <= len(letters) <= 8 and len(tokens(long_)) >= 2 and initials(long_) == letters
+
+
+def merge_veto(a: str, b: str) -> str | None:
+    """A reason to overrule a model "same" answer, or None.
+
+    The model is too generous (checked by hand on real merges: "ROUGE" with "Rouge-X", "Step
+    Verifier" with "verifier"). So a model merge only stands when one name is an acronym of the
+    other, or when the names differ by nothing but generic words, plurals or word order.
+    """
+    if _is_acronym_of(a, b) or _is_acronym_of(b, a):
+        return None
+    core_a, core_b = _core_tokens(a), _core_tokens(b)
+    if core_a and core_a == core_b:
+        return None
+    return "names differ by more than a generic word, plural, word order or acronym"
+
+
 def spelling_score(a: str, b: str) -> tuple[float, bool]:
     """(0 to 1 alikeness, safe to merge without asking).
 
@@ -446,6 +491,9 @@ def resolve(
                 )
                 continue
             same, reason, cost = outcome
+            veto = merge_veto(a.name, b.name) if same else None
+            if veto:
+                same, reason = False, f"{veto} (model said: {reason})"[:300]
             spent += cost
             calls += 1 if cost else 0
             if same:
