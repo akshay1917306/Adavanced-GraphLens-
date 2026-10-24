@@ -13,7 +13,9 @@ dependencies = [
     "openai==3.28.0",  # the only code that calls OpenAI is graphlens_pipeline/llm.py
     "prefect==3.8.8",  # runs the stages as a flow with retries (Apache-2.0)
     "psycopg[binary]==3.3.6",
+    "pydantic==2.14.1",
     "pypdf==6.19.0",
+    "pyyaml==6.0.3",
     "qdrant-client==1.15.1",  # same minor version as the Qdrant server (v1.15.4)
     "sqlalchemy==2.1.5",
     "tiktoken==0.14.0",
