@@ -93,6 +93,9 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       QDRANT_URL: http://qdrant:6333
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       LLM_MODEL_MAIN: ${LLM_MODEL_MAIN:-}
       LLM_MODEL_SMALL: ${LLM_MODEL_SMALL:-}
@@ -109,6 +112,8 @@ services:
       postgres:
         condition: service_healthy
       qdrant:
+        condition: service_healthy
+      neo4j:
         condition: service_healthy
 
 volumes:

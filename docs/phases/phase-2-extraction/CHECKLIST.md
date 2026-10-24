@@ -20,8 +20,14 @@ the phase exit is "measured", so a missed target is reported, not hidden.
 - [x] The cost cap stops a run cleanly and it can resume
       (tested with a mock model against the real database: a capped run stopped, the next run
       took finished units from the cache and did only the rest)
-- [ ] Neo4j constraints and indexes come from versioned scripts; counts match Postgres
-- [ ] No model-written Cypher anywhere (templated, parameterised queries only)
+- [x] Neo4j constraints and indexes come from versioned scripts; counts match the resolution
+      output (scripts `V001` to `V003`, checksums stored in `SchemaVersion` nodes; real run
+      2026-10-24: 1,848 entities and 2,695 relations in Neo4j, as resolved; all 1,848 embedded;
+      vector index ONLINE; 0 entities without source units; 0 edges without evidence units;
+      there is no entity table in Postgres, so the counts are compared with the resolution)
+- [x] No model-written Cypher anywhere (templated, parameterised queries only; labels and
+      relationship types come from the ontology and are checked first; tested with an injection
+      string)
 - [ ] Gleaning 0 versus 2 and the model choice measured on a 5% sample (D5, D6)
       (done for counts and cost on 43 units: +8% entities, +22% relations, +57% cost; **precision
       of the added items is not measured yet**, and the model comparison waits for labeled units)

@@ -69,6 +69,15 @@ def main(argv: list[str] | None = None) -> int:
     resolve.add_argument("--max-cost-usd", type=float, default=0.25)
     resolve.add_argument("--no-llm", action="store_true", help="never ask the model")
     resolve.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    graph = sub.add_parser(
+        "graph-load", help="resolve (cached answers) and load the graph into Neo4j"
+    )
+    graph.add_argument("--corpus-name", default=DEFAULT_CORPUS)
+    graph.add_argument("--index-version", default="idx2-full-g0")
+    graph.add_argument("--gleaning", type=int, default=0)
+    graph.add_argument("--max-cost-usd", type=float, default=0.25)
+    graph.add_argument("--no-llm", action="store_true", help="never ask the model")
+    graph.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
@@ -118,6 +127,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "resolve":
         return _resolve(engine, args)
+
+    if args.command == "graph-load":
+        return _graph_load(engine, args)
 
     if args.command == "extract-estimate":
         return _extract_estimate(engine, args)
@@ -211,17 +223,13 @@ def main(argv: list[str] | None = None) -> int:
     return 1 if report.failures else 0
 
 
-def _resolve(engine, args) -> int:
-    import json
-    from collections import Counter
-
-    from sqlalchemy import text
-
+def _compute_resolution(engine, args):
+    """Resolve the cached extraction. Returns (resolution, ontology, embedder) or an exit code."""
     from graphlens_pipeline.embed import FastEmbedder
     from graphlens_pipeline.extract import load_cached_results, load_units
     from graphlens_pipeline.llm import LlmError, OpenAiLlm
     from graphlens_pipeline.ontology import load_ontology
-    from graphlens_pipeline.resolve import resolve, save_decisions
+    from graphlens_pipeline.resolve import resolve
 
     ontology = load_ontology(args.ontology)
     model = os.environ.get("LLM_MODEL_SMALL") or "gpt-4.1-mini"
@@ -243,6 +251,64 @@ def _resolve(engine, args) -> int:
         engine, results, {u["id"]: u["title"] for u in units}, ontology, embedder.dense, llm,
         args.max_cost_usd,
     )  # fmt: skip
+    return result, ontology, embedder
+
+
+def _graph_load(engine, args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.graphstore import (
+        GraphLoadError,
+        apply_schema,
+        embedding_text,
+        load_graph,
+    )
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    computed = _compute_resolution(engine, args)
+    if isinstance(computed, int):
+        return computed
+    result, ontology, embedder = computed
+    texts = [embedding_text(e.name, e.description) for e in result.entities]
+    vectors = dict(zip((e.id for e in result.entities), embedder.dense(texts), strict=True))
+    try:
+        with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+            applied = apply_schema(driver)
+            counts = load_graph(driver, result, ontology, vectors, args.index_version)
+    except GraphLoadError as error:
+        print(f"Graph load refused: {error}", file=sys.stderr)
+        return 1
+    print(json.dumps({
+        "schema_scripts_applied_now": applied,
+        "expected": {"entities": len(result.entities), "relations": len(result.relations)},
+        "in_neo4j": {
+            "entities": counts.entities, "by_type": counts.entities_by_type,
+            "relations": counts.relations, "by_predicate": counts.relations_by_predicate,
+            "with_embedding": counts.with_embedding,
+        },
+        "counts_match": (counts.entities, counts.relations)
+        == (len(result.entities), len(result.relations)),
+    }, indent=2))  # fmt: skip
+    return 0
+
+
+def _resolve(engine, args) -> int:
+    import json
+    from collections import Counter
+
+    from sqlalchemy import text
+
+    from graphlens_pipeline.resolve import save_decisions
+
+    computed = _compute_resolution(engine, args)
+    if isinstance(computed, int):
+        return computed
+    result, _, _ = computed
     with engine.connect() as conn:
         run = conn.execute(
             text("SELECT id FROM index_runs WHERE index_version = :v"), {"v": args.index_version}

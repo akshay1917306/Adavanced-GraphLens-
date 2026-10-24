@@ -119,7 +119,26 @@ about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diag
 - Money spent in Phase 2 so far: about **$2.40** of the $3 cap (extraction $2.24, resolution
   runs $0.16). The guard cost nothing.
 
+## Step 7: Neo4j load (2026-10-24, Claude, built and run for real)
+
+- Code: `pipeline/graphlens_pipeline/graphstore.py`, schema scripts in `graph_schema/`
+  (`V001` unique entity id, `V002` type/name/version indexes + full-text, `V003` 768-d cosine
+  vector index), CLI `graph-load` (resolves with the cached judge answers, then loads).
+  The `neo4j` driver 5.28.2 is pinned; compose passes `NEO4J_*` to the `pipeline` service.
+- Real run on `idx2-full-g0`: 1,848 entities (Author 128, Dataset 301, Method 940,
+  Organization 70, Paper 179, Task 230) and 2,695 relations in Neo4j, equal to the resolution
+  output; every entity has an embedding; no entity without source units, no edge without
+  evidence units. Took 196 s, no model cost.
+- Loading is idempotent (MERGE by stable id; a reload removes only that index version's own
+  leftovers). 9 tests in `tests/test_graphstore.py`; 4 of them run against the real Neo4j.
+- **Known problem for step 8:** 323 of 1,848 entities (17.5%) have no edge at all. The gate
+  allows at most 10%, so this will fail unless the cause is fixed or the gate result is
+  reported as a miss. I have not looked at which types they are yet.
+
 ## Things that went wrong and were fixed (so the next session knows)
+
+- `uv sync` in the image build failed because the connection dropped. The Dockerfile now has a
+  download cache mount, system certificates, fewer parallel downloads and 5 tries.
 
 - The first resolution run took 25+ minutes because model calls were one after another. I made
   them parallel. A reboot had also stopped Docker; starting Docker Desktop again fixed it.
@@ -140,10 +159,10 @@ None.
 
 ## Exact next action
 
-Build step 7 (Neo4j load): versioned constraint and index scripts, nodes and edges with
-provenance (`source_unit_ids`, `evidence_unit_ids`), entity embeddings and vector index,
-idempotent, templated parameterised Cypher only. Then 8 (quality report), 9 (labeled sets, owner
-review), 10 (tests, docs, README, CI). Nothing from Phase 2 is pushed.
+Build step 8 (quality report with the gate checks written to `quality_checks`): schema
+validity, edges with evidence, duplicates, orphans (look at the 323 isolated entities first),
+then 9 (labeled sets, owner review) and 10 (tests, docs, README, CI). Nothing from Phase 2 is
+pushed.
 
 ## Notes for the next session
 
