@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from graphlens_pipeline.evalset import load_questions, render_review, verify
+from graphlens_pipeline.evalset import load_questions, remap_evidence, render_review, verify
 
 UNITS = {"u_1": "The model reaches   65.9 accuracy\non MiraQA.", "u_2": "Second unit text."}
 
@@ -62,6 +62,29 @@ def test_review_page_lists_every_question_and_its_evidence():
     page = render_review([question(), question("G01", "global", unit="u_2", quote="Second unit")])
     assert "### L01" in page and "### G01" in page
     assert "reaches 65.9 accuracy" in page and "Your decision" in page
+
+
+def test_remap_points_evidence_at_the_unit_that_holds_the_quote():
+    old = question(unit="u_old")
+    units = {"p": {"u_new_0001": "text with reaches 65.9 accuracy inside", "u_new_0002": "other"}}
+    remapped, problems = remap_evidence([old], units)
+    assert problems == []
+    assert remapped[0]["evidence"][0]["unit_id"] == "u_new_0001"
+    assert old["evidence"][0]["unit_id"] == "u_old"  # the input is not changed
+
+
+def test_remap_uses_the_first_unit_when_neighbours_overlap():
+    units = {"p": {"u_2": "also reaches 65.9 accuracy", "u_1": "reaches 65.9 accuracy"}}
+    remapped, problems = remap_evidence([question()], units)
+    assert problems == [] and remapped[0]["evidence"][0]["unit_id"] == "u_1"
+
+
+def test_remap_reports_a_quote_that_is_nowhere():
+    units = {"p": {"u_1": "reaches 65.9 accuracy"}}
+    _, problems = remap_evidence([question(quote="never appears")], units)
+    assert any("not found in any unit" in p.message for p in problems)
+    _, problems = remap_evidence([question()], {})
+    assert any("not found in any unit" in p.message for p in problems)
 
 
 def test_load_questions_reads_the_file(tmp_path):

@@ -5,7 +5,10 @@ the phase exit is "measured", so a missed target is reported, not hidden.
 
 ## Build
 
-- [ ] Front-matter unit kept (CR-0003); re-ingest and re-embed done; evaluation evidence remapped
+- [x] Front-matter unit kept (CR-0003); re-ingest and re-embed done; evaluation evidence remapped
+      (751 units, 25 front-matter units, none with an email or web address; collection
+      `units_qa_v0_baseline_2`; `eval-verify` 0 problems; evaluation sets version 2 loaded;
+      111 tests pass; run 2026-10-24 on the owner's machine)
 - [ ] Extraction output is schema-valid: at least 99% (3 retries per unit)
 - [ ] Every edge has at least one evidence unit; every node has `source_unit_ids` (100%)
 - [ ] Relation precision measured on 30 labeled text units (target 0.80)

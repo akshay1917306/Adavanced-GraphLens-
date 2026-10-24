@@ -1,10 +1,10 @@
-# GraphLens (Advanced GraphRAG pipeline)
+﻿# GraphLens (Advanced GraphRAG pipeline)
 
 GraphLens turns a document collection into a knowledge graph and answers questions
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) built, waiting for owner review.**
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is in progress.**
 > The plain vector RAG works and is measured. There is **no graph yet** (Phase 2) and no
 > web interface for questions (Phase 5). Development data: 25 open-licensed research papers.
 
@@ -13,8 +13,8 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Phase | Status |
 |---|---|
 | 0. Setup and decisions | Approved, merged, tag `phase-0` |
-| 1. Baseline RAG and evaluation set v0 | Built, in review (not pushed yet) |
-| 2. Extraction and graph | Planned (next) |
+| 1. Baseline RAG and evaluation set v0 | Approved, merged, tag `phase-1` |
+| 2. Extraction and graph | In progress, branch `phase-2/extraction` ([plan](docs/phases/phase-2-extraction/BRIEF.md)) |
 | 3 to 8 | Planned, see [docs/phases](docs/phases/README.md) |
 
 ## What works today
@@ -26,7 +26,7 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Postgres schema (blueprint, 23 tables) | Implemented |
 | Corpus of 25 QA papers with license manifest and download script | Implemented |
 | PDF reading, cleaning, section detection, chunking (450 tokens, 75 overlap) | Implemented |
-| Ingest into Postgres (726 text units), safe to repeat | Implemented |
+| Ingest into Postgres (751 text units, including one front-matter unit per paper), safe to repeat | Implemented |
 | Local embeddings (dense and sparse) into Qdrant | Implemented |
 | Baseline answer with citation-number check and refusal (OpenAI `gpt-4.1-mini`) | Implemented |
 | Evaluation set v0 (30 local, 10 global) and runner with cost cap | Implemented |
@@ -34,7 +34,7 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Baseline results: 93% correct on local, 0% on global questions | **Measured** (LLM judge, see limits) |
 | Graph, communities, global search, router, relate, citation support check | Planned (Phases 2 to 4) |
 | Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |
-| CI for the `pipeline/` folder | Written, **not yet run on GitHub** |
+| CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
 
 ## Prerequisites
 
@@ -63,7 +63,7 @@ If `data/corpus/qa_v0/pdfs/` is empty, first run
 |---|---|
 | http://localhost:8000/api/v1/health | JSON with `"status":"ok"` and four services |
 | http://localhost:8000/docs | API documentation |
-| http://localhost:6333/dashboard | Qdrant dashboard (collection `units_qa_v0_baseline_1`, 726 points) |
+| http://localhost:6333/dashboard | Qdrant dashboard (collection `units_qa_v0_baseline_2`, 751 points; other collections there, such as `dinosaurs`, are Qdrant sample data) |
 | http://localhost:7474 | Neo4j Browser (empty until Phase 2) |
 
 Evaluation: `docker compose run --rm pipeline eval-run --dry-run` shows the cost first; the real
@@ -84,7 +84,7 @@ Names only; real values live in your git-ignored `.env`. See `.env.example`.
 
 ```bash
 docker compose up -d postgres qdrant
-docker compose run --rm --entrypoint pytest pipeline -q                  # 106 tests
+docker compose run --rm --entrypoint pytest pipeline -q                  # 111 tests
 docker compose run --rm --no-deps --entrypoint ruff pipeline check .
 docker compose run --rm pipeline eval-verify                             # evidence quotes exist
 ```

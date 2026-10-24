@@ -82,6 +82,50 @@ def fetch_unit_texts(engine: Engine, unit_ids: set[str]) -> dict[str, str]:
     return {row.id: row.text for row in rows}
 
 
+def fetch_units_by_paper(engine: Engine) -> dict[str, dict[str, str]]:
+    """{paper_id: {unit_id: text}} for every stored text unit."""
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT u.id, u.text, d.metadata->>'paper_id' AS paper_id"
+                " FROM text_units u JOIN documents d ON d.id = u.document_id"
+            )
+        ).all()
+    result: dict[str, dict[str, str]] = {}
+    for row in rows:
+        result.setdefault(row.paper_id, {})[row.id] = row.text
+    return result
+
+
+def remap_evidence(
+    questions: list[dict], units_by_paper: dict[str, dict[str, str]]
+) -> tuple[list[dict], list[Problem]]:
+    """Point every evidence item at the unit that now holds its quote.
+
+    Needed after the text units were rebuilt (new IDs). The quote must be found in at least one
+    unit of the same paper, otherwise the item is reported and left unchanged. Consecutive
+    units overlap by a few sentences, so a quote can sit in two neighbouring units; the first one
+    (document order, unit IDs sort by ordinal) is used.
+    """
+    problems: list[Problem] = []
+    remapped = json.loads(json.dumps(questions))  # deep copy
+    for question in remapped:
+        for item in question.get("evidence", []):
+            units = units_by_paper.get(item.get("paper_id", ""), {})
+            quote = _squash(item.get("quote", ""))
+            matches = sorted(uid for uid, body in units.items() if quote and quote in _squash(body))
+            if matches:
+                item["unit_id"] = matches[0]
+            else:
+                problems.append(
+                    Problem(
+                        question["id"],
+                        f"quote not found in any unit of {item.get('paper_id')}",
+                    )
+                )
+    return remapped, problems
+
+
 def render_review(questions: list[dict]) -> str:
     """A readable page for the owner to review: question, reference answer, evidence."""
     lines = [

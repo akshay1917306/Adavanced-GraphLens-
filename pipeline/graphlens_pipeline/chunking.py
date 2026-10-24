@@ -18,7 +18,7 @@ from graphlens_pipeline.cleaning import Section
 ENCODING_NAME = "o200k_base"
 TARGET_TOKENS = 450
 OVERLAP_TOKENS = 75
-CHUNKER_VERSION = "2"
+CHUNKER_VERSION = "3"  # 3: the front matter is kept as the first unit (CR-0003)
 
 SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+(?=[A-Z])")
 ABBREVIATIONS = (

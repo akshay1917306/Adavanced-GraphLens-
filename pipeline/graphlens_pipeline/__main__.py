@@ -51,6 +51,10 @@ def main(argv: list[str] | None = None) -> int:
     index.add_argument("--index-version", default="baseline-1")
     load = sub.add_parser("eval-load", help="store the approved questions in the database")
     load.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    load.add_argument("--version", type=int, default=2, help="evaluation set version to create")
+    remap = sub.add_parser("eval-remap", help="point evidence at the current text unit IDs")
+    remap.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    remap.add_argument("--out", type=Path, default=Path("/out/questions.json"))
     run = sub.add_parser("eval-run", help="run the baseline on the evaluation set and score it")
     run.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     run.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
@@ -96,8 +100,31 @@ def main(argv: list[str] | None = None) -> int:
         from graphlens_pipeline.evalrun import load_eval_sets
         from graphlens_pipeline.evalset import load_questions
 
-        for name, count in load_eval_sets(engine, load_questions(args.questions)).items():
-            print(f"{name}: {'already present' if count == 0 else f'{count} questions loaded'}")
+        loaded = load_eval_sets(engine, load_questions(args.questions), args.version)
+        for name, count in loaded.items():
+            state = "already present" if count == 0 else f"{count} questions loaded"
+            print(f"{name} v{args.version}: {state}")
+        return 0
+
+    if args.command == "eval-remap":
+        import json
+
+        from graphlens_pipeline.evalset import fetch_units_by_paper, load_questions, remap_evidence
+
+        document = json.loads(args.questions.read_text(encoding="utf-8"))
+        remapped, problems = remap_evidence(
+            load_questions(args.questions), fetch_units_by_paper(engine)
+        )
+        for problem in problems:
+            print(f"PROBLEM {problem.question_id}: {problem.message}", file=sys.stderr)
+        if problems:
+            return 1
+        document["questions"] = remapped
+        document["note"] = (
+            document.get("note", "") + " Unit IDs were remapped by quote after CR-0003."
+        ).strip()
+        args.out.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n", "utf-8")
+        print(f"Remapped {len(remapped)} questions into {args.out}")
         return 0
 
     if args.command == "eval-run":

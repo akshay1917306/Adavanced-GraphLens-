@@ -6,13 +6,36 @@ def names(pages):
     return [section.name for section in clean_pages(pages)]
 
 
-def test_finds_sections_and_drops_front_matter_and_references():
+def test_finds_sections_keeps_front_matter_and_cuts_references():
     sections = clean_pages(fake_pages())
-    assert [s.name for s in sections] == ["Abstract", "1 Introduction", "2 Method"]
+    assert [s.name for s in sections] == ["Front matter", "Abstract", "1 Introduction", "2 Method"]
+    front = sections[0].text
+    assert "A Paper About Things" in front and "Jane Author" in front  # CR-0003
     joined = " ".join(s.text for s in sections)
-    assert "Jane Author" not in joined  # authors before the abstract are dropped
     assert "must be dropped" not in joined  # the bibliography is cut
     assert "Proceedings of the" not in joined
+
+
+def test_front_matter_loses_email_and_web_lines_but_keeps_authors_and_affiliations():
+    pages = [
+        "A Paper About Things\nJane Author, John Writer\nUniversity of Examples\n"
+        "{jane,john}@example.edu\nhttps://example.edu/jane\nwww.example.edu\n"
+        "Abstract\nShort abstract with a link https://example.org/code kept in the body.\n"
+        "1 Introduction\n" + "Real body text of the paper goes here. " * 12
+    ]
+    sections = clean_pages(pages)
+    front = sections[0].text
+    assert sections[0].name == "Front matter"
+    assert "Jane Author" in front and "University of Examples" in front
+    assert "@" not in front and "http" not in front and "www" not in front
+    assert "https://example.org/code" in sections[1].text  # only the front matter is filtered
+
+
+def test_a_paper_without_front_matter_gets_no_empty_front_matter_section():
+    assert (
+        names(["Abstract\nShort abstract.\n1 Introduction\n" + "Body text of the paper. " * 20])[0]
+        == "Abstract"
+    )
 
 
 def test_removes_page_numbers():
