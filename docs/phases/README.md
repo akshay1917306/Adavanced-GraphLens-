@@ -6,9 +6,9 @@ approval, a merged pull request, and a `phase-N` tag.
 | Phase | Folder | Status |
 |---|---|---|
 | 0. Setup and decisions | [phase-0-setup](phase-0-setup/) | Approved, merged, tag `phase-0` |
-| 1. Baseline RAG and evaluation set v0 | [phase-1-baseline](phase-1-baseline/) | Built, in review |
-| 2. Extraction and graph | phase-2-extraction | Planned |
-| 3. Communities and global search | phase-3-communities | Planned |
+| 1. Baseline RAG and evaluation set v0 | [phase-1-baseline](phase-1-baseline/) | Approved, merged, tag `phase-1` |
+| 2. Extraction and graph | [phase-2-extraction](phase-2-extraction/) | Approved, merged, tag `phase-2` |
+| 3. Communities and global search | [phase-3-communities](phase-3-communities/) | Plan written, waiting for owner approval |
 | 4. Local search, router, relate, citation check | phase-4-local-search | Planned |
 | 5. Product UI | phase-5-ui | Planned |
 | 6. User data and hardening | phase-6-hardening | Planned |

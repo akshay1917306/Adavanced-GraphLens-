@@ -4,7 +4,7 @@ GraphLens turns a document collection into a knowledge graph and answers questio
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is built on a branch and waits for the owner's approval.**
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is planned and waits for the owner's approval.**
 > The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
 > used for answers, and its relation precision is 0.81 and entity-resolution F1 0.79, below the target). There is no web interface for
 > questions (Phase 5). Development data: 25 open-licensed research papers.
@@ -15,8 +15,9 @@ by following the graph, showing the evidence for every answer. It is built from 
 |---|---|
 | 0. Setup and decisions | Approved, merged, tag `phase-0` |
 | 1. Baseline RAG and evaluation set v0 | Approved, merged, tag `phase-1` |
-| 2. Extraction and graph | Built on branch `phase-2/extraction`, **not approved or pushed** ([plan](docs/phases/phase-2-extraction/BRIEF.md), [walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md)) |
-| 3 to 8 | Planned, see [docs/phases](docs/phases/README.md) |
+| 2. Extraction and graph | Approved, merged, tag `phase-2` ([plan](docs/phases/phase-2-extraction/BRIEF.md), [walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md)) |
+| 3. Communities and global search | Plan written, waiting for owner approval ([plan](docs/phases/phase-3-communities/BRIEF.md)) |
+| 4 to 8 | Planned, see [docs/phases](docs/phases/README.md) |
 
 ## What works today
 
@@ -119,4 +120,4 @@ database and Qdrant collections.
 - Licenses come from the ACL Anthology policy page, not from each PDF.
 - Not production-ready and not security-reviewed; do not expose it to the internet.
 
-**Next planned phase:** owner review and approval of Phase 2, then Phase 3 (communities and global search).
+**Next planned phase:** Phase 3 (communities and global search), waiting for the owner's approval of the plan.
