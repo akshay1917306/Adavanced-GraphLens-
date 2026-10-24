@@ -31,6 +31,7 @@ class LlmResult:
     model: str
     tokens_in: int
     tokens_out: int
+    finish_reason: str = ""  # "stop" is normal; "length" means the answer was cut off
 
 
 class Llm(Protocol):
@@ -90,4 +91,5 @@ class OpenAiLlm:
             model=response.model,
             tokens_in=usage.prompt_tokens if usage else 0,
             tokens_out=usage.completion_tokens if usage else 0,
+            finish_reason=response.choices[0].finish_reason or "",
         )

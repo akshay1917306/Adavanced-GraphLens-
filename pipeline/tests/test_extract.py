@@ -230,6 +230,16 @@ def test_three_unusable_answers_fail_the_unit():
     assert len(llm.calls) == 3
 
 
+def test_a_cut_off_answer_is_reported_as_such():
+    class CutOff(ScriptedLlm):
+        def complete(self, system, user, max_output_tokens, json_schema=None):
+            reply = super().complete(system, user, max_output_tokens, json_schema)
+            return LlmResult(reply.text, reply.model, reply.tokens_in, reply.tokens_out, "length")
+
+    with pytest.raises(ExtractionFailed, match="cut off at the output token limit"):
+        run_unit(CutOff(['{"entities": [{"name": "Hop']))
+
+
 def test_a_model_error_fails_the_unit_safely():
     with pytest.raises(ExtractionFailed, match="TimeoutError"):
         run_unit(ScriptedLlm([answer()], error=LlmError("model call failed (TimeoutError)")))

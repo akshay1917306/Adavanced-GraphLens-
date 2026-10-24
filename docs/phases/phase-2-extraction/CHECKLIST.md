@@ -21,6 +21,8 @@ the phase exit is "measured", so a missed target is reported, not hidden.
 - [ ] Neo4j constraints and indexes come from versioned scripts; counts match Postgres
 - [ ] No model-written Cypher anywhere (templated, parameterised queries only)
 - [ ] Gleaning 0 versus 2 and the model choice measured on a 5% sample (D5, D6)
+      (done for counts and cost on 43 units: +8% entities, +22% relations, +57% cost; **precision
+      of the added items is not measured yet**, and the model comparison waits for labeled units)
 
 ## Tests
 

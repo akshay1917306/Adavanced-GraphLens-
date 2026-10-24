@@ -97,6 +97,9 @@ services:
       LLM_MODEL_MAIN: ${LLM_MODEL_MAIN:-}
       LLM_MODEL_SMALL: ${LLM_MODEL_SMALL:-}
       GIT_SHA: ${GIT_SHA:-unknown}
+      # Prefect starts a small temporary server for each flow run. On a busy or low-memory
+      # machine that can take longer than the default 20 seconds.
+      PREFECT_SERVER_EPHEMERAL_STARTUP_TIMEOUT_SECONDS: "120"
       SCHEMA_SQL: /schema/0001_initial_schema.sql
     volumes:
       - ./data:/data:ro

@@ -25,7 +25,8 @@ from graphlens_pipeline.llm import Llm, LlmError, cost_usd
 from graphlens_pipeline.ontology import Ontology
 
 PROMPT_VERSION = "extract-v1"
-MAX_OUTPUT_TOKENS = 1500
+# A table-like passage can list many entities; 1500 cut such an answer off in the sample run.
+MAX_OUTPUT_TOKENS = 3000
 MAX_ATTEMPTS = 3  # tries per call when the answer is not valid JSON of the right shape
 MAX_NAME_CHARS = 200
 MAX_DESCRIPTION_CHARS = 500
@@ -236,6 +237,7 @@ def _ask(
     known: list[Entity] | None = None,
 ):  # fmt: skip
     """Call the model until it gives a usable answer (at most MAX_ATTEMPTS)."""
+    last_problem = "no answer"
     for _ in range(MAX_ATTEMPTS):
         result.attempts += 1
         reply = llm.complete(system, user, MAX_OUTPUT_TOKENS, json_schema=ontology.output_schema())
@@ -245,9 +247,10 @@ def _ask(
         result.model = reply.model
         try:
             return parse_answer(reply.text, ontology, known)
-        except ValueError:
-            continue
-    raise ExtractionFailed("the model did not return a usable answer")
+        except ValueError as error:
+            cut = reply.finish_reason == "length"
+            last_problem = "answer cut off at the output token limit" if cut else str(error)
+    raise ExtractionFailed(f"no usable answer after {MAX_ATTEMPTS} attempts ({last_problem})")
 
 
 def extract_unit(

@@ -41,6 +41,40 @@ from Phase 2 is pushed. Local branch `phase-2/extraction`, branched from `main` 
 - Cost cap: new units stop being started once the spent amount reaches the cap; units already
   running finish, so the cap can be passed by up to `workers` units' cost.
 
+## Step 4: the paid 5% sample (2026-10-24, Claude, owner approved about $0.11)
+
+Fixed sample of **43 units** (`gpt-4.1-mini`, prompt `extract-v1`). Money spent in Phase 2 so far:
+about **$0.12** (g0 $0.045, g2 $0.067, one failed unit finished $0.004, one diagnosis call $0.002).
+
+| | Gleaning 0 | Gleaning 2 |
+|---|---|---|
+| Cost for the 43 units | $0.045 ($0.00105 per unit) | $0.071 ($0.0017 per unit) |
+| Entities on the same 42 units | 210 | 227 (+8%) |
+| Relations on the same 42 units | 139 | 169 (+22%) |
+| Units where gleaning added something | | 18 of 42 |
+| Average gleaning passes actually done | | 1.07 of 2 (stops early) |
+
+- **Projected full run (751 units) at the measured rates:** about **$0.79** (gleaning 0) or about
+  **$1.30** (gleaning 2). The free estimate said $0.64 and $1.57; answers were longer than assumed.
+- **Quality is not measured yet.** Gleaning adds items, but we do not know if the added ones are
+  right; that needs the labeled units (precision 0.80 target). My informal read of 4 sampled units:
+  the abstract unit was good; a short unit correctly gave nothing; the SQUIRE introduction gave
+  correct entities but only 1 of 5 attempted relations survived.
+- **About 24% of attempted relations are dropped** (`relation_end_not_in_entities` 24 and
+  `type_not_allowed_for_predicate` 25 in the g0 run, against 157 kept). The second reason is the
+  ontology: `USES` goes only from Paper to Method or Dataset, so true statements such as "SQUIRE
+  uses a Transformer" (Method to Method) or "method uses dataset" are dropped. Blueprint decision
+  D4 says to start small and widen when the audit shows gaps. Proposal for the owner: widen
+  `USES` to start at Paper or Method (new ontology version 2, which also changes cache keys).
+- One unit (a table of numbers) failed in the gleaning run: the answer was cut off at the old
+  1,500-token output limit. The limit is now 3,000, a cut-off answer is reported as such, and the
+  unit was finished in the second run.
+- Other things seen: a vague phrase such as "three MHQA datasets" is stored as a Dataset (noise to
+  watch in the audit); one `CITES` edge appeared although references are cut.
+- Test environment: the Prefect temporary server needs 30 to 40 s on this machine (free RAM about
+  3 GB); the tests wait up to 120 s now (`PREFECT_SERVER_EPHEMERAL_STARTUP_TIMEOUT_SECONDS` and
+  `server_startup_timeout`). 153 tests pass. `ruff` clean.
+
 ## Things that went wrong and were fixed (so the next session knows)
 
 - Docker's engine was stopped after a reboot. Quitting Docker Desktop, running `wsl --shutdown`
@@ -59,14 +93,17 @@ None.
 
 ## Exact next action
 
-Build step 4: the paid 5% sample runs. **The owner must say yes first.** Plan: two runs on the
-same fixed 5% sample (about 38 units), gleaning 0 then gleaning 2, each with
-`--max-cost-usd 0.25`, expected total about $0.11 (estimate). Then Claude reads the sample output
-against the source text, reports what was missed and what was wrong (a first, informal quality
-look), and compares gleaning 0 and 2 (D6) and the model (D5). After that, the owner decides the
-full run (about $0.64 or $1.57, estimates). Commands:
-`docker compose run --rm pipeline extract --sample 0.05 --gleaning 0 --index-version idx-sample-g0`
-and the same with `--gleaning 2 --index-version idx-sample-g2`.
+The owner decides two things (asked in chat):
+1. Widen `USES` (ontology version 2: Paper or Method to Method or Dataset)? If yes, Claude edits
+   `ontology/research_v1.yaml` into a v2 file, records the decision, and the sample is re-run
+   with the new ontology (cache keys change; about $0.12 more).
+2. Full extraction on all 751 units, which gleaning setting, and the cost cap. Suggested: run
+   gleaning 0 and gleaning 2 both (about $0.8 and $1.3, cap $3 in total), so the labeled units can
+   decide D6 by measured precision instead of a guess.
+
+Then build steps 6 to 10 in BRIEF.md: entity resolution, Neo4j load, quality report, labeled
+sets, tests and docs. Command for the full run:
+`docker compose run --rm pipeline extract --sample 1 --gleaning 0 --max-cost-usd 1.5 --index-version idx-1-g0`.
 
 ## Notes for the next session
 
