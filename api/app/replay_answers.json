@@ -1,0 +1,783 @@
+{
+ "entries": [
+  {
+   "id": "M03",
+   "question": "What size of model does KGT5 use in its main experiments, and which two large knowledge graphs does it use to test link prediction?",
+   "answer": {
+    "mode": "local",
+    "status": "answered",
+    "text": "KGT5 uses a model with the same architecture as T5-small, which has approximately 60 million parameters, but without pretrained weights in its main experiments [T5]. For testing link prediction, KGT5 is evaluated on two large publicly available benchmark knowledge graphs: Wikidata5M and WikiKG90Mv2. Wikidata5M contains about 4.8 million entities, 828 relations, and 21 million edges, while WikiKG90Mv2 is even larger with 91 million entities, 1,387 relations, and 601 million edges [T1][T6][E2][E7]. On these datasets, KGT5 achieves competitive link prediction performance, outperforming low-parameter count models and achieving the highest MRR on WikiKG90Mv2 validation set with 98% fewer parameters than the next best model [T1]. The model's size and architecture enable scalability and versatility for large knowledge graphs [T2][T5]. Thus, the main experiments use a 60M parameter T5-small based model, and the two large knowledge graphs used for link prediction evaluation are Wikidata5M and WikiKG90Mv2 [T1][T5][T6].",
+    "citations": [
+     {
+      "label": "E2",
+      "kind": "entity",
+      "title": "Wikidata5M (Dataset): A knowledge graph dataset with 4.8M entities, 828 relation",
+      "text": "Wikidata5M (Dataset): A knowledge graph dataset with 4.8M entities, 828 relations, and 21M edges. One of the largest publicly available benchmark knowledge graphs used for evaluating link prediction.",
+      "source": null,
+      "ref_id": "e_42e6cfdd602f"
+     },
+     {
+      "label": "E7",
+      "kind": "entity",
+      "title": "WikiKG90Mv2 (Dataset): A knowledge graph dataset with 91M entities, 1,387 relati",
+      "text": "WikiKG90Mv2 (Dataset): A knowledge graph dataset with 91M entities, 1,387 relations, and 601M edges. One of the largest publicly available benchmark knowledge graphs used for evaluating link prediction.",
+      "source": null,
+      "ref_id": "e_a78100703cdf"
+     },
+     {
+      "label": "T1",
+      "kind": "text_unit",
+      "title": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+      "text": "paper 2022.acl-long.201, section 4.4 Link Prediction with KGT5\nTab. 3 shows link prediction performance on WikiKG90Mv2, one of the largest benchmark KGs available. Here we compare against TransE, ComplEx and their variants. *-MPNet and *-concat methods use text embeddings as part of entity representations, and operate on the same textual data as KGT5 . KGT5 achieves the highest MRR on validation set while having 98% fewer parameters than the next best performing model on the leaderboard.13 Tab. 2 shows link prediction performance on Wikidata5M, a smaller but better studied KG. We see that KGT5 outperformed all low-parameter count models on all metrics. When compared to the large ComplEx model, there is a drop of 0.008 points in MRR and a gain of 0.012 points in hits@1. We performed a more fine-grained analysis of 13The authors of OGB-LSC did not provide us with scores on the hidden test set because we used the entity mentions that were provided with the dataset. These entity mentions have now been removed; we provide them for reproducibility on our resource website. model predictions according to the type of query for Wikidata5M (Tab. 13 in the appendix). We found that KGT5 excelled at answering queries which have none or only a few correct answers in the train set; performance dropped when several entities can be correct for a query. This could be due to the nature of sampling: low probability sequences are harder to sample and also harder to rank correctly. Additionally, the limited sampling (§3.3) may not even provide the correct answer if there exist more known positives than sampled answers. Based on these observations we created an ensemble of ComplEx and KGT5 which answers queries as follows: if the query does not have answers in the train KG, use KGT5 ; otherwise use ComplEx (614M).",
+      "source": "4.4 Link Prediction with KGT5",
+      "ref_id": "u_381134ba1f9c_0024"
+     },
+     {
+      "label": "T2",
+      "kind": "text_unit",
+      "title": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+      "text": "paper 2022.acl-long.201, section 4 Experimental Study\nWe investigate whether KGT5–i.e. a simple seq2seq Transformer model–can be jointly trained 7See Appendix C for additional details on sampling and our choice of decoding strategy. 8The decoded sequence may or may not be an entity mention. We experimented with constrained decoding (Cao et al., 2021) to force the decoder to output only entity mentions; however, we found this unnecessary since the model almost always outputs an entity mention, and increasing the number of samples was enough to solve the issue. to perform both knowledge graph link prediction as well as question answering. Hereby, we first describe the used datasets (§4.1), the baselines we compared to (§4.2) and the experimental setup (§4.3). The results of our experiments are analysed in §4.4-§4.8. Before going into detail, we summarize our key findings: 1. For link prediction on large KGs, the text-based approach of KGT5 reduces model size to comparable KGE models by up to 98% and reaches or outperforms current state-of-the-art. 2. On the task of KGQA over incomplete KGs, our simple seq2seq approach obtains better results than the current state-of-the-art across multiple datasets. 3. KG link prediction training might be more beneficial than language modeling pretraining on knowledge intensive tasks such as KGQA. 4. Although KGT5 is good at generalizing to unseen facts, it is rather poor at memorizing facts. This problem can be alleviated, if needed, by using an ensemble of KGT5 and conventional link prediction or KGQA systems.",
+      "source": "4 Experimental Study",
+      "ref_id": "u_381134ba1f9c_0014"
+     },
+     {
+      "label": "T5",
+      "kind": "text_unit",
+      "title": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+      "text": "paper 2022.acl-long.201, section 4.3 Experimental Setup\nIn all our main experiments we used a model with the same architecture as T5-small (∼60M parameters) but without the pretrained weights. For tokenizing sequences, we trained a BPE tokenizer using the SentencePiece (Kudo and Richardson, 2018) library on the verbalised KGs (see Tab. 1 for tokenizer statistics). We used AdaFactor (Shazeer and Stern, 2018) with a learning rate warmup schedule for link prediction training, batch size 320 and 10% dropout. We adopted the same procedure as Roberts et al. (2020) for QA finetuning - we halved the batch size and fixed the learning rate to 0.001. All experiments were performed using 4 Nvidia 1080Ti GPUs and models were implemented using the HuggingFace library (Wolf et al., 2019). We performed no dataset-specific hyperparameter tuning for KGT5 and used the same architecture, batch size, dropout and learning rate schedule throughout all experiments.11 All models were trained until validation accuracy did not significantly increase for 10k steps.12 For inference, we used sampling size = 500 for link prediction and beam size = 4 for KGQA. We further performed a neighbourhood-based reranking for KGQA: given questionq, topic entity from 10Please see Appendix D for details of PathPred. 11The vocabulary size for MetaQA is 10k, compared to ∼30k for other datasets.",
+      "source": "4.3 Experimental Setup",
+      "ref_id": "u_381134ba1f9c_0021"
+     },
+     {
+      "label": "T6",
+      "kind": "text_unit",
+      "title": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+      "text": "paper 2022.acl-long.201, section 4.1 Datasets\nWe evaluate the link prediction capability of KGT5 on Wikidata5M (Wang et al., 2021) and WikiKG90Mv2 (Hu et al., 2021), two of the largest publicly available benchmark KGs. Although KGT5 is designed for large problems, we evaluate on the smaller benchmark KGs FB15k-237 (Toutanova and Chen, 2015), WN18RR (Dettmers et al., 2018) and YAGO3- 10 (Dettmers et al., 2018) for comparability. We evaluate the QA capabilities of KGT5 on three large-scale KGQA benchmark datasets: MetaQA (Zhang et al., 2018), WebQuestionsSP (WQSP) (Yih et al., 2016) and ComplexWebQuestions (CWQ) (Talmor and Berant, 2018). Questions in MetaQA span from 1-hop to 3-hop questions requiring path-based reasoning on a KG based on WikiMovies (Miller et al., 2016). WQSP contains both 1-hop and 2-hop path based questions while CWQ contains questions requiring steps such as compositional, conjunctive, comparative and superlative reasoning. Both WQSP and CWQ can be answered using Freebase (Google, 2015) as the background KG.",
+      "source": "4.1 Datasets",
+      "ref_id": "u_381134ba1f9c_0015"
+     }
+    ],
+    "nodes": [
+     {
+      "id": "e_45cf30c47cf8",
+      "label": "KGT5",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_42e6cfdd602f",
+      "label": "Wikidata5M",
+      "type": "Dataset",
+      "confidence": null
+     },
+     {
+      "id": "e_94466795002a",
+      "label": "link prediction",
+      "type": "Task",
+      "confidence": null
+     },
+     {
+      "id": "e_a78100703cdf",
+      "label": "WikiKG90Mv2",
+      "type": "Dataset",
+      "confidence": null
+     },
+     {
+      "id": "e_2d4c82685ec2",
+      "label": "Sequence-to-Sequence Knowledge Graph Completion and Question Answering",
+      "type": "Paper",
+      "confidence": null
+     },
+     {
+      "id": "e_5d612a69f31d",
+      "label": "ReasoningLM: Enabling Structural Subgraph Reasoning in Pre-trained Language Models for Question Answering over Knowledge Graph",
+      "type": "Paper",
+      "confidence": null
+     }
+    ],
+    "links": [
+     {
+      "source": "e_2d4c82685ec2",
+      "target": "e_42e6cfdd602f",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_2d4c82685ec2",
+      "target": "e_45cf30c47cf8",
+      "predicate": "PROPOSES",
+      "confidence": null
+     },
+     {
+      "source": "e_2d4c82685ec2",
+      "target": "e_45cf30c47cf8",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_2d4c82685ec2",
+      "target": "e_a78100703cdf",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_45cf30c47cf8",
+      "target": "e_42e6cfdd602f",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_45cf30c47cf8",
+      "target": "e_94466795002a",
+      "predicate": "ADDRESSES",
+      "confidence": null
+     },
+     {
+      "source": "e_45cf30c47cf8",
+      "target": "e_a78100703cdf",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_5d612a69f31d",
+      "target": "e_42e6cfdd602f",
+      "predicate": "USES",
+      "confidence": null
+     }
+    ],
+    "check_status": "verified",
+    "model": "gpt-4.1-mini (saved run)"
+   },
+   "baseline": {
+    "mode": "baseline",
+    "status": "answered",
+    "text": "KGT5 uses a model with the same architecture as T5-small, which has approximately 60 million parameters, in its main experiments [5]. It tests link prediction on two large knowledge graphs: Wikidata5M and WikiKG90Mv2 [6].",
+    "model": "gpt-4.1-mini (saved run)"
+   }
+  },
+  {
+   "id": "M05",
+   "question": "What is the maximum length of the paths SQUIRE samples for training, and what kind of model does it use to turn a query into a path?",
+   "answer": {
+    "mode": "local",
+    "status": "answered",
+    "text": "SQUIRE samples paths of maximum length \\( N = 3 \\) for training. Specifically, for each triple fact \\((h, r, t)\\), it samples a path from all paths with maximum length \\( N = 3 \\) between \\( h \\) and \\( t \\) and treats it as the target path \\(\\tau\\). If such a path cannot be found, it defaults to a shorter path consisting of the relation and tail entity with an end-of-sequence token [T3]. The choice of \\( N = 3 \\) is motivated by the observation that almost all pairs of entities are within 3 hops in the knowledge graph datasets used, and to maintain fair comparison with baselines that also set the maximum path length to 3 [T3].\n\nSQUIRE uses a Transformer encoder-decoder model to turn a query into a path. It poses multi-hop reasoning as a sequence-to-sequence problem, where the Transformer model \"translates\" a query sequence (head entity and relation) into a path sequence. The Transformer encoder-decoder architecture allows the model to generate paths in an end-to-end fashion, enabling it to infer missing edges dynamically during path generation [T1][T3][E2]. During decoding, the model attends to the query tokens and previously generated path tokens, using masking to prevent access to future tokens, and computes the probability distribution over the next token via a multi-layer perceptron on the encoder output [T3].\n\nIn summary, SQUIRE samples paths up to length 3 for training and employs a Transformer encoder-decoder model to convert queries into reasoning paths [T1][T3].",
+    "citations": [
+     {
+      "label": "E2",
+      "kind": "entity",
+      "title": "Transformer encoder-decoder model (Method): A model used to translate a query se",
+      "text": "Transformer encoder-decoder model (Method): A model used to translate a query sequence to a path sequence in the SQUIRE framework. A model used in SQUIRE to translate a query sequence to a path sequence.",
+      "source": null,
+      "ref_id": "e_18ed6f2804c5"
+     },
+     {
+      "label": "T1",
+      "kind": "text_unit",
+      "title": "SQUIRE: A Sequence-to-sequence Framework for Multi-hop Knowledge Graph Reasoning",
+      "text": "paper 2022.emnlp-main.107, section 1 Introduction\nAmazingly, we show that both drawbacks can be alleviated by a new Sequence to sequence framework for multi-hop reasoning (SQUIRE). By posing multi-hop reasoning as a sequence-to-sequence problem, we use a Transformer encoder-decoder model (Vaswani et al., 2017) to “translate” a query sequence to a path sequence. For model learning, each triple induces a supervised training sample consisting of a source sequence, i.e., query (h,r ), and a target path sequence sampled from all paths between h and t. Hence, SQUIRE framework learns and predicts in a complete end-to-end fashion, yielding faster and more stable convergence than RL-based methods (green curve in training time comparison Fig. 2). Furthermore, our approach naturally overcomes the missing path problem, since the Transformer does not explicitly rely on existing edges in the graph to generate the path sequence. That is, our proposed method has the flexibility to “walk and complete”: automatically infers missing edges along the path. Meanwhile, multi-hop reasoning poses particular challenges to our framework. (a) Noisy sample: Unlike in language modeling where we have a groundtruth target sequence, in our case, there is no such supervision on the target path. A naive way to obtain the target path is randomly sampling from all paths betweenh andt, but this might introduce noise into model learning since the random path may be spurious. To address this, we propose rule-enhanced learning. We search groundtruth paths by logical rules mined from the KG, which are less noisy and more reliable compared to randomly sampled paths. (b) History gap : During training, we provide the groundtruth sequence as the path history for our model to predict the next token. Yet, during inference the history is generated by the model from scratch, resulting in a deviation from its training distribution. In language modeling, this is also known as exposure bias (Ranzato et al., 2016), a common challenge faced in autoregressive models. To narrow such a gap, we propose iterative training that iteratively aggregates new paths to the training set based on the model’s previous predictions, adapting the model to the distribution of history tokens it induces.",
+      "source": "1 Introduction",
+      "ref_id": "u_4724660473c3_0004"
+     },
+     {
+      "label": "T3",
+      "kind": "text_unit",
+      "title": "SQUIRE: A Sequence-to-sequence Framework for Multi-hop Knowledge Graph Reasoning",
+      "text": "paper 2022.emnlp-main.107, section 3.2 SQUIRE Framework\nWhen decoding τk, the mask, shown in Fig. 3, only allows the encoder to attend to the query tokens h,r and previous tokens τ(k in the output path, preventing the revelation of future information. Then our model computes the probability distribution on thek-th token as p (·|q,τ(k) = Softmax(MLP(Enc(h,r,τ (k))· E) (3) where the MLP(·) is a multi-layer perceptron that learns a mapping Rd→ Rd. During training, for each triple fact(h,r,t )∈T , we sample a path from all paths with maximum lengthN = 3 2 betweenh andt and treat it as the target pathτ. If such a path cannot be found, we simply takeτ := (r,t, (eos)) to force the model to memorize the edge. After obtaining the setU of all query-path pairs, we optimize the parameters to maximize∑ (q,τ )∈Up (τ|q). We use cross-entropy loss and further add label-smoothing to avoid overfitting, resulting in the following loss function for each sample (q,τ )∈U : L =− 1 |τ| |τ|∑ k=1 V∑ i=1 αi logp (i|q,τ(k) (4) whereαi =ε for the target tokeni =τk andαi = 1−ε V−1 for other tokens.ε is the label-smoothing hyperparameter ranging from 0 to 1. Furthermore, to 1Special tokens include start ((bos)), end ((eos)) and mask ((mask)). 2We choose suchN since almost all pairs of entities are within 3 hops in the KG datasets, and to keep fair comparison with baselines that all set maximum path length to 3. avoid overdependence of future predictions on path history, we mask out (by substituting with (mask) token) every entity token in τ with probabilityp, and exclude the loss on masked tokens.",
+      "source": "3.2 SQUIRE Framework",
+      "ref_id": "u_4724660473c3_0011"
+     }
+    ],
+    "nodes": [
+     {
+      "id": "e_99c0bb97fc15",
+      "label": "SQUIRE",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_18ed6f2804c5",
+      "label": "Transformer encoder-decoder model",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_a0c9691256bd",
+      "label": "beam search",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_fd29ee03acaa",
+      "label": "SQUIRE: A Sequence-to-sequence Framework for Multi-hop Knowledge Graph Reasoning",
+      "type": "Paper",
+      "confidence": null
+     },
+     {
+      "id": "e_45cf30c47cf8",
+      "label": "KGT5",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_196064a569fa",
+      "label": "MetaQA",
+      "type": "Dataset",
+      "confidence": null
+     }
+    ],
+    "links": [
+     {
+      "source": "e_45cf30c47cf8",
+      "target": "e_18ed6f2804c5",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_45cf30c47cf8",
+      "target": "e_196064a569fa",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_45cf30c47cf8",
+      "target": "e_a0c9691256bd",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_99c0bb97fc15",
+      "target": "e_18ed6f2804c5",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_fd29ee03acaa",
+      "target": "e_99c0bb97fc15",
+      "predicate": "PROPOSES",
+      "confidence": null
+     },
+     {
+      "source": "e_fd29ee03acaa",
+      "target": "e_a0c9691256bd",
+      "predicate": "USES",
+      "confidence": null
+     }
+    ],
+    "check_status": "verified",
+    "model": "gpt-4.1-mini (saved run)"
+   },
+   "baseline": {
+    "mode": "baseline",
+    "status": "answered",
+    "text": "The maximum length of the paths SQUIRE samples for training is 3 hops [3]. SQUIRE uses a Transformer encoder-decoder model to \"translate\" a query sequence into a path sequence [1].",
+    "model": "gpt-4.1-mini (saved run)"
+   }
+  },
+  {
+   "id": "M07",
+   "question": "How does CompAQT add alignment to the training loss, and how many questions does the paper use to structure its results discussion?",
+   "answer": {
+    "mode": "local",
+    "status": "answered",
+    "text": "CompAQT adds alignment to the training loss by incorporating a minimum-distance component referred to as the \"alignment loss,\" which is detailed in Equation 4 of the paper. This alignment loss encourages the model to focus its attention on relevant parts of the input that correspond to the compositional steps in the output program. Additionally, a coverage term is added to the alignment loss to discourage the model from repeatedly attending to the same tokens, and a linear decay term is used to weight the alignment loss across steps, emphasizing early steps more strongly. This combined alignment loss helps the model learn meaningful attention patterns that improve program accuracy, especially for multi-step programs [T1].\n\nRegarding the structure of the results discussion, the paper organizes its investigation around four main questions: (1) whether CompAQT improves baseline model performance across four datasets, (2) whether CompAQT encourages compositional generalization by enabling models to attend to relevant input parts, (3) whether each component of CompAQT contributes to enhanced performance, and (4) whether CompAQT's performance gains are merely due to added parameters. These four questions guide the presentation and analysis of the results [T2].\n\nIn summary, CompAQT adds alignment to the training loss via a minimum-distance alignment loss with coverage and linear decay terms, and the paper structures its results discussion around four key research questions [T1][T2].",
+    "citations": [
+     {
+      "label": "T1",
+      "kind": "text_unit",
+      "title": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+      "text": "paper 2022.emnlp-main.125, section 6.4 Ablation study\nWe perform a series of experiments to examine the impact of each component of CompAQT. Table 6 shows the results after applying FinQANet to the FinQA dataset. “Self-attention” indicates the addition of a plain self-attention module without any compositional guidance. “Alignment loss” indicates the addition of the minimum-distance component in Equation 4. “Coverage term” indicates the addition of−a(i−1) j,k to alignment loss. “Linear decay” indicates replacing a simple average loss with the linear decay term in Equation 2. As the table shows, each component contributes to the program accuracy. The self-attention module offers an improvement that is relatively consistent across all programs, whereas the alignment loss and the coverage term favor multi-step programs, as intended. Lastly, linear decay further improves results for the longest programs by a small margin. To ensure that the effectiveness of CompAQT is not simply due to added parameters, we also perform a series of experiments that measure the performance of CompAQT with additional parameters in the form of additional layers and attention heads. Each row in Table 7 shows how much Model Program accuracy 1 step 2 steps 3+ steps Overall FinQANet 75.63 65.87 30.36 68.44 +self-attention +2.95 +2.08 +2.00 +2.57 +alignment loss +0.07 +5.31 +2.01 +1.95 +coverage term +0.03 +1.97 +0.97 +0.69 +linear decay +0.00 +0.07 +0.51 +0.06 Table 6: Ablation results on the FinQA dataset using FinQANet as the base model. program accuracy improves over using FinQANet without CompAQT. As the table shows, additional parameters are not always helpful and can undermine the performance of the model, especially for multi-step programs.",
+      "source": "6.4 Ablation study",
+      "ref_id": "u_039c611d6451_0024"
+     },
+     {
+      "label": "T2",
+      "kind": "text_unit",
+      "title": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+      "text": "paper 2022.emnlp-main.125, section 6 Results and discussion\nIn this section, we investigate the effectiveness of CompAQT through four questions: 1. Does CompAQT improve the performance of the baseline models on the four datasets? 2. Does CompAQT encourage compositional generalization by enabling the models to attend to relevant parts of the input? 3. Does each component of CompAQT contribute to enhanced performance? 4. Can CompAQT’s performance be attributed merely to added parameters? Additionally, we examine whether the combined dataset offers an advantage over the largest constituent dataset. Model Dataset Program accuracy 1 step 2 steps 3+ steps Overall TAGOP7 TAT-QA 45.01 39.56 42.73 43.25 +CompAQT +1.06 +0.72 +1.00 +0.63 PVN Combined 68.14 61.33 13.54 56.64 +CompAQT +2.64 +2.12 +3.09 +2.57 FinQANet FinQA 75.63 65.87 30.36 68.44 +CompAQT +3.05 +9.25 +5.49 +5.30 FinQANet TAT-QA 73.33 63.76 64.88 70.71 +CompAQT -3.33 +0.00 +1.38 -0.74 FinQANet HiTab 34.70 25.14 15.91 30.12 +CompAQT +0.03 +4.50 +1.44 +2.11 FinQANet MULTIHIERTT 38.99 40.07 15.01 38.94 +CompAQT -0.12 +2.28 +1.76 +1.88 FinQANet Combined 65.11 62.00 30.76 58.60 +CompAQT +1.49 +3.14 +3.40 +2.28 Table 3: Program accuracy for program generation using baseline models. Additional performance gain/loss is indicated after CompAQT is added to each model.",
+      "source": "6 Results and discussion",
+      "ref_id": "u_039c611d6451_0017"
+     }
+    ],
+    "nodes": [
+     {
+      "id": "e_032a7a56fad4",
+      "label": "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+      "type": "Paper",
+      "confidence": null
+     },
+     {
+      "id": "e_43d08c056011",
+      "label": "CompAQT",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_570fbae8b00e",
+      "label": "FinQANet+CompAQT",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_06e9d18e1c4e",
+      "label": "FinQA",
+      "type": "Dataset",
+      "confidence": null
+     },
+     {
+      "id": "e_2aedd7670b2f",
+      "label": "FinQANet",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_712dbf5ace89",
+      "label": "a method that encourages the QA models to adjust their attention patterns and capture input/output alignments",
+      "type": "Method",
+      "confidence": null
+     }
+    ],
+    "links": [
+     {
+      "source": "e_032a7a56fad4",
+      "target": "e_06e9d18e1c4e",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_032a7a56fad4",
+      "target": "e_2aedd7670b2f",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_032a7a56fad4",
+      "target": "e_43d08c056011",
+      "predicate": "PROPOSES",
+      "confidence": null
+     },
+     {
+      "source": "e_032a7a56fad4",
+      "target": "e_43d08c056011",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_032a7a56fad4",
+      "target": "e_570fbae8b00e",
+      "predicate": "PROPOSES",
+      "confidence": null
+     },
+     {
+      "source": "e_032a7a56fad4",
+      "target": "e_570fbae8b00e",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_032a7a56fad4",
+      "target": "e_712dbf5ace89",
+      "predicate": "PROPOSES",
+      "confidence": null
+     },
+     {
+      "source": "e_2aedd7670b2f",
+      "target": "e_06e9d18e1c4e",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_2aedd7670b2f",
+      "target": "e_43d08c056011",
+      "predicate": "IMPROVES_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_43d08c056011",
+      "target": "e_06e9d18e1c4e",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_43d08c056011",
+      "target": "e_2aedd7670b2f",
+      "predicate": "IMPROVES_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_570fbae8b00e",
+      "target": "e_06e9d18e1c4e",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_570fbae8b00e",
+      "target": "e_43d08c056011",
+      "predicate": "USES",
+      "confidence": null
+     }
+    ],
+    "check_status": "verified",
+    "model": "gpt-4.1-mini (saved run)"
+   },
+   "baseline": {
+    "mode": "baseline",
+    "status": "answered",
+    "text": "CompAQT adds alignment to the training loss by including the minimum-distance component in Equation 4, referred to as the \"alignment loss,\" and also incorporates a \"coverage term\" which adds −a(i−1) j,k to the alignment loss [1]. The paper structures its results discussion around four questions investigating the effectiveness of CompAQT [2].",
+    "model": "gpt-4.1-mini (saved run)"
+   }
+  },
+  {
+   "id": "M08",
+   "question": "On which five datasets does QADA report results, and what happens to the HotpotQA exact match when contrastive adaptation is removed?",
+   "answer": {
+    "mode": "local",
+    "status": "answered",
+    "text": "QADA reports results on five datasets: HotpotQA, Natural Questions, NewsQA, SearchQA, and TriviaQA. These datasets are selected as target domains for QA domain adaptation, with SQuAD v1.1 serving as the source domain [T5][E3][E16][E9][E8][E21][E24].\n\nRegarding the effect of removing contrastive adaptation on HotpotQA exact match (EM) performance, an ablation study shows that removing the attention-based contrastive adaptation component from QADA leads to a decrease in EM by 8.3% on average across datasets. Specifically, for HotpotQA, the EM score drops from 50.80 to 48.21 when contrastive adaptation is removed, indicating a significant performance degradation [T1][T4].\n\nIn summary, QADA is evaluated on HotpotQA, Natural Questions, NewsQA, SearchQA, and TriviaQA datasets. The HotpotQA exact match performance notably decreases by approximately 2.59 points (from 50.80 to 48.21 EM) when contrastive adaptation is removed, underscoring the importance of this component in the QADA framework [T4].",
+    "citations": [
+     {
+      "label": "E3",
+      "kind": "entity",
+      "title": "HotpotQA (Dataset): The dataset used for evaluation in the distractor setting. A",
+      "text": "HotpotQA (Dataset): The dataset used for evaluation in the distractor setting. A QA dataset used for evaluation.",
+      "source": null,
+      "ref_id": "e_90ad3e0538e6"
+     },
+     {
+      "label": "E8",
+      "kind": "entity",
+      "title": "SearchQA (Dataset): A dataset used for evaluation in the experiments. A QA datas",
+      "text": "SearchQA (Dataset): A dataset used for evaluation in the experiments. A QA dataset used for evaluation.",
+      "source": null,
+      "ref_id": "e_a293c38d2e2b"
+     },
+     {
+      "label": "E9",
+      "kind": "entity",
+      "title": "NewsQA (Dataset): A dataset used for evaluation in the experiments. A QA dataset",
+      "text": "NewsQA (Dataset): A dataset used for evaluation in the experiments. A QA dataset used for evaluation.",
+      "source": null,
+      "ref_id": "e_ca944303e49d"
+     },
+     {
+      "label": "E16",
+      "kind": "entity",
+      "title": "NQ (Dataset): Natural Questions dataset used for evaluation. A dataset used for ",
+      "text": "NQ (Dataset): Natural Questions dataset used for evaluation. A dataset used for evaluation in the experiments.",
+      "source": null,
+      "ref_id": "e_4090b72c893a"
+     },
+     {
+      "label": "E21",
+      "kind": "entity",
+      "title": "TriviaQA (Dataset): TriviaQA dataset used for evaluation. A dataset used for eva",
+      "text": "TriviaQA (Dataset): TriviaQA dataset used for evaluation. A dataset used for evaluation.",
+      "source": null,
+      "ref_id": "e_2335714691c5"
+     },
+     {
+      "label": "E24",
+      "kind": "entity",
+      "title": "SQuAD (Dataset): A dataset used for evaluation in the experiments. The dataset o",
+      "text": "SQuAD (Dataset): A dataset used for evaluation in the experiments. The dataset on which the baseline BERT QA model is trained.",
+      "source": null,
+      "ref_id": "e_ddaabebe0d7b"
+     },
+     {
+      "label": "T1",
+      "kind": "text_unit",
+      "title": "QA Domain Adaptation using Hidden Space Augmentation and Self-Supervised Contrastive Adaptation",
+      "text": "paper 2022.emnlp-main.147, section 6.2 Ablation Study for QADA\nWe evaluate the effectiveness of the proposed QADA by performing an ablation study. By comparing the performance of QADA and CAQA* in Table 1, we yield an ablation quantifying the gains that should be attributed to the combination of all proposed components in QADA. We find distinctive performance improvements due to our hidden space augmentation and contrastive adaptation. For example, we observe that EM performance can drop up to 20.8% without QADA, suggesting clear superiority of the proposed QADA. We further evaluate the effectiveness of the individual components in QADA. We remove the proposed Dirichlet neighborhood sampling, attentive context cutoff and attention-based contrastive adaptation in QADA separately and observe the performance changes. The results on target datasets are reported in Table 2. For all components, we observe consistent performance drops when removed from QADA. For example, the performance of QADA reduces, on average, by 3.3%, 4.5%, and 8.3% in EM when we remove Dirichlet sampling, context cutoff, and contrastive adaptation, respectively. The results suggest that the combination of question and context augmentation in the hidden space is highly effective for improving QA domain adaptation. Moreover, the performance improves clearly when including our attention-based contrastive adaptation.",
+      "source": "6.2 Ablation Study for QADA",
+      "ref_id": "u_56d31becd18d_0024"
+     },
+     {
+      "label": "T4",
+      "kind": "text_unit",
+      "title": "QA Domain Adaptation using Hidden Space Augmentation and Self-Supervised Contrastive Adaptation",
+      "text": "paper 2022.emnlp-main.147, section 5 Experiments\nDatasets: We use the following datasets (see Appendix A for details): • For the source domain Ds, we use SQuAD v1.1 (Rajpurkar et al., 2016). • For target domain Dt, we select MRQA Split I (Fisch et al., 2019): HotpotQA (Yang et al., 2018), Natural Questions (Kwiatkowski et al., 2019), NewsQA (Trischler et al., 2016), SearchQA (Dunn et al., 2017), and TriviaQA (Joshi et al., 2017). This selection makes our results comparable with other works in QA domain adaptation (e.g., Lee et al., 2020; Shakeri et al., 2020; Cao et al., 2020; Yue et al., 2021b, 2022d). Baselines: As a naïve baseline, we pretrain a BERT on the source dataset as our base model and evaluate on each target dataset with zero knowledge of the target domain. In addition, we adopt three state-of-the-art baselines: domain-adversarial training (DAT) (Lee et al., 2019), conditional adversarial self-training (CASe) (Cao et al., 2020), and contrastive adaptation for QA (CAQA) (Yue et al., 2021b). For a fair comparison, we adopt both the original CAQA and CAQA with our selfsupervised adaptation framework ( = CAQA*).3 Baseline details are reported in Appendix B. Training and Evaluation: We use the proposed method to adapt the pretrained QA model, augmentation hyperparameters are tuned empirically by searching for the best combinations. To evaluate the predictions, we follow (Lee et al., 2020; Shakeri et al., 2020; Yue et al., 2021b) and assess the exact matches (EM) and the F1 score on the dev sets. Implementation details are in Appendix C. 3For CAQA*, we exclude question generation and adopt the same process of pseudo labeling and self-supervised adaptation as QADA.",
+      "source": "5 Experiments",
+      "ref_id": "u_56d31becd18d_0021"
+     },
+     {
+      "label": "T5",
+      "kind": "text_unit",
+      "title": "QA Domain Adaptation using Hidden Space Augmentation and Self-Supervised Contrastive Adaptation",
+      "text": "paper 2022.emnlp-main.147, section 5 Experiments\nImplementation details are in Appendix C. 3For CAQA*, we exclude question generation and adopt the same process of pseudo labeling and self-supervised adaptation as QADA. Different from QADA, hidden space augmentation is not applied and we use the same objective function as in the original CAQA paper. Model HotpotQA NaturalQ. NewsQA SearchQA TriviaQA EM / F1 EM / F1 EM / F1 EM / F1 EM / F1 QADA (ours) 50.80/65.75 52.13/65.00 45.64/61.84 40.47/48.76 56.92/65.86 w/o Dirichlet sampling 49.57/64.71 51.15/64.24 45.27/61.44 35.90/44.28 56.83/65.51 w/o context cutoff 50.36/65.71 50.30/62.98 45.39/61.47 33.94/42.43 56.04/64.87 w/o contrastive adaptation 48.21/64.54 48.35/61.76 44.35/60.66 30.85/39.42 55.42/64.38 Table 2: Ablation study on different components of QADA.",
+      "source": "5 Experiments",
+      "ref_id": "u_56d31becd18d_0022"
+     }
+    ],
+    "nodes": [
+     {
+      "id": "e_cd8492197610",
+      "label": "QADA",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_95e0a6decf73",
+      "label": "contrastive adaptation",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_90ad3e0538e6",
+      "label": "HotpotQA",
+      "type": "Dataset",
+      "confidence": null
+     },
+     {
+      "id": "e_a293c38d2e2b",
+      "label": "SearchQA",
+      "type": "Dataset",
+      "confidence": null
+     },
+     {
+      "id": "e_ca944303e49d",
+      "label": "NewsQA",
+      "type": "Dataset",
+      "confidence": null
+     },
+     {
+      "id": "e_4090b72c893a",
+      "label": "NQ",
+      "type": "Dataset",
+      "confidence": null
+     }
+    ],
+    "links": [
+     {
+      "source": "e_cd8492197610",
+      "target": "e_4090b72c893a",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_cd8492197610",
+      "target": "e_90ad3e0538e6",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_cd8492197610",
+      "target": "e_95e0a6decf73",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_cd8492197610",
+      "target": "e_a293c38d2e2b",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_cd8492197610",
+      "target": "e_ca944303e49d",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     }
+    ],
+    "check_status": "verified",
+    "model": "gpt-4.1-mini (saved run)"
+   },
+   "baseline": {
+    "mode": "baseline",
+    "status": "answered",
+    "text": "QADA reports results on five datasets: HotpotQA, Natural Questions, NewsQA, SearchQA, and TriviaQA [3][4][5]. When contrastive adaptation is removed from QADA, the exact match (EM) performance on HotpotQA drops from 50.80 to 48.21, indicating a decrease of 2.59 EM points [4].",
+    "model": "gpt-4.1-mini (saved run)"
+   }
+  },
+  {
+   "id": "M11",
+   "question": "Which dataset is FAME evaluated on, how many entailment trees does it contain, and what structure does FAME build for its reasoning?",
+   "answer": {
+    "mode": "local",
+    "status": "answered",
+    "text": "FAME is evaluated primarily on the EntailmentBankQA dataset, which is a benchmark derived from EntailmentBank and ARC datasets. EntailmentBank contains 1,840 expert-annotated entailment trees, each corresponding to a hypothesis derived from a question and correct option from ARC. These trees have an average of 7.6 nodes and 3.2 reasoning steps [T4]. The EntailmentBankQA dataset includes 1,840 questions split into train, dev, and test sets, with detailed statistics provided [T7].\n\nFAME builds a structured entailment tree for its reasoning process. This tree organizes reasoning steps where each nonleaf node represents an intermediate entailment step, connecting basic facts (leaf nodes) and intermediate conclusions [T6][E3][E15]. The reasoning environment in FAME is modular, decomposing reasoning into task-oriented modules such as a retriever for updating known facts and a single-step entailment module that combines premises to generate intermediate conclusions [T9][E20].\n\nFAME formulates faithful question answering as a discrete decision-making problem solved via Monte-Carlo planning. This planning algorithm constructs a planning tree to guide simulations, assigning values to candidate actions based on the quality of successor states, enabling foresighted selection of reasoning steps that lead to high-quality entailment trees [T9][E10][C2]. The controller, implemented with a T5-large model trained on EntailmentBank, interacts with the reasoning environment to propose next actions [T7][C2].\n\nIn summary, FAME is evaluated on EntailmentBankQA containing 1,840 entailment trees and builds structured entailment trees for reasoning, guided by Monte-Carlo planning to select optimal reasoning steps [T4][T6][T9][E1][E2][E3][E10].",
+    "citations": [
+     {
+      "label": "C2",
+      "kind": "community",
+      "title": "Faithful Question Answering with Monte-Carlo Planning and Related Methods",
+      "text": "Faithful Question Answering with Monte-Carlo Planning and Related Methods\nThis community centers on the paper \"Faithful Question Answering with Monte-Carlo Planning,\" which proposes a controller model based on T5-large trained on the EntailmentBank dataset. The controller uses behavior cloning and a verifier to improve reasoning trajectories, supported by a planning algorithm that constructs a planning tree to guide simulations. The community also includes related methods such as the retriever, which uses a Siamese Network encoder fine-tuned with contrastive loss, and the entailment module for single-step entailment reasoning. The methods collectively aim to improve\n- The controller is a sequence generation model based on T5-large trained on EntailmentBank.\n- The planning algorithm constructs a planning tree to guide simulations in question answering.\n- Behavior cloning and verifier-based fine-tuning improve the controller's reasoning capabilities.",
+      "source": null,
+      "ref_id": "c_b43f3ac4f468"
+     },
+     {
+      "label": "E1",
+      "kind": "entity",
+      "title": "FAME (Method): A method for faithful question answering that formulates the task",
+      "text": "FAME (Method): A method for faithful question answering that formulates the task as a discrete decision-making problem and uses Monte-Carlo planning. The approach proposed in the paper that formulates question answering as a discrete d",
+      "source": null,
+      "ref_id": "e_e3c01bf031f6"
+     },
+     {
+      "label": "E2",
+      "kind": "entity",
+      "title": "EntailmentBankQA (Dataset): The standard benchmark dataset used for experiments ",
+      "text": "EntailmentBankQA (Dataset): The standard benchmark dataset used for experiments in the paper. A dataset used for manual evaluation of the quality of trees for selected options.",
+      "source": null,
+      "ref_id": "e_4df76b5773e8"
+     },
+     {
+      "label": "E3",
+      "kind": "entity",
+      "title": "entailment tree (Method): A structure organizing reasoning steps where each nonl",
+      "text": "entailment tree (Method): A structure organizing reasoning steps where each nonleaf node indicates an intermediate entailment step.",
+      "source": null,
+      "ref_id": "e_b1b552baa14f"
+     },
+     {
+      "label": "E10",
+      "kind": "entity",
+      "title": "Monte-Carlo planning (Method): A planning method used by FAME to make more infor",
+      "text": "Monte-Carlo planning (Method): A planning method used by FAME to make more informed and foresighted decisions. A planning algorithm introduced to select the optimal action in the reasoning process.",
+      "source": null,
+      "ref_id": "e_a59af17ae4bc"
+     },
+     {
+      "label": "E15",
+      "kind": "entity",
+      "title": "structured entailment tree (Method): A structure organizing reasoning steps to s",
+      "text": "structured entailment tree (Method): A structure organizing reasoning steps to show how premises produce intermediate conclusions proving answer correctness.",
+      "source": null,
+      "ref_id": "e_f1f985f6e9c5"
+     },
+     {
+      "label": "E20",
+      "kind": "entity",
+      "title": "single-step entailment module (Method): A basic task-oriented module for combini",
+      "text": "single-step entailment module (Method): A basic task-oriented module for combining premises to obtain intermediate conclusions.",
+      "source": null,
+      "ref_id": "e_cfa412b0770b"
+     },
+     {
+      "label": "T4",
+      "kind": "text_unit",
+      "title": "Faithful Question Answering with Monte-Carlo Planning",
+      "text": "paper 2023.acl-long.218, section 5.1 Dataset\nWe conduct experiments based on Entailment- Bank ( Dalvi et al. , 2021). It consists of 1,840 expert-annotated entailment trees, each of which corresponds to a hypothesis derived from a question+correct option from the ARC ( Clark et al. , 2018) dataset. The leaf facts of trees are selected from the WorldTreeV2 corpus (Xie et al., 2020). Since EntailmentBank is originally designed for post-hoc tree reconstruction instead of QA, we follow Creswell and Shanahan (2022) to convert it to EntailmentBankQA by adding back the 4-way multiple options from the ARC dataset. Summary statistics are shown in Table 2. Answering these questions requires retrieving from a large fact corpus and complex multi-hop reasoning (each tree contains 7.6 nodes and 3.2 steps on average).",
+      "source": "5.1 Dataset",
+      "ref_id": "u_bd66cdf3c6b3_0019"
+     },
+     {
+      "label": "T6",
+      "kind": "text_unit",
+      "title": "Faithful Question Answering with Monte-Carlo Planning",
+      "text": "paper 2023.acl-long.218, section 1 Introduction\nThe entailment tree contains the basic fact ( sent∗) and novel intermediate conclusions (int∗) connected by entailment steps. answer (Wei et al., 2022b; Zelikman et al. , 2022; Creswell et al., 2022). Such a lack of faithfulness makes it difficult for users to trust the answers and debug the wrong answers, diminishing the overall trustworthiness of the QA systems. To tackle this issue, the recently proposed faithful question-answering (FQA) task ( Tafjord et al., 2022; Creswell and Shanahan, 2022) asks the system to provide the reasoning steps that the answer faithfully follows, as demonstrated in Figure 1(a) and (c). The reasoning steps are organized as an entailment tree (Dalvi et al., 2021), where each nonleaf node indicates an intermediate entailment step. The provision of the faithful steps allows users to inspect and debug the system’s reasoning process, potentially enabling the construction of interactive and teachable QA systems ( Dalvi et al., 2022). Existing FQA methods typically adopt a stepwise approach to generate an entailment step at a time (Tafjord et al., 2022; Creswell and Shanahan, 2022). When determining which step to generate next, they produce several candidate steps and select one based on the validity of the step. However, they do not explicitly consider whether the selected step will ultimately result in a high-quality tree that supports the answer. For complex questions that require multiple reasoning steps, such a lack of foresight might lead to the irreversible miss of the optimal step in a huge search space. Furthermore, existing methods are based on either the model’s internal beliefs or a small number of given facts, which limits their ability to ground to the external world and update their known facts. In this paper, we propose F AME , a novel FQA method integrating Monte-Carlo planning. We formulate the task as a discrete decision-making problem and solve it through the interaction of a reasoning environment and a controller, as shown in Figure 1. The reasoning environment is modular.",
+      "source": "1 Introduction",
+      "ref_id": "u_bd66cdf3c6b3_0003"
+     },
+     {
+      "label": "T7",
+      "kind": "text_unit",
+      "title": "Faithful Question Answering with Monte-Carlo Planning",
+      "text": "paper 2023.acl-long.218, section 5.2 Implementation Details\nRetriever .The retriever is based on the Siamese Network encoder provided by Sentence Transformers (Reimers and Gurevych , 2019). We fine-tune the all-mpnet-base-v2 encoder via a contrastive loss (van den Oord et al., 2018) to maximize the cosine similarity between the hypothesis and its leaf facts of the tree from the EntailmentBank training split. We use the fact corpus provided by EntailmentBank following previous works. Entailment Module. The entailment module is a T5-large model which takes the premises as input and generates the conclusion. Following Met- Gen (Hong et al., 2022), we divide the single-step entailment reasoning into a set of basic logical reasoning (i.e., substitution, conjunction, and if-then). Special prefixes are used to specify the reasoning type the model should perform. We train the module with entailment steps from the EntailmentBank training split. Given premises, we generate conclusions using all types of modules and select the conclusion with the highest step verifier score. Train Dev Test All Questions 1,313 187 340 1,840 Easy 920 128 234 1,282 Chal (Challenge) 393 59 106 558 Entailment Steps 4,175 597 1,109 5,881 Table 2: EntailmentBankQA Statistics. Step V erifierVs. We fine-tune a DeBERTa-large model (He et al. , 2021) to classify if a step is valid. We use the human-labeled data provided by Tafjord et al. (2022), which contains 1,827 valid steps and 1,564 invalid steps. We also include 4,175 valid steps from the EntailmentBank training split. Controller .The controller is implemented with a T5-large model. For each state, we use the beam search to generate five candidate actions and then exclude the ill-formed and invalid actions (e.g., Retrieve: int2, but int2 is not yet available in X). For iterative training, we use a threshold of 0.98 to select high-quality trajectories.",
+      "source": "5.2 Implementation Details",
+      "ref_id": "u_bd66cdf3c6b3_0020"
+     },
+     {
+      "label": "T9",
+      "kind": "text_unit",
+      "title": "Faithful Question Answering with Monte-Carlo Planning",
+      "text": "paper 2023.acl-long.218, section 1 Introduction\nIn this paper, we propose F AME , a novel FQA method integrating Monte-Carlo planning. We formulate the task as a discrete decision-making problem and solve it through the interaction of a reasoning environment and a controller, as shown in Figure 1. The reasoning environment is modular. We decompose the reasoning into several basic taskoriented modules, such as a retriever for updating known facts and a single-step entailment module for combining several premises to obtain a novel intermediate conclusion. To assemble these modules, we leverage a controller (implemented with a generative language model) to observe the state of the environment and propose the next actions. The final answer is derived based on the validity and faithfulness of the generated entailment tree. To select actions foresightedly, we introduce a Monte-Carlo planning algorithm ( Kocsis and Szepesvári, 2006) to do the look-ahead search. Specifically, we assign an action value to each candidate action, which is iteratively updated based on the quality of its successor states after the action is explicitly executed. With these values, we could make more informed decisions and select the actions that will eventually lead to a high-quality tree. In addition, we design a verifier-guided iterative training technique to train the controller. Experiments on the standard benchmark EntailmentBankQA (Creswell and Shanahan, 2022) show that FAME outperforms previous best FQA methods by a large margin. Manual evaluation results demonstrate that F AME could produce valid and faithful reasoning steps compared with LLMs (i.e., GPT-3 and ChatGPT). Further ablation results illustrate the advantages of Monte-Carlo planning compared to other planning methods.",
+      "source": "1 Introduction",
+      "ref_id": "u_bd66cdf3c6b3_0004"
+     }
+    ],
+    "nodes": [
+     {
+      "id": "e_e3c01bf031f6",
+      "label": "FAME",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_4df76b5773e8",
+      "label": "EntailmentBankQA",
+      "type": "Dataset",
+      "confidence": null
+     },
+     {
+      "id": "e_b1b552baa14f",
+      "label": "entailment tree",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_a59af17ae4bc",
+      "label": "Monte-Carlo planning",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_f1f985f6e9c5",
+      "label": "structured entailment tree",
+      "type": "Method",
+      "confidence": null
+     },
+     {
+      "id": "e_cfa412b0770b",
+      "label": "single-step entailment module",
+      "type": "Method",
+      "confidence": null
+     }
+    ],
+    "links": [
+     {
+      "source": "e_e3c01bf031f6",
+      "target": "e_4df76b5773e8",
+      "predicate": "EVALUATED_ON",
+      "confidence": null
+     },
+     {
+      "source": "e_e3c01bf031f6",
+      "target": "e_a59af17ae4bc",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_e3c01bf031f6",
+      "target": "e_cfa412b0770b",
+      "predicate": "USES",
+      "confidence": null
+     },
+     {
+      "source": "e_e3c01bf031f6",
+      "target": "e_f1f985f6e9c5",
+      "predicate": "USES",
+      "confidence": null
+     }
+    ],
+    "check_status": "verified",
+    "model": "gpt-4.1-mini (saved run)"
+   },
+   "baseline": {
+    "mode": "baseline",
+    "status": "answered",
+    "text": "FAME is evaluated on the EntailmentBank dataset, which consists of 1,840 expert-annotated entailment trees [4]. Each entailment tree corresponds to a hypothesis derived from a question and correct option from the ARC dataset [4]. FAME builds an entailment tree structure for its reasoning, where the tree contains basic facts (leaf nodes) and novel intermediate conclusions (non-leaf nodes) connected by entailment steps [6].",
+    "model": "gpt-4.1-mini (saved run)"
+   }
+  },
+  {
+   "id": "U01",
+   "question": "What is the capital of France?",
+   "answer": {
+    "mode": "local",
+    "status": "refused",
+    "message": "No entity in the collection is close enough to the question (best similarity 0.68). Name a method, dataset or task from the papers, or rephrase the question.",
+    "model": "none"
+   }
+  },
+  {
+   "id": "U05",
+   "question": "How tall is Mount Everest?",
+   "answer": {
+    "mode": "local",
+    "status": "refused",
+    "message": "No entity in the collection is close enough to the question (best similarity 0.72). Name a method, dataset or task from the papers, or rephrase the question.",
+    "model": "none"
+   }
+  }
+ ]
+}

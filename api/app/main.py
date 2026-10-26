@@ -9,9 +9,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.ask import AskService, EngineUnavailable, get_ask_service
+from app.ask import AskService, EngineUnavailable, get_ask_service, set_ask_service
 from app.config import get_settings
 from app.health import run_checks
+from app.replay import ReplayService
 from app.schemas import (
     AskRequest,
     AskResponse,
@@ -22,6 +23,9 @@ from app.schemas import (
 from app.store import Store, get_store
 
 log = logging.getLogger("graphlens.api")
+
+if get_settings().answer_mode == "replay":
+    set_ask_service(ReplayService())
 
 app = FastAPI(title="GraphLens API", version="0.0.1")
 app.add_middleware(
@@ -102,3 +106,10 @@ def run_status(
     if x_admin_key is None or not hmac.compare_digest(x_admin_key, key):
         return _error("unauthorized", "Missing or wrong admin key.", 401)
     return store.status()
+
+
+@app.get("/api/v1/examples")
+def examples(service: Annotated[AskService, Depends(get_ask_service)]) -> dict:
+    """Questions the current engine can answer in full (replay mode), for the example chips."""
+    listing = getattr(service, "examples", None)
+    return {"questions": listing() if listing else []}

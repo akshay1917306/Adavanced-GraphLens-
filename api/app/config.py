@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     # Index version the answers are read from (stored with every answer).
     index_version: str = "idx2-full-g0"
 
+    # Where answers come from: "replay" (saved answers, no model) or "off" (no engine).
+    answer_mode: str = "replay"
+
     # Key for the read-only status page. Empty means the status endpoint is switched off.
     admin_api_key: SecretStr = SecretStr("")
 

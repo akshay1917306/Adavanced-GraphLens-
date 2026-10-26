@@ -8,11 +8,13 @@ Mark an item only after it was run, and say where it was run.
 - [x] Question over 4,000 characters, empty question and wrong types are rejected with a clear error
       **Result:** unit tests (API, in Docker); the input is never echoed back.
 - [ ] Refusal and clarify show as plain messages, not errors
+      (API side tested for refusal; clarify has no saved example; screen not built yet)
 - [x] Answers, traces and feedback are stored in the existing tables (no schema change)
       **Result:** integration test on a temporary Postgres database (answer, metadata, trace, one rating per visitor).
 - [x] `GET /api/v1/status` is read-only and needs the admin key
       **Result:** unit tests for the key checks; the run and quality SQL is not yet tried on real data.
-- [ ] Fixture mode works with no model and no key
+- [x] Fixture mode works with no model and no key
+      **Result:** replay of 5 real answers and 2 refusals; 32 API tests pass in Docker.
 - [ ] Ask screen: question, answer, source chips, trust badge
 - [ ] "Why this answer": passages and the small evidence graph; selecting a dot shows its passage
 - [ ] Text alternative lists the same dots and links
