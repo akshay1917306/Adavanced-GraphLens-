@@ -4,8 +4,7 @@ Last updated: 2026-10-26
 
 ## State
 
-**Build in progress: everything is built except the small paid evaluation, which waits for the
-owner's yes.** Local branch `phase-4/local-search`, branched from `main` at ce6f4de (tagged
+**Built and evaluated (paid run done, $0.27). Waiting for owner review of the question sets, the WALKTHROUGH and approval.** Local branch `phase-4/local-search`, branched from `main` at ce6f4de (tagged
 `phase-3`, merged as PR #4). Nothing from Phase 4 is pushed.
 
 ## Completed
@@ -56,22 +55,36 @@ of the passage ranking showed less than plain RAG (37% on the hard set); it was 
 questions only (citation weight 0.25 and the 6 best plain-search hits placed first) and then
 checked once on the hard set. PageRank added nothing on either set.
 
+## Paid evaluation result (2026-10-26, `data/eval/phase4/local-eval-phase4.json`, cost $0.2671)
+
+| system (30 hard questions) | correct | partial | incorrect | share correct (95% interval) |
+|---|---|---|---|---|
+| plain RAG baseline | 16 | 10 | 4 | 0.53 (0.36-0.70) |
+| local search | 21 | 7 | 2 | 0.70 (0.52-0.83) |
+| local without reports | 21 | 7 | 2 | 0.70 (0.52-0.83) |
+
+- Local vs baseline, paired: 9 wins, 19 ties, 2 losses. The intervals overlap, so this is a
+  encouraging sign on 30 questions, not proof. Judge is the same model family as the answerer.
+- Community reports add nothing on these questions (identical to no-reports).
+- Local answers are slower (5.2 s vs 2.4 s mean).
+- Citation support: 122 of 124 sampled citations supported (98.4%, 20 answers).
+- Refusal: 8 of 10 unanswerable refused (80%); U09 and U10 were answered anyway (below a 90% bar if one is set; to be looked at).
+- Relate: 20 of 20 paths found, 20 of 20 right length; only 11 of 20 explanations passed the citation check as `verified`.
+- Router with the model on unsure questions was not run separately (rules only: 46/50).
+
 ## Blockers
 
 None.
 
 ## Decisions waiting for the owner
 
-- A yes for `local-eval` (about $0.36, cap $0.60 in the command, $0.80 for the phase).
 - Review of the new question sets: `REVIEW_LOCAL_HARD.md`, `REVIEW_RELATE.md`,
   `REVIEW_UNANSWERABLE.md` (about 2 to 2.5 hours; it can happen after the run, a changed question
   is simply run again).
 
 ## Exact next action
 
-After the owner's yes: `local-eval --max-cost-usd 0.6` with `data/eval/phase4` mounted, then
-record the numbers in the CHECKLIST, write the WALKTHROUGH and README, run the router with the
-model on the labeled questions, and send the A to J report. No paid batch without a yes.
+Fill CHECKLIST, write WALKTHROUGH, update README and DECISIONS (D35-D40), look at U09/U10 and the 9 unverified relate explanations, send the A to J report. No more paid runs without a yes.
 
 ## Notes for the next session
 
