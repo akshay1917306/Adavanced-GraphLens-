@@ -201,6 +201,21 @@ def main(argv: list[str] | None = None) -> int:
         "--questions", type=Path, nargs="+", default=[eval_dir / "questions.json"],
     )  # fmt: skip
     reval.add_argument("--show-misses", action="store_true")
+    p4 = sub.add_parser(
+        "review-phase4", help="write the review pages for the new Phase 4 question sets (no cost)"
+    )
+    p4.add_argument("--dir", type=Path, default=Path("/data/eval/phase4"))
+    p4.add_argument("--out-dir", type=Path, default=Path("/out"))
+    leval = sub.add_parser(
+        "local-eval", help="the small paid Phase 4 evaluation (about $0.4; use --dry-run first)"
+    )
+    leval.add_argument("--index-version", default="idx2-full-g0")
+    leval.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    leval.add_argument("--dir", type=Path, default=Path("/data/eval/phase4"))
+    leval.add_argument("--out-dir", type=Path, default=Path("/out"))
+    leval.add_argument("--max-cost-usd", type=float, default=0.6)
+    leval.add_argument("--dry-run", action="store_true")
+    leval.add_argument("--label", default="")
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -325,6 +340,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "route-eval":
         return _route_eval(args)
+
+    if args.command == "local-eval":
+        return _local_eval(engine, args)
+
+    if args.command == "review-phase4":
+        return _review_phase4(args)
 
     if args.command == "local-graph-eval":
         return _local_graph_eval(engine, args)
@@ -770,6 +791,228 @@ def _local_deps(engine, driver, args):
         index=index,
         plain_hits=lambda q: [p.unit_id for p in search_passages(client, engine, embedder, q, k=6)],
     )
+
+
+def _review_phase4(args) -> int:
+    import json
+
+    from graphlens_pipeline.evalset import render_review
+    from graphlens_pipeline.reviewsheets import render_relate_review, render_unanswerable_review
+
+    def load(name: str) -> list[dict]:
+        return json.loads((args.dir / name).read_text(encoding="utf-8"))["questions"]
+
+    (args.out_dir / "REVIEW_LOCAL_HARD.md").write_text(
+        render_review(load("local_hard.json")), encoding="utf-8"
+    )
+    (args.out_dir / "REVIEW_RELATE.md").write_text(
+        render_relate_review(load("relate_pairs.json")), encoding="utf-8"
+    )
+    (args.out_dir / "REVIEW_UNANSWERABLE.md").write_text(
+        render_unanswerable_review(load("unanswerable.json")), encoding="utf-8"
+    )
+    print("wrote REVIEW_LOCAL_HARD.md, REVIEW_RELATE.md, REVIEW_UNANSWERABLE.md")
+    return 0
+
+
+def _local_eval(engine, args) -> int:
+    """The lean paid evaluation of Phase 4 (see localeval.py). --dry-run only estimates."""
+    import dataclasses
+    import json
+    import time
+    from datetime import date
+
+    import tiktoken
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import AnswerError, answer_question
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.globalsearch import select_communities
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localanswer import answer_local
+    from graphlens_pipeline.localcontext import postgres_unit_rows
+    from graphlens_pipeline.localeval import (
+        AnswerRecord,
+        check_support,
+        paired,
+        refusal_accuracy,
+        run_correctness,
+        summarize,
+        support_sample,
+    )
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.relate import answer_relate
+    from graphlens_pipeline.router import route_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+
+    def load(path):
+        return json.loads(path.read_text(encoding="utf-8"))["questions"]
+
+    hard = load(args.dir / "local_hard.json")
+    unanswerable = load(args.dir / "unanswerable.json")
+    pairs = load(args.dir / "relate_pairs.json")
+    n_hard, n_un, n_rel = len(hard), len(unanswerable), len(pairs)
+    # per-call prices checked on real calls: a local answer about $0.0035, a baseline answer
+    # $0.0013, a judge call $0.0004, a support check $0.001, a relate explanation $0.0016
+    estimate = (
+        n_hard * (0.0013 + 2 * 0.0035) + 3 * n_hard * 0.0004 + 20 * 0.001
+        + n_un * 0.5 * 0.0035 + n_rel * 0.0016 + 80 * 0.3 * 0.0003
+    )  # fmt: skip
+    if args.dry_run:
+        print(json.dumps({
+            "hard_questions": n_hard, "systems": 3, "answers": 3 * n_hard,
+            "correctness_judgements": 3 * n_hard, "support_checks": 20,
+            "unanswerable_questions": n_un, "relate_pairs": n_rel,
+            "cost_usd_estimate": round(estimate, 3),
+            "cost_usd_with_margin": round(estimate * 1.4, 3),
+        }, indent=2))  # fmt: skip
+        print("Per-call prices come from real calls; nothing was spent.")
+        return 0
+
+    llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    encoder = tiktoken.get_encoding("o200k_base")
+    predicates = load_ontology(args.ontology).predicate_names
+    qdrant = QdrantClient(url=os.environ["QDRANT_URL"])
+    embedder = FastEmbedder()
+    spent = 0.0
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = _local_deps(engine, driver, args)
+        index = deps.index
+        no_reports = dataclasses.replace(deps, reports=lambda lk: [])
+
+        def local_fn(variant):
+            def run(question):
+                started = time.monotonic()
+                answer, context = answer_local(variant, llm, question)
+                cited = [c for c in answer.check.cited if c.startswith("T")]
+                passages = {}
+                if context:
+                    shown = context.by_label()
+                    passages = {c: shown[c].text for c in cited if c in shown}
+                return AnswerRecord(
+                    "local", answer.text, answer.status, answer.cost_usd,
+                    round(time.monotonic() - started, 2), answer.check.status,
+                    answer.check.cited, passages,
+                )  # fmt: skip
+
+            return run
+
+        def baseline_fn(question):
+            started = time.monotonic()
+            try:
+                result = answer_question(question, qdrant, engine, embedder, llm, k=6)
+            except AnswerError as error:
+                raise LlmError(f"baseline failed: {error}") from error
+            return AnswerRecord(
+                "baseline", result.answer, "refused" if result.refused else "answered",
+                result.cost_usd or 0.0, round(time.monotonic() - started, 2),
+            )  # fmt: skip
+
+        fns = {"baseline": baseline_fn, "local_no_reports": local_fn(no_reports),
+               "local": local_fn(deps)}  # fmt: skip
+        rows, cost, skipped = run_correctness(
+            engine, llm, hard, fns, args.max_cost_usd,
+            on_progress=lambda d, n, c: print(f"  answers {d}/{n}, ${c:.4f}"),
+        )  # fmt: skip
+        spent += cost
+        summary = summarize(rows)
+
+        support = {"checked": 0, "supported": 0, "answers": 0}
+        for row in support_sample(rows, "local", 20):
+            if spent >= args.max_cost_usd:
+                break
+            try:
+                checked, supported, price = check_support(engine, llm, row)
+            except LlmError:
+                continue
+            spent += price
+            support["checked"] += checked
+            support["supported"] += supported
+            support["answers"] += 1
+        support["precision"] = (
+            round(support["supported"] / support["checked"], 3) if support["checked"] else None
+        )
+
+        def status_of(question: str) -> str:
+            route = route_question(question, index, llm)
+            if route.mode == "relate":
+                result = answer_relate(
+                    driver, llm, index, question, predicates, args.index_version,
+                    lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+                )  # fmt: skip
+                return result.status
+            if route.mode == "global":
+                chosen = select_communities(
+                    driver, embedder.dense_query, question, args.index_version
+                )
+                if not chosen:
+                    return "no_report"
+                return "answered"
+            if route.mode == "baseline":
+                try:
+                    return "refused" if answer_question(
+                        question, qdrant, engine, embedder, llm, k=6
+                    ).refused else "answered"  # fmt: skip
+                except AnswerError:
+                    return "refused"
+            return fns["local"](question).status
+
+        statuses = {}
+        for q in unanswerable:
+            if spent >= args.max_cost_usd:
+                break
+            statuses[q["id"]] = status_of(q["question"])
+        refusal = refusal_accuracy(statuses)
+
+        relate = {"pairs": 0, "path_found": 0, "right_length": 0, "answered": 0, "verified": 0}
+        for q in pairs:
+            if spent >= args.max_cost_usd:
+                break
+            result = answer_relate(
+                driver, llm, index, q["question"], predicates, args.index_version,
+                lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+            )  # fmt: skip
+            spent += result.cost_usd
+            relate["pairs"] += 1
+            relate["path_found"] += bool(result.paths)
+            relate["right_length"] += (
+                bool(result.paths) and result.paths[0].length == q["expected_hops"]
+            )
+            relate["answered"] += result.status == "answered"
+            relate["verified"] += result.check.status == "verified"
+
+    label = args.label or date.today().isoformat()
+    report = {
+        "correctness": summary,
+        "local_vs_baseline": paired(rows, "local", "baseline"),
+        "local_vs_no_reports": paired(rows, "local", "local_no_reports"),
+        "support": support, "refusal": refusal, "relate": relate,
+        "skipped_by_cap": skipped, "cost_usd": round(spent, 4),
+        "answers": [
+            {"id": r.question_id, "system": r.system, "status": r.record.status,
+             "verdict": r.verdict, "reason": r.reason, "text": r.record.text,
+             "check": r.record.check_status, "failed": r.failed}
+            for r in rows
+        ],
+    }  # fmt: skip
+    (args.out_dir / f"local-eval-{label}.json").write_text(
+        json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8"
+    )
+    for system, s in summary.items():
+        print(f"{system}: {s['correct']} correct, {s['partial']} partial, {s['incorrect']} "
+              f"incorrect of {s['questions']} (share correct {s['share_correct']}, "
+              f"interval {s['ci95']}), mean {s['mean_seconds']} s")  # fmt: skip
+    print("local vs baseline:", report["local_vs_baseline"])
+    print("citation support:", support)
+    print("refusal:", refusal)
+    print("relate:", relate)
+    print(f"cost ${spent:.4f}")
+    return 0
 
 
 def _route_eval(args) -> int:
