@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     qdrant_url: str = "http://localhost:6333"
     redis_url: str = "redis://localhost:6379/0"
 
+    # The only browser origin allowed to call the API (CORS).
+    web_origin: str = "http://localhost:3000"
+
     # Seconds to wait for each dependency in the health check.
     health_timeout_s: float = 3.0
 
