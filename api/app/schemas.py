@@ -1,6 +1,7 @@
 """Request and response shapes of the query API. See docs/phases/phase-5-ui/BRIEF.md."""
 
 from typing import Literal
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -32,6 +33,7 @@ class Citation(BaseModel):
     title: str
     text: str  # the passage or description; shown as text only, never as HTML
     source: str | None = None  # paper title or section, when known
+    ref_id: str | None = None  # id of the text unit, entity or community, for the trace
 
 
 class GraphNode(BaseModel):
@@ -57,6 +59,7 @@ class Answer(BaseModel):
     nodes: list[GraphNode] = []
     links: list[GraphLink] = []
     check_status: CheckStatus = "not_checked"
+    model: str = ""
     cost_usd: float = 0.0
     latency_ms: int = 0
 
@@ -66,6 +69,7 @@ class AskResponse(BaseModel):
     answer: Answer
     baseline: Answer | None = None  # only when compare was requested
     fixture: bool = False  # true when replayed from saved data, not computed now
+    saved: bool = False  # false when the answer could not be stored (feedback is then off)
 
 
 class ErrorBody(BaseModel):
@@ -75,3 +79,18 @@ class ErrorBody(BaseModel):
 
 class ErrorResponse(BaseModel):
     error: ErrorBody
+
+
+class FeedbackRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    answer_id: UUID
+    rating: Literal["up", "down"]
+    reason: (
+        Literal["wrong_answer", "missing_evidence", "wrong_connection", "too_slow", "other"] | None
+    ) = None
+    comment: str | None = Field(default=None, max_length=1000)
+
+
+class FeedbackResponse(BaseModel):
+    saved: bool

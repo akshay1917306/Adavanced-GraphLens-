@@ -1,9 +1,10 @@
 """GraphLens API entry point."""
 
+import hmac
 import logging
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Request, Response, status
+from fastapi import Depends, FastAPI, Header, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,7 +12,14 @@ from fastapi.responses import JSONResponse
 from app.ask import AskService, EngineUnavailable, get_ask_service
 from app.config import get_settings
 from app.health import run_checks
-from app.schemas import AskRequest, AskResponse, ErrorResponse
+from app.schemas import (
+    AskRequest,
+    AskResponse,
+    ErrorResponse,
+    FeedbackRequest,
+    FeedbackResponse,
+)
+from app.store import Store, get_store
 
 log = logging.getLogger("graphlens.api")
 
@@ -58,6 +66,39 @@ def health(response: Response) -> dict:
 
 
 @app.post("/api/v1/ask", response_model=AskResponse)
-def ask(body: AskRequest, service: Annotated[AskService, Depends(get_ask_service)]) -> AskResponse:
+def ask(
+    body: AskRequest,
+    service: Annotated[AskService, Depends(get_ask_service)],
+    store: Annotated[Store, Depends(get_store)],
+) -> AskResponse:
     """Answer one question with its evidence. A refusal or a clarify request is a normal 200."""
-    return service.ask(body.question, body.compare)
+    response = service.ask(body.question, body.compare)
+    try:
+        answer_id = store.save_answer(body.question, response.answer, get_settings().index_version)
+    except Exception as error:  # the answer is still useful without the record
+        log.error("could not save the answer: %s", type(error).__name__)
+        return response.model_copy(update={"saved": False})
+    return response.model_copy(update={"answer_id": answer_id, "saved": True})
+
+
+@app.post("/api/v1/feedback", response_model=None)
+def feedback(
+    body: FeedbackRequest, store: Annotated[Store, Depends(get_store)]
+) -> FeedbackResponse | JSONResponse:
+    if not store.save_feedback(body.answer_id, body.rating, body.reason, body.comment):
+        return _error("unknown_answer", "No such answer.", 404)
+    return FeedbackResponse(saved=True)
+
+
+@app.get("/api/v1/status", response_model=None)
+def run_status(
+    store: Annotated[Store, Depends(get_store)],
+    x_admin_key: Annotated[str | None, Header()] = None,
+) -> dict | JSONResponse:
+    """Read-only run and quality summary. Needs the admin key; off when no key is configured."""
+    key = get_settings().admin_api_key.get_secret_value()
+    if not key:
+        return _error("admin_disabled", "The status page is switched off.", 403)
+    if x_admin_key is None or not hmac.compare_digest(x_admin_key, key):
+        return _error("unauthorized", "Missing or wrong admin key.", 401)
+    return store.status()
