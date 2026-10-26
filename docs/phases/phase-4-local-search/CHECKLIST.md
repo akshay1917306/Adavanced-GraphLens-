@@ -31,15 +31,17 @@ the exit is "measured", so a missed target is reported, not hidden.
 - [ ] Local correctness on the hard multi-hop set: at least 75%, and at least 15 points above the
       baseline (report the number of questions and the interval)
 - [ ] Local correctness on the easy set (ceiling 100%, baseline was 93%)
-- [ ] Ablations: baseline, plus entity linking, plus expansion, plus PageRank, plus community
-      reports (correctness, cost, latency)
-- [ ] Citation precision (a cited passage supports its claim): at least 90% by the judge, and the
-      owner's spot-check of 10 answers
+- [ ] Ablations without any model call: the share of the evidence text units that reach the
+      context with entity linking only, plus expansion, plus PageRank, plus community reports;
+      model answers (correctness, cost, latency) only for baseline, local without community
+      reports and full local
+- [ ] Citation precision (a cited passage supports its claim): at least 90% by the judge on a
+      sample of 20 answers, and the owner's spot-check of 10
 - [ ] Refusal accuracy on 10 unanswerable questions: at least 90%
 - [ ] Relate path correctness on 20 entity pairs
 - [ ] Router accuracy on the labeled questions (proposed bar: at least 85%)
 - [ ] Local query cost at most $0.03; p95 at most 8 s (10 queries, one at a time)
-- [ ] Total Phase 4 spend within the approved cap
+- [ ] Total Phase 4 spend within the approved cap ($0.80)
 
 ## Tests
 

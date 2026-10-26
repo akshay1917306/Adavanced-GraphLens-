@@ -12,7 +12,9 @@ Nothing from Phase 4 is pushed.
 
 - Phase 3 checkpoint finished: PR #4 merged, CI green on the branch commit and on `main` (all four
   jobs), tag `phase-3` pushed and verified (remote and local both point to ce6f4de).
-- `BRIEF.md`, `PREREQUISITES.md`, `CHECKLIST.md`, `PROMPT.md` written. Blueprint section 2.6
+- `BRIEF.md`, `PREREQUISITES.md`, `CHECKLIST.md`, `PROMPT.md` written. The owner asked to keep
+  the OpenAI spend low, so the plan was cut to a $0.80 cap with free measurements wherever
+  possible (2026-10-26). Blueprint section 2.6
   (query pipeline) and the targets in 1.2 were read for the plan.
 
 ## Blockers
@@ -23,8 +25,8 @@ the local questions we have, so "15 points above baseline" needs a harder set (D
 ## Decisions waiting for the owner
 
 - D35 to D40 in `BRIEF.md` (harder local set, PageRank in numpy, router, new evaluation sets,
-  citation check, models and the $2.00 cap).
-- OpenAI monthly limit of at least $8 (this month's spend is about $3.3).
+  citation check, models and the **$0.80** cap).
+- OpenAI monthly limit: $5 is enough (this month's spend is about $3.3).
 
 ## Exact next action
 

@@ -46,7 +46,7 @@ rate limits, access control (Phase 6); incremental updates (v1.5); a bigger corp
 | D37 | Router | Rules first (they are free and explainable), a `gpt-4.1-mini` call for the rest, confidence under 0.6 runs local. Measured on a labeled set of questions (D38) |
 | D38 | New evaluation sets | 10 unanswerable questions (about things outside the 25 papers), 20 entity pairs for relate mode, and mode labels for every question we have. I draft all of them; you review (about 1 hour in total) |
 | D39 | Citation check | Two parts. Automatic: every `[T]` `[E]` `[C]` exists in the context, unknown entities in a sentence are flagged. Support check (does the passage really back the claim): a judge on every benchmark answer, and you spot-check 10 |
-| D40 | Models and spend | `gpt-4.1-mini` everywhere (D30). Phase 4 cap **$2.00** with a shown estimate before every paid batch |
+| D40 | Models and spend | `gpt-4.1-mini` everywhere (D30). **The owner asked to keep OpenAI spend low**, so Phase 4 cap is **$0.80** (not $2.00), with a shown estimate before every paid batch. Building and testing use mock models only; real calls are limited to a few smoke tests and one approved evaluation (see Cost) |
 
 ## Build steps
 
@@ -58,20 +58,31 @@ rate limits, access control (Phase 6); incremental updates (v1.5); a bigger corp
 5. Relate mode (up to 3 paths, 4 hops, evidence per hop, nearest shared communities if none).
 6. Router and one `ask` command that picks the mode; optional rerank in baseline mode.
 7. The new evaluation sets (D35, D38), drafted by me and reviewed by you.
-8. Evaluation with ablations (baseline, plus entity linking, plus expansion, plus PageRank, plus
-   community reports), refusal accuracy, relate path correctness, router accuracy, citation
-   support. **Estimate first, your yes, then the paid run.**
+8. Evaluation, kept small: the ablation of each step (entity linking, expansion, PageRank,
+   community reports) is measured **without any model call** (how many of the evidence text
+   units end up in the context); model answers are generated only for baseline, local without
+   community reports, and full local, on the hard set; plus refusal accuracy, relate path
+   correctness (checked against the graph, no model), router accuracy (rules first) and a
+   sampled citation-support check. **Estimate first, your yes, then the paid run.**
 9. Tests, docs, WALKTHROUGH, README, CI and the A to J report.
 
 ## Cost (assumptions, to be replaced by a dry run)
 
-- One local answer: about 8,000 tokens in and 1,200 out with `gpt-4.1-mini`, roughly **$0.005 to
-  $0.01**, plus the router call (under $0.001).
-- Evaluation: 5 configurations on 30 hard questions plus the easy set, a correctness judge and a
-  citation-support judge: roughly **$1.0 to $1.6**. Refusal, relate and router runs: under $0.2.
-  Small live tests while building: about $0.2.
-- Expected total **$1.2 to $2.0**, against the $2.00 cap in D40. Entity linking, graph work,
-  PageRank and embeddings are local and free. These are estimates, not measurements.
-- **OpenAI monthly limit:** this month's spend is already about $3.3 (Phase 1 $0.05, Phase 2
-  $2.40, Phase 3 $0.69, small extras). Phase 4 could take it past $5, so please set the limit in
-  the OpenAI dashboard to at least $8 before the paid evaluation, or tell me to stay lower.
+The owner asked to keep the OpenAI spend low, so the plan is built around free measurements.
+
+- **Free (no model call):** entity linking, graph expansion, PageRank, context assembly, the
+  citation check of IDs, path finding, router rules, and the ablation of each retrieval step
+  (share of the evidence text units found in the context). All tests use labelled mock models.
+- **Paid, small:**
+  - one local answer is about 6,000 tokens in and 800 out with `gpt-4.1-mini`, roughly
+    **$0.004 to $0.006**;
+  - model answers for 3 configurations on the 30 hard questions: about **$0.45**;
+  - correctness judge on those answers (about 60 short calls): about **$0.05**;
+  - refusal test (10 questions): about **$0.05**; citation-support judge on a sample of 20
+    answers: about **$0.04**; router model calls for the unclear questions only: under **$0.01**;
+  - a few live smoke tests while building (about 10 calls): about **$0.05**.
+- Expected total **$0.6 to $0.75**, against the **$0.80** cap in D40. Every cost is cached, so
+  repeating a run is free. These are estimates, not measurements; the dry run replaces them.
+- **OpenAI monthly limit:** this month's spend is about $3.3 (Phase 1 $0.05, Phase 2 $2.40,
+  Phase 3 $0.69, small extras). With about $0.7 more it stays under $5. A limit of $5 in the
+  OpenAI dashboard is enough; nothing needs to be raised.
