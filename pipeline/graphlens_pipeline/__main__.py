@@ -183,6 +183,24 @@ def main(argv: list[str] | None = None) -> int:
     rel.add_argument("--index-version", default="idx2-full-g0")
     rel.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     rel.add_argument("--paths-only", action="store_true", help="find paths, call no model")
+    ask_any = sub.add_parser(
+        "ask-auto", help="pick the right mode and answer (local, global, relate or baseline)"
+    )
+    ask_any.add_argument("question")
+    ask_any.add_argument("--mode", choices=["local", "global", "relate", "baseline"], default=None)
+    ask_any.add_argument("--index-version", default="idx2-full-g0")
+    ask_any.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    ask_any.add_argument(
+        "--route-only", action="store_true", help="show the chosen mode, answer nothing"
+    )
+    reval = sub.add_parser(
+        "route-eval", help="router accuracy on labeled questions, rules only (no model, no cost)"
+    )
+    reval.add_argument("--index-version", default="idx2-full-g0")
+    reval.add_argument(
+        "--questions", type=Path, nargs="+", default=[eval_dir / "questions.json"],
+    )  # fmt: skip
+    reval.add_argument("--show-misses", action="store_true")
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -301,6 +319,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "relate":
         return _relate(engine, args)
+
+    if args.command == "ask-auto":
+        return _ask_auto(engine, args)
+
+    if args.command == "route-eval":
+        return _route_eval(args)
 
     if args.command == "local-graph-eval":
         return _local_graph_eval(args)
@@ -725,6 +749,98 @@ def _local_deps(engine, driver, args):
         count_tokens=lambda s: len(encoder.encode(s)),
         index=index,
     )
+
+
+def _route_eval(args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EntityIndex
+    from graphlens_pipeline.router import route_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+    questions = [
+        q
+        for path in args.questions
+        for q in json.loads(path.read_text(encoding="utf-8"))["questions"]
+    ]
+
+    def acceptable(q: dict) -> set[str]:
+        """A one-fact question about a named paper may go to baseline or local; a multi-hop
+        one to local; a corpus-wide one to global; a pair question to relate."""
+        if q.get("expected_modes"):
+            return set(q["expected_modes"])
+        if q["kind"] == "global":
+            return {"global"}
+        if q["kind"] == "relate":
+            return {"relate"}
+        return {"baseline", "local"} if q.get("hops", 1) <= 1 else {"local"}
+
+    right = 0
+    by_kind: dict[str, list[int]] = {}
+    for q in questions:
+        route = route_question(q["question"], index)
+        ok = route.mode in acceptable(q)
+        right += ok
+        by_kind.setdefault(q["kind"], []).append(int(ok))
+        if args.show_misses and not ok:
+            print(f"  MISS {q['id']}: routed {route.mode} ({route.confidence:.2f}), "
+                  f"expected {sorted(acceptable(q))}: {q['question'][:90]}")  # fmt: skip
+    share = right / len(questions)
+    print(f"router (rules only): {right} of {len(questions)} acceptable ({share:.0%})")
+    for kind, results in sorted(by_kind.items()):
+        print(f"  {kind}: {sum(results)} of {len(results)}")
+    return 0
+
+
+def _ask_auto(engine, args) -> int:
+    """Route the question, then run the chosen mode through the same commands as before."""
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EntityIndex
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.router import route_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    llm = None
+    if not args.route_only:
+        try:
+            llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+        except LlmError as error:
+            print(f"Cannot start: {error}", file=sys.stderr)
+            return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+    route = route_question(args.question, index, llm, args.mode)
+    note = " (low confidence)" if route.ran_as_fallback else ""
+    print(
+        f"mode: {route.mode}{note} | chosen by {route.source}, confidence {route.confidence:.2f}"
+        f" | {route.reason}"
+    )
+    if route.ran_as_fallback:
+        print("  The question was unclear, so it ran as local. Force a mode with --mode.")
+    if args.route_only:
+        return 0
+    args.show_context = False
+    args.paths_only = False
+    if route.mode == "local":
+        return _local_ask(engine, args)
+    if route.mode == "relate":
+        return _relate(engine, args)
+    if route.mode == "global":
+        args.level, args.max_reports, args.threshold = 1, 40, None
+        args.no_dynamic, args.select_only = False, False
+        return _global_ask(args)
+    return _ask(engine, args.question, 6)
 
 
 def _relate(engine, args) -> int:
