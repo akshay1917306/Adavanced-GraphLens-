@@ -85,6 +85,24 @@ services:
       redis:
         condition: service_healthy
 
+  # Optional local model server (no OpenAI key, no cost). Start with:
+  #   docker compose --profile local-llm up -d ollama
+  # then set LLM_BASE_URL=http://ollama:11434/v1 and LLM_MODEL_* to the pulled model in .env.
+  ollama:
+    image: ollama/ollama:0.12.6
+    profiles: ["local-llm"]
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
   # Pipeline tools. Not started by `docker compose up`; run on demand:
   #   docker compose run --rm pipeline ingest
   pipeline:
@@ -99,6 +117,7 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       LLM_MODEL_MAIN: ${LLM_MODEL_MAIN:-}
       LLM_MODEL_SMALL: ${LLM_MODEL_SMALL:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
       GIT_SHA: ${GIT_SHA:-unknown}
       # Prefect starts a small temporary server for each flow run. On a busy or low-memory
       # machine that can take longer than the default 20 seconds.
@@ -120,3 +139,4 @@ volumes:
   postgres_data:
   neo4j_data:
   qdrant_data:
+  ollama_data:

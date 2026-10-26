@@ -2,6 +2,9 @@
 
 The API key is read from the OPENAI_API_KEY environment variable and is never printed,
 logged or stored. Error messages carry only the error type.
+
+If LLM_BASE_URL is set (for example http://ollama:11434/v1), the same client talks to that
+OpenAI-compatible server instead, no key is needed and calls cost nothing. Unset it to use OpenAI.
 """
 
 import os
@@ -44,6 +47,8 @@ class Llm(Protocol):
 
 def cost_usd(model: str, tokens_in: int, tokens_out: int) -> float | None:
     """Cost of one call in dollars, or None when the model has no known price."""
+    if os.environ.get("LLM_BASE_URL"):
+        return 0.0  # a local model on the owner's machine
     prices = PRICES_PER_MILLION.get(model.split("-20")[0])  # "gpt-4.1-mini-2025-04-14" too
     if prices is None:
         return None
@@ -55,12 +60,20 @@ class OpenAiLlm:
         from openai import OpenAI
 
         api_key = os.environ.get("OPENAI_API_KEY", "")
+        base_url = os.environ.get("LLM_BASE_URL") or None
         self.model = model or os.environ.get("LLM_MODEL_MAIN", "")
-        if not api_key or api_key.startswith("sk-placeholder"):
+        if base_url:
+            api_key = "local"  # the local server ignores it
+        elif not api_key or api_key.startswith("sk-placeholder"):
             raise LlmError("OPENAI_API_KEY is not set")
         if not self.model or self.model.startswith("to-be-chosen"):
             raise LlmError("LLM_MODEL_MAIN is not set")
-        self._client = OpenAI(api_key=api_key, timeout=TIMEOUT_SECONDS, max_retries=MAX_RETRIES)
+        self._client = OpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=TIMEOUT_SECONDS * (4 if base_url else 1),
+            max_retries=MAX_RETRIES,
+        )
 
     def complete(
         self, system: str, user: str, max_output_tokens: int, json_schema: dict | None = None
