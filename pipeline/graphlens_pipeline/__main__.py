@@ -144,6 +144,15 @@ def main(argv: list[str] | None = None) -> int:
     geval.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
     geval.add_argument("--out-dir", type=Path, default=Path("/out"))
     geval.add_argument("--label", default="")
+    link = sub.add_parser(
+        "link-entities", help="show which entities a question links to (local, no cost)"
+    )
+    link.add_argument("question", nargs="*")
+    link.add_argument("--index-version", default="idx2-full-g0")
+    link.add_argument("--min-vector-score", type=float, default=0.79)
+    link.add_argument(
+        "--file", type=Path, default=None, help="a questions.json: link every question"
+    )
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -250,6 +259,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "global-bench":
         return _global_bench(args)
+
+    if args.command == "link-entities":
+        return _link_entities(args)
 
     if args.command == "community-quality":
         return _community_quality(engine, args)
@@ -573,6 +585,47 @@ def _community_reports(engine, args) -> int:
                result.tokens_in, result.tokens_out, stats)  # fmt: skip
     print(json.dumps({**stats, "cost_usd": result.cost_usd}, indent=2))
     return 0 if complete else 1
+
+
+def _link_entities(args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.linking import EmptyQuestion, EntityIndex, link_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    questions = list(args.question)
+    if args.file:
+        document = json.loads(args.file.read_text(encoding="utf-8"))
+        questions += [f"{q['id']}|{q['question']}" for q in document["questions"]]
+    if not questions:
+        print("Give a question or --file.", file=sys.stderr)
+        return 2
+    embedder = FastEmbedder()
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        for item in questions:
+            label, _, text = item.partition("|") if "|" in item and args.file else ("", "", item)
+            try:
+                result = link_question(
+                    driver, embedder.dense_query, index, text, args.index_version,
+                    args.min_vector_score,
+                )  # fmt: skip
+            except EmptyQuestion as error:
+                print(f"{label}: {error}")
+                continue
+            names = ", ".join(
+                f"{s.name} ({s.type}, {s.source}{' AMBIGUOUS' if s.ambiguous else ''}"
+                f"{'' if s.source == 'name' else f' {s.score:.3f}'})"
+                for s in result.seeds
+            )
+            print(f"{label} best vector {result.best_vector_score:.3f} | {names or 'no seeds'}")
+    return 0
 
 
 def _global_bench(args) -> int:
