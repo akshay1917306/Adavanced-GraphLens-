@@ -168,6 +168,13 @@ def main(argv: list[str] | None = None) -> int:
     lctx.add_argument("--index-version", default="idx2-full-g0")
     lctx.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     lctx.add_argument("--show", action="store_true", help="print the whole prompt text")
+    lask = sub.add_parser(
+        "local-ask", help="answer a specific question from the graph (about half a cent)"
+    )
+    lask.add_argument("question")
+    lask.add_argument("--index-version", default="idx2-full-g0")
+    lask.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    lask.add_argument("--show-context", action="store_true")
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -280,6 +287,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "local-context":
         return _local_context(engine, args)
+
+    if args.command == "local-ask":
+        return _local_ask(engine, args)
 
     if args.command == "local-graph-eval":
         return _local_graph_eval(args)
@@ -666,6 +676,86 @@ def _local_graph_eval(args) -> int:
             f"  {name}: {coverage:.0%} on average, all units reached for {full}, {nodes:.0f} nodes"
         )
     print(f"  questions with at least one seed: {sum(seed_hits)} of {len(seed_hits)}")
+    return 0
+
+
+def _local_deps(engine, driver, args):
+    """Local search wired to the real databases and the local embedding model."""
+    import tiktoken
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.embed import LIVE_ALIAS, FastEmbedder
+    from graphlens_pipeline.linking import EntityIndex, link_question
+    from graphlens_pipeline.localanswer import LocalDeps
+    from graphlens_pipeline.localcontext import (
+        postgres_unit_rows,
+        qdrant_unit_vectors,
+        seed_reports,
+        similarity_to_question,
+    )
+    from graphlens_pipeline.localgraph import build_subgraph
+    from graphlens_pipeline.ontology import load_ontology
+
+    encoder = tiktoken.get_encoding("o200k_base")
+    embedder = FastEmbedder()
+    client = QdrantClient(url=os.environ["QDRANT_URL"])
+    predicates = load_ontology(args.ontology).predicate_names
+    index = EntityIndex.from_neo4j(driver, args.index_version)
+    return LocalDeps(
+        link=lambda q: link_question(driver, embedder.dense_query, index, q, args.index_version),
+        subgraph=lambda lk: build_subgraph(
+            driver, lk.seeds, embedder.dense_query(lk.question), predicates, args.index_version
+        ),
+        reports=lambda lk: seed_reports(driver, lk.seeds, args.index_version),
+        unit_rows=lambda ids: postgres_unit_rows(engine, ids),
+        unit_similarity=lambda lk, ids: similarity_to_question(
+            embedder.dense_query(lk.question), qdrant_unit_vectors(client, ids, LIVE_ALIAS)
+        ),
+        count_tokens=lambda s: len(encoder.encode(s)),
+        index=index,
+    )
+
+
+def _local_ask(engine, args) -> int:
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EmptyQuestion
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localanswer import answer_local
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = _local_deps(engine, driver, args)
+        try:
+            answer, context = answer_local(deps, llm, args.question)
+        except EmptyQuestion as error:
+            print(f"Cannot answer: {error}")
+            return 1
+    print(f"mode: local | status: {answer.status} | seeds: {', '.join(answer.seeds) or '-'}")
+    if answer.status == "answered":
+        print(chr(10) + answer.text + chr(10))
+        check = answer.check
+        print(f"citation check: {check.status}; cited {check.cited}")
+        if check.unknown_labels:
+            print(f"  labels not in the context: {check.unknown_labels}")
+        for sentence in check.unsupported:
+            print(f"  names an entity the context never mentions: {sentence}")
+    else:
+        print(answer.reason)
+        if answer.options:
+            print("options: " + "; ".join(answer.options))
+        print(answer.suggestion)
+    print(f"cost ${answer.cost_usd:.5f}, {answer.tokens_in} tokens in, {answer.seconds} s")
+    if args.show_context and context:
+        print(context.prompt)
     return 0
 
 
