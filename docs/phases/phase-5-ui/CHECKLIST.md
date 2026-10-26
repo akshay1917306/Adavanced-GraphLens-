@@ -5,13 +5,13 @@ Mark an item only after it was run, and say where it was run.
 ## Build
 
 - [ ] `POST /api/v1/ask` returns answer, mode, citations with passages, evidence graph, check status, cost, latency
-- [x] Question over 4,000  
-      **Result:** unit tests (api, in Docker); input is never echoed. characters, empty question and wrong types are rejected with a clear error
+- [x] Question over 4,000 characters, empty question and wrong types are rejected with a clear error
+      **Result:** unit tests (API, in Docker); the input is never echoed back.
 - [ ] Refusal and clarify show as plain messages, not errors
-- [x] Answers, traces and feedback are stored  
-      **Result:** integration test on a temporary Postgres database (answer, metadata, trace, one rating per visitor); no schema change. in the existing tables (no schema change)
-- [x] `GET /api/v1/status` is read-only  
-      **Result:** unit tests for key checks; the SQL itself is only partly exercised (counts), run against real data later. and needs the admin key
+- [x] Answers, traces and feedback are stored in the existing tables (no schema change)
+      **Result:** integration test on a temporary Postgres database (answer, metadata, trace, one rating per visitor).
+- [x] `GET /api/v1/status` is read-only and needs the admin key
+      **Result:** unit tests for the key checks; the run and quality SQL is not yet tried on real data.
 - [ ] Fixture mode works with no model and no key
 - [ ] Ask screen: question, answer, source chips, trust badge
 - [ ] "Why this answer": passages and the small evidence graph; selecting a dot shows its passage
