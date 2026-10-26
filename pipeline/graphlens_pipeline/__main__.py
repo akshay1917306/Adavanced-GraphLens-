@@ -175,6 +175,14 @@ def main(argv: list[str] | None = None) -> int:
     lask.add_argument("--index-version", default="idx2-full-g0")
     lask.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     lask.add_argument("--show-context", action="store_true")
+    rel = sub.add_parser(
+        "relate",
+        help="how are two things connected? (paths are free; the explanation costs ~0.3 cent)",
+    )
+    rel.add_argument("question")
+    rel.add_argument("--index-version", default="idx2-full-g0")
+    rel.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    rel.add_argument("--paths-only", action="store_true", help="find paths, call no model")
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -290,6 +298,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "local-ask":
         return _local_ask(engine, args)
+
+    if args.command == "relate":
+        return _relate(engine, args)
 
     if args.command == "local-graph-eval":
         return _local_graph_eval(args)
@@ -714,6 +725,66 @@ def _local_deps(engine, driver, args):
         count_tokens=lambda s: len(encoder.encode(s)),
         index=index,
     )
+
+
+def _relate(engine, args) -> int:
+    import tiktoken
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EmptyQuestion, EntityIndex
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localcontext import postgres_unit_rows
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.relate import answer_relate, find_paths, link_pair, shared_communities
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    predicates = load_ontology(args.ontology).predicate_names
+    encoder = tiktoken.get_encoding("o200k_base")
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        try:
+            if args.paths_only:
+                ends, early = link_pair(index, args.question)
+                if early:
+                    print(f"{early.status}: {early.reason} {'; '.join(early.options)}")
+                    return 0
+                paths = find_paths(driver, ends[0].id, ends[1].id, predicates, args.index_version)
+                print(f"{ends[0].name}  <->  {ends[1].name}: {len(paths)} path(s)")
+                for path in paths:
+                    names = " | ".join(f"{h.predicate}" for h in path.hops)
+                    print("  " + " - ".join(n["name"] for n in path.nodes) + f"   [{names}]")
+                if not paths:
+                    for c in shared_communities(driver, ends[0].id, ends[1].id, args.index_version):
+                        print(f"  shared community (level {c['level']}): {c['title']}")
+                return 0
+            llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+            answer = answer_relate(
+                driver, llm, index, args.question, predicates, args.index_version,
+                lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+            )  # fmt: skip
+        except (EmptyQuestion, LlmError) as error:
+            print(f"Cannot answer: {error}")
+            return 1
+    print(f"mode: relate | status: {answer.status} | {' <-> '.join(answer.ends)}")
+    for path in answer.paths:
+        print("  " + " - ".join(n["name"] for n in path.nodes))
+    if answer.text:
+        print(chr(10) + answer.text + chr(10))
+        print(f"citation check: {answer.check.status}; cited {answer.check.cited}")
+        if answer.check.unknown_labels:
+            print(f"  labels not in the context: {answer.check.unknown_labels}")
+        for sentence in answer.check.unsupported:
+            print(f"  names an entity the context never mentions: {sentence}")
+    else:
+        print(answer.reason, "; ".join(answer.options))
+        for c in answer.shared_communities:
+            print(f"  shared community (level {c['level']}, {c['size']} entities): {c['title']}")
+        print(answer.suggestion)
+    print(f"cost ${answer.cost_usd:.5f}")
+    return 0
 
 
 def _local_ask(engine, args) -> int:
