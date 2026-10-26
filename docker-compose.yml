@@ -88,6 +88,15 @@ services:
       redis:
         condition: service_healthy
 
+  web:
+    build: ./web
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+
   # Optional local model server (no OpenAI key, no cost). Start with:
   #   docker compose --profile local-llm up -d ollama
   # then set LLM_BASE_URL=http://ollama:11434/v1 and LLM_MODEL_* to the pulled model in .env.

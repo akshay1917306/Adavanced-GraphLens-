@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "GraphLens",
-  description: "GraphRAG over a research corpus (Phase 0 placeholder)",
+  description: "Ask questions about a research corpus and see the evidence behind each answer",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: "system-ui, sans-serif", margin: "2rem", lineHeight: 1.5 }}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
