@@ -153,6 +153,14 @@ def main(argv: list[str] | None = None) -> int:
     link.add_argument(
         "--file", type=Path, default=None, help="a questions.json: link every question"
     )
+    lgraph = sub.add_parser(
+        "local-graph-eval",
+        help="free ablation: how many evidence units each retrieval step reaches (no model)",
+    )
+    lgraph.add_argument("--index-version", default="idx2-full-g0")
+    lgraph.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    lgraph.add_argument("--kind", default="local")
+    lgraph.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -262,6 +270,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "link-entities":
         return _link_entities(args)
+
+    if args.command == "local-graph-eval":
+        return _local_graph_eval(args)
 
     if args.command == "community-quality":
         return _community_quality(engine, args)
@@ -585,6 +596,67 @@ def _community_reports(engine, args) -> int:
                result.tokens_in, result.tokens_out, stats)  # fmt: skip
     print(json.dumps({**stats, "cost_usd": result.cost_usd}, indent=2))
     return 0 if complete else 1
+
+
+def _local_graph_eval(args) -> int:
+    import json
+    import statistics
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.linking import EntityIndex, link_question
+    from graphlens_pipeline.localgraph import (
+        build_subgraph,
+        evidence_coverage,
+        seeds_only_subgraph,
+    )
+    from graphlens_pipeline.ontology import load_ontology
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    predicates = load_ontology(args.ontology).predicate_names
+    questions = [
+        q
+        for q in json.loads(args.questions.read_text(encoding="utf-8"))["questions"]
+        if q["kind"] == args.kind
+    ]
+    embedder = FastEmbedder()
+    variants = {
+        "1 entity linking only": [],
+        "2 + expansion (2 hops, ranked by similarity)": [],
+        "3 + personalized PageRank": [],
+    }
+    seed_hits = []
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        for q in questions:
+            wanted = {e["unit_id"] for e in q["evidence"]}
+            link = link_question(
+                driver, embedder.dense_query, index, q["question"], args.index_version
+            )
+            vector = embedder.dense_query(link.question)
+            seed_hits.append(len(link.seeds) > 0)
+            rungs = [
+                seeds_only_subgraph(driver, link.seeds),
+                build_subgraph(driver, link.seeds, vector, predicates, args.index_version,
+                               use_pagerank=False),
+                build_subgraph(driver, link.seeds, vector, predicates, args.index_version),
+            ]  # fmt: skip
+            for name, graph in zip(variants, rungs, strict=True):
+                variants[name].append((evidence_coverage(graph, wanted), len(graph.nodes)))
+    print(f"{len(questions)} {args.kind} questions; share of gold evidence units reached")
+    for name, rows in variants.items():
+        coverage = statistics.mean(c for c, _ in rows)
+        full = sum(1 for c, _ in rows if c == 1.0)
+        nodes = statistics.mean(n for _, n in rows)
+        print(
+            f"  {name}: {coverage:.0%} on average, all units reached for {full}, {nodes:.0f} nodes"
+        )
+    print(f"  questions with at least one seed: {sum(seed_hits)} of {len(seed_hits)}")
+    return 0
 
 
 def _link_entities(args) -> int:
