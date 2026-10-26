@@ -170,6 +170,7 @@ class LocalDeps:
     unit_similarity: object  # (LinkResult, unit ids) -> {id: float}
     count_tokens: object  # (text) -> int
     index: EntityIndex | None = None
+    plain_hits: object = None  # (question) -> unit ids of a plain hybrid search, shown first
 
 
 def prepare_local(deps: LocalDeps, question: str):
@@ -184,9 +185,12 @@ def prepare_local(deps: LocalDeps, question: str):
         return early, None, link
     graph = deps.subgraph(link)
     cited = list(candidate_units(graph))
+    plain = list(deps.plain_hits(link.question)) if deps.plain_hits else []
+    # the best hits of a plain search go first, so local search never has less evidence than it
     context = assemble(
-        link.question, graph, deps.unit_rows(cited), deps.unit_similarity(link, cited),
-        deps.reports(link), deps.count_tokens,
+        link.question, graph, deps.unit_rows(list(dict.fromkeys(cited + plain))),
+        deps.unit_similarity(link, cited), deps.reports(link), deps.count_tokens,
+        priority_units=tuple(plain),
     )  # fmt: skip
     thin = thin_evidence(context, link.question)
     if thin:

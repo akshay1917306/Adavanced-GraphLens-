@@ -327,7 +327,7 @@ def main(argv: list[str] | None = None) -> int:
         return _route_eval(args)
 
     if args.command == "local-graph-eval":
-        return _local_graph_eval(args)
+        return _local_graph_eval(engine, args)
 
     if args.command == "community-quality":
         return _community_quality(engine, args)
@@ -653,7 +653,7 @@ def _community_reports(engine, args) -> int:
     return 0 if complete else 1
 
 
-def _local_graph_eval(args) -> int:
+def _local_graph_eval(engine, args) -> int:
     import json
     import statistics
 
@@ -679,13 +679,23 @@ def _local_graph_eval(args) -> int:
         if q["kind"] == args.kind
     ]
     embedder = FastEmbedder()
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import search_passages
+
+    qdrant = QdrantClient(url=os.environ["QDRANT_URL"])
     variants = {
+        "0 plain RAG baseline (6 passages)": [],
         "1 entity linking only": [],
         "2 + expansion (2 hops, ranked by similarity)": [],
         "3 + personalized PageRank": [],
+        "4 + budgeted context (text units really shown)": [],
     }
     seed_hits = []
     with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        from graphlens_pipeline.localanswer import prepare_local
+
+        deps = _local_deps(engine, driver, args)
         index = EntityIndex.from_neo4j(driver, args.index_version)
         for q in questions:
             wanted = {e["unit_id"] for e in q["evidence"]}
@@ -694,15 +704,24 @@ def _local_graph_eval(args) -> int:
             )
             vector = embedder.dense_query(link.question)
             seed_hits.append(len(link.seeds) > 0)
+            passages = search_passages(qdrant, engine, embedder, q["question"], k=6)
+            base_hit = len(wanted & {p.unit_id for p in passages}) / len(wanted)
+            variants["0 plain RAG baseline (6 passages)"].append((base_hit, len(passages)))
             rungs = [
                 seeds_only_subgraph(driver, link.seeds),
                 build_subgraph(driver, link.seeds, vector, predicates, args.index_version,
                                use_pagerank=False),
                 build_subgraph(driver, link.seeds, vector, predicates, args.index_version),
             ]  # fmt: skip
-            for name, graph in zip(variants, rungs, strict=True):
+            early, context, _ = prepare_local(deps, q["question"])
+            shown = {i.ref for i in context.items if i.label.startswith("T")} if context else set()
+            variants["4 + budgeted context (text units really shown)"].append(
+                (len(wanted & shown) / len(wanted), len(shown))
+            )
+            for name, graph in zip(list(variants)[1:4], rungs, strict=True):
                 variants[name].append((evidence_coverage(graph, wanted), len(graph.nodes)))
     print(f"{len(questions)} {args.kind} questions; share of gold evidence units reached")
+    print("  (the baseline row counts text units; the graph rows count nodes)")
     for name, rows in variants.items():
         coverage = statistics.mean(c for c, _ in rows)
         full = sum(1 for c, _ in rows if c == 1.0)
@@ -719,6 +738,7 @@ def _local_deps(engine, driver, args):
     import tiktoken
     from qdrant_client import QdrantClient
 
+    from graphlens_pipeline.answer import search_passages
     from graphlens_pipeline.embed import LIVE_ALIAS, FastEmbedder
     from graphlens_pipeline.linking import EntityIndex, link_question
     from graphlens_pipeline.localanswer import LocalDeps
@@ -748,6 +768,7 @@ def _local_deps(engine, driver, args):
         ),
         count_tokens=lambda s: len(encoder.encode(s)),
         index=index,
+        plain_hits=lambda q: [p.unit_id for p in search_passages(client, engine, embedder, q, k=6)],
     )
 
 

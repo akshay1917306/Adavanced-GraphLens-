@@ -1,0 +1,619 @@
+{
+  "version": 1,
+  "corpus": "qa_v0",
+  "status": "DRAFT by Claude, waiting for the owner's review (30 hard multi-hop local questions)",
+  "drafted_by": "Claude, from the full text of the papers (method and experiment sections, not only abstracts)",
+  "note": "Each question needs two or more text units (21 combine two places of one paper, 9 combine two papers). Every quote is an exact substring of the cited unit; a script checks it.",
+  "questions": [
+    {
+      "id": "M01",
+      "kind": "local",
+      "hops": 2,
+      "question": "How much computation can KG-FiD save with its early reranking setting, and which model is its main baseline?",
+      "reference_answer": "About 60% of the computation cost (with L1 = L/4 and N2 = N1/5); the main baseline is FiD.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0017",
+          "quote": "we can reduce about 60% of computation cost"
+        },
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0020",
+          "quote": "We mainly compare KG-FiD with the baseline model FiD"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M02",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which generator does the unified-knowledge-interface approach use for data-to-text, and on which test set is it evaluated intrinsically?",
+      "reference_answer": "It fine-tunes the pretrained T5-Large model as the generator; the intrinsic evaluation uses the DART test set.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.113",
+          "unit_id": "u_b8cfb9072b0d_0011",
+          "quote": "we use the pretrained T5-Large (Raffel et al., 2020) model as our generator"
+        },
+        {
+          "paper_id": "2022.acl-long.113",
+          "unit_id": "u_b8cfb9072b0d_0016",
+          "quote": "intrinsic evaluation on the DART test set"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M03",
+      "kind": "local",
+      "hops": 2,
+      "question": "What size of model does KGT5 use in its main experiments, and which two large knowledge graphs does it use to test link prediction?",
+      "reference_answer": "A model with the architecture of T5-small (about 60M parameters) trained without the pretrained weights; link prediction is tested on Wikidata5M and WikiKG90Mv2.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0021",
+          "quote": "a model with the same architecture as T5-small"
+        },
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0015",
+          "quote": "We evaluate the link prediction capability of KGT5 on Wikidata5M"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M04",
+      "kind": "local",
+      "hops": 2,
+      "question": "How does ConditionalQA score an answer that comes with conditions, and what makes its questions hard?",
+      "reference_answer": "The score of the predicted answer is multiplied by the F1 of the predicted conditions against the oracle conditions; answering requires compositional logical reasoning across complex context.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.253",
+          "unit_id": "u_85db020b91cb_0013",
+          "quote": "the scoring function will also take into account the accuracy of predicted conditions"
+        },
+        {
+          "paper_id": "2022.acl-long.253",
+          "unit_id": "u_85db020b91cb_0001",
+          "quote": "Answering the questions requires compositional logical reasoning across complex context"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M05",
+      "kind": "local",
+      "hops": 2,
+      "question": "What is the maximum length of the paths SQUIRE samples for training, and what kind of model does it use to turn a query into a path?",
+      "reference_answer": "The sampled paths have a maximum length of 3 (N = 3); SQUIRE uses an encoder-decoder Transformer.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0011",
+          "quote": "with maximum lengthN = 3"
+        },
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0001",
+          "quote": "encoder-decoder Transformer structure to translate the query to a path"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M06",
+      "kind": "local",
+      "hops": 2,
+      "question": "How many steps does SF-TQA's query generation have, and how much higher is its H@1 on TempQuestions than QUINT's?",
+      "reference_answer": "Two steps (constraint evocation and constraint grounding); its H@1 is 41.2 against 27.0 for QUINT, 14.2 points higher.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0011",
+          "quote": "The query generation consists of two steps"
+        },
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0020",
+          "quote": "SF-TQA 41.2 42.2 48.8 41.1"
+        },
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0020",
+          "quote": "QUINT 27.0 30.3 51.2 28.8"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M07",
+      "kind": "local",
+      "hops": 2,
+      "question": "How does CompAQT add alignment to the training loss, and how many questions does the paper use to structure its results discussion?",
+      "reference_answer": "It adds an alignment term to the loss that pulls the attention weights towards prior alignments built from heuristics (in the absence of gold alignments); the results are organised around four questions.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.125",
+          "unit_id": "u_039c611d6451_0010",
+          "quote": "we add the below term to the loss"
+        },
+        {
+          "paper_id": "2022.emnlp-main.125",
+          "unit_id": "u_039c611d6451_0017",
+          "quote": "we investigate the effectiveness of CompAQT through four questions"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M08",
+      "kind": "local",
+      "hops": 2,
+      "question": "On which five datasets does QADA report results, and what happens to the HotpotQA exact match when contrastive adaptation is removed?",
+      "reference_answer": "HotpotQA, NaturalQ., NewsQA, SearchQA and TriviaQA; without contrastive adaptation the HotpotQA EM drops from 50.80 to 48.21.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.147",
+          "unit_id": "u_56d31becd18d_0022",
+          "quote": "Model HotpotQA NaturalQ. NewsQA SearchQA TriviaQA"
+        },
+        {
+          "paper_id": "2022.emnlp-main.147",
+          "unit_id": "u_56d31becd18d_0022",
+          "quote": "w/o contrastive adaptation 48.21/64.54"
+        },
+        {
+          "paper_id": "2022.emnlp-main.147",
+          "unit_id": "u_56d31becd18d_0001",
+          "quote": "a novel selfsupervised framework called QADA for QA domain adaptation"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M09",
+      "kind": "local",
+      "hops": 2,
+      "question": "By how much does the single-model open-domain QA approach beat the previous best, and on which two datasets is it evaluated?",
+      "reference_answer": "It outperforms the previous state of the art by 1.0 and 0.7 exact match points; it is evaluated on Natural Questions and TriviaQA.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0001",
+          "quote": "our model outperforms the previous state-of-the-art model by 1.0 and 0.7 exact match scores"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0018",
+          "quote": "Natural Questions (Kwiatkowski et al., 2019) and TriviaQA (Joshi et al., 2017)"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M10",
+      "kind": "local",
+      "hops": 2,
+      "question": "What do the authors of the long-form QA evaluation study conclude about automatic metrics, and how do they study what makes one answer better than another?",
+      "reference_answer": "No existing metric is predictive of human preference judgments; they analyse the free-form justifications collected from expert annotators (and WebGPT crowd annotators).",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0001",
+          "quote": "no existing metrics are predictive of human preference judgments"
+        },
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0011",
+          "quote": "we perform an analysis on the free-form justifications"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M11",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which dataset is FAME evaluated on, how many entailment trees does it contain, and what structure does FAME build for its reasoning?",
+      "reference_answer": "EntailmentBank, with 1,840 expert-annotated entailment trees (converted to EntailmentBankQA); FAME organises its reasoning steps as a structured entailment tree.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.218",
+          "unit_id": "u_bd66cdf3c6b3_0019",
+          "quote": "1,840 expert-annotated entailment trees"
+        },
+        {
+          "paper_id": "2023.acl-long.218",
+          "unit_id": "u_bd66cdf3c6b3_0001",
+          "quote": "The reasoning steps are organized as a structured entailment tree"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M12",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which multi-hop architectures does the counterfactual multi-hop method get applied to besides BERT, and what problem does it set out to reduce?",
+      "reference_answer": "DFGN, HGN and XLNet in Dire; it targets the disconnected reasoning problem.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0022",
+          "quote": "DFGN (Qiu et al., 2019), HGN (Fang et al., 2019)"
+        },
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0001",
+          "quote": "reduce the disconnected reasoning"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M13",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which architecture is the WikiHowQA baseline built on, and how often did the first human-evaluation set-up prefer model answers over reference answers?",
+      "reference_answer": "Retrieval-Augmented Generation (RAG); in the conventional human evaluation simpler model-generated answers were preferred over reference answers 48% of the time.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0018",
+          "quote": "we use the Retrieval-Augmented Generation (RAG)"
+        },
+        {
+          "paper_id": "2023.acl-long.290",
+          "unit_id": "u_51284ef6b044_0021",
+          "quote": "simpler modelgenerated answers were frequently (48% of the time) preferred over reference answers"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M14",
+      "kind": "local",
+      "hops": 2,
+      "question": "How many open-domain QA models and how many NQ-Open questions are used in the study of evaluation of open-domain QA with LLMs?",
+      "reference_answer": "12 open-domain QA models; 301 questions randomly sampled from NQ-Open (1,490 unique question/answer pairs).",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0010",
+          "quote": "assess 12 open-domain QA models"
+        },
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0009",
+          "quote": "We randomly sample 301 questions from NQ"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M15",
+      "kind": "local",
+      "hops": 2,
+      "question": "How is the 'w/o head' training set of the long-tailed QA paper built, and between which kinds of tasks does the OLTQA model share knowledge?",
+      "reference_answer": "It is built by discarding the samples of head tasks, leaving samples from 16 tail tasks; the model shares knowledge between head, tail and unseen tasks.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.351",
+          "unit_id": "u_533dbf92ffe5_0025",
+          "quote": "discarding samples from head tasks"
+        },
+        {
+          "paper_id": "2023.acl-long.351",
+          "unit_id": "u_533dbf92ffe5_0001",
+          "quote": "knowledge sharing between head, tail and unseen tasks"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M16",
+      "kind": "local",
+      "hops": 2,
+      "question": "How many parameters does the ReasoningLM comparison list for EmbedKGQA, and what mismatch between components does ReasoningLM set out to remove?",
+      "reference_answer": "125M parameters for EmbedKGQA; the divergence in model architecture between the pre-trained language model and the GNN module, which limits knowledge sharing.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0021",
+          "quote": "EmbedKGQA (Saxena et al., 2020) 125M"
+        },
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0001",
+          "quote": "due to the divergence in model architecture, the PLM and GNN are not closely integrated"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M17",
+      "kind": "local",
+      "hops": 2,
+      "question": "What does GEMFormer put into its memory, and how much did its best memory improve joint F1 on HotpotQA?",
+      "reference_answer": "It first collects relevant information over the entire document into a global memory (tokens with entropy below a threshold); the best memory improved joint F1 by 1.6 points over the highest-performing memory-free baseline on HotpotQA.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.262",
+          "unit_id": "u_2dae343019ba_0001",
+          "quote": "first collects relevant information over the entire document to the memory"
+        },
+        {
+          "paper_id": "2023.emnlp-main.262",
+          "unit_id": "u_2dae343019ba_0010",
+          "quote": "by 1.6 joint F1 points for HP"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M18",
+      "kind": "local",
+      "hops": 2,
+      "question": "How does Hop, Union, Generate score a set of documents, and how does it learn rationales?",
+      "reference_answer": "A document-set scoring function (an MLP over the document embeddings and the question); it trains with a principled probabilistic approach and needs no rationale supervision.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.1001",
+          "unit_id": "u_08db683fca63_0010",
+          "quote": "The document set scoring function is given by"
+        },
+        {
+          "paper_id": "2023.emnlp-main.1001",
+          "unit_id": "u_08db683fca63_0001",
+          "quote": "a principled, probabilistic approach for training explainable multi"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M19",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which score is the main metric for decontextualization in the LLM experiments, and into which stages does the proposed framework split the task?",
+      "reference_answer": "SARI-add (the F1 of added unigram edits, with BERTScore reported too); the framework has three stages: question generation, question answering and rewriting.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.193",
+          "unit_id": "u_d352bfc2d1e1_0018",
+          "quote": "we report SARI-add as our performance metric"
+        },
+        {
+          "paper_id": "2023.emnlp-main.193",
+          "unit_id": "u_d352bfc2d1e1_0001",
+          "quote": "decomposes the task into three stages: question generation, question answering, and rewriting"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M20",
+      "kind": "local",
+      "hops": 2,
+      "question": "What kind of method is the deep inductive logic reasoning paper, and why does it replace the minimum t-norm?",
+      "reference_answer": "A deep-learning based inductive logic reasoning method; the minimum t-norm is prone to a learning plateau because the gradient flows through only one input, so it proposes a neural logic operator.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.343",
+          "unit_id": "u_f1e807c70065_0001",
+          "quote": "deep-learning based inductive logic reasoning method"
+        },
+        {
+          "paper_id": "2022.acl-long.343",
+          "unit_id": "u_f1e807c70065_0020",
+          "quote": "minimum t-norm is prone to learning plateau"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M21",
+      "kind": "local",
+      "hops": 2,
+      "question": "How many training examples does the bandit-learning study start its systems from, and how is learning from feedback cast?",
+      "reference_answer": "Initial models are trained on 64, 256 or 1,024 examples; learning from feedback is cast as contextual bandit learning with simulated feedback.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.355",
+          "unit_id": "u_e4de0d926563_0011",
+          "quote": "We obtain the sets of 64, 256, or 1,024"
+        },
+        {
+          "paper_id": "2022.acl-long.355",
+          "unit_id": "u_e4de0d926563_0001",
+          "quote": "We cast the problem as contextual bandit learning"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M22",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which of the two approaches, the unified knowledge interface or KGT5, uses a pretrained T5-Large, and which one trains a T5-small-sized model without pretrained weights?",
+      "reference_answer": "The unified knowledge interface (data-to-text generator) fine-tunes the pretrained T5-Large; KGT5 uses a model with the T5-small architecture trained without the pretrained weights.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.113",
+          "unit_id": "u_b8cfb9072b0d_0011",
+          "quote": "we use the pretrained T5-Large (Raffel et al., 2020) model as our generator"
+        },
+        {
+          "paper_id": "2022.acl-long.201",
+          "unit_id": "u_381134ba1f9c_0021",
+          "quote": "a model with the same architecture as T5-small"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M23",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which two datasets do both KG-FiD and the single-model open-domain QA approach (YONO) use for their experiments, and which of them builds on FiD?",
+      "reference_answer": "Natural Questions and TriviaQA; KG-FiD builds on and improves FiD.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0027",
+          "quote": "Experiments on Natural Questions and TriviaQA"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0018",
+          "quote": "Natural Questions (Kwiatkowski et al., 2019) and TriviaQA (Joshi et al., 2017)"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M24",
+      "kind": "local",
+      "hops": 2,
+      "question": "How do the long-form QA evaluation study and the open-domain QA evaluation study differ in who judges the answers?",
+      "reference_answer": "The long-form study hires domain experts in seven areas to give preference judgments over pairs of answers; the open-domain study evaluates the answers of 12 models on 301 sampled questions with manual evaluation.",
+      "evidence": [
+        {
+          "paper_id": "2023.acl-long.181",
+          "unit_id": "u_e84a3c72733d_0001",
+          "quote": "We hire domain experts in seven areas to provide preference judgments over pairs of answers"
+        },
+        {
+          "paper_id": "2023.acl-long.307",
+          "unit_id": "u_61676b02aa27_0010",
+          "quote": "assess 12 open-domain QA models"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M25",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which core model does SQUIRE use to turn a query into a path, and which knowledge-graph QA paper deals with questions that have temporal intent?",
+      "reference_answer": "SQUIRE uses an encoder-decoder Transformer; SF-TQA (the semantic-framework approach) handles temporal questions over knowledge graphs.",
+      "evidence": [
+        {
+          "paper_id": "2022.emnlp-main.107",
+          "unit_id": "u_4724660473c3_0001",
+          "quote": "encoder-decoder Transformer structure to translate the query to a path"
+        },
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0001",
+          "quote": "Answering factual questions with temporal intent over knowledge graphs"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M26",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which two papers use counterfactuals, and for what does each use them?",
+      "reference_answer": "The retrieve-generate-filter paper creates counterfactual training and evaluation data; the counterfactual multi-hop QA paper uses counterfactual inference to disentangle disconnected reasoning.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.117",
+          "unit_id": "u_6183c13e0bb6_0001",
+          "quote": "create counterfactual evaluation and training data with minimal human supervision"
+        },
+        {
+          "paper_id": "2023.acl-long.231",
+          "unit_id": "u_d37e80b0a561_0001",
+          "quote": "a counterfactual inference is proposed to disentangle the disconnected reasoning"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M27",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which paper simulates user feedback to cut annotation and which one studies how users react to QA answers?",
+      "reference_answer": "The bandit-learning paper simulates feedback from supervised data to reduce data annotation; the background-information paper studies how users interact with QA systems and over-rely on predictions.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.355",
+          "unit_id": "u_e4de0d926563_0001",
+          "quote": "analyze the characteristics of several learning scenarios with focus on reducing data annotation"
+        },
+        {
+          "paper_id": "2023.emnlp-main.201",
+          "unit_id": "u_71f8f712a4f8_0001",
+          "quote": "we study how users interact with QA systems"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M28",
+      "kind": "local",
+      "hops": 2,
+      "question": "How do KG-FiD and ReasoningLM each bring knowledge-graph structure into a text model?",
+      "reference_answer": "KG-FiD uses a knowledge graph to establish structural relationships among the retrieved passages; ReasoningLM makes a pre-trained language model directly support subgraph reasoning for KGQA.",
+      "evidence": [
+        {
+          "paper_id": "2022.acl-long.340",
+          "unit_id": "u_732906872c61_0001",
+          "quote": "uses a knowledge graph to establish the structural relationship among the retrieved passages"
+        },
+        {
+          "paper_id": "2023.emnlp-main.228",
+          "unit_id": "u_4e80cf74d13c_0001",
+          "quote": "develop a more capable PLM that can directly support subgraph reasoning for KGQA"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M29",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which paper splits its task into three stages and which splits query generation into two steps?",
+      "reference_answer": "The decontextualization framework (question generation, question answering, rewriting); SF-TQA (constraint evocation and constraint grounding).",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.193",
+          "unit_id": "u_d352bfc2d1e1_0001",
+          "quote": "decomposes the task into three stages: question generation, question answering, and rewriting"
+        },
+        {
+          "paper_id": "2022.emnlp-main.122",
+          "unit_id": "u_af4b5ba47ddd_0011",
+          "quote": "The query generation consists of two steps"
+        }
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "M30",
+      "kind": "local",
+      "hops": 2,
+      "question": "Which approach relies on a multilingual dense retriever, and which one folds the retriever into the transformer itself?",
+      "reference_answer": "The cross-lingual attribution study models attributed QA with CORA, whose multilingual dense retriever MDPR is based on mBERT; the single-model open-domain QA approach casts the retriever and the reranker as internal passage-wise attention mechanisms inside the transformer.",
+      "evidence": [
+        {
+          "paper_id": "2023.emnlp-main.10",
+          "unit_id": "u_60ab7f2e85b3_0008",
+          "quote": "multilingual dense retriever ( MDPR ) which is based on mBERT"
+        },
+        {
+          "paper_id": "2022.emnlp-main.198",
+          "unit_id": "u_be1f94442adf_0001",
+          "quote": "casting the retriever and the reranker as internal passage-wise attention mechanisms"
+        }
+      ],
+      "review": "draft"
+    }
+  ]
+}

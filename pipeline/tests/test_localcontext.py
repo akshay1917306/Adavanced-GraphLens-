@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import uuid
+from collections import Counter
 
 import pytest
 
@@ -60,7 +61,25 @@ def test_units_cited_by_more_entities_and_edges_come_first():
     cited = candidate_units(sub)
     assert cited["a"] == 3 and cited["b"] == 1 and cited["c"] == 1
     assert rank_units(cited, {}) == ["a", "b", "c"]
-    assert rank_units(cited, {"c": 1.0, "b": 0.0}) == ["a", "c", "b"]  # closeness breaks the tie
+    even = rank_units(cited, {"c": 1.0, "b": 0.0}, citation_weight=0.5)
+    assert even == ["a", "c", "b"]  # with equal weights, closeness breaks the tie
+
+
+def test_the_citation_weight_moves_the_ranking_between_cited_and_close():
+    cited = Counter({"popular": 5, "close": 1})
+    similarity = {"popular": 0.1, "close": 0.9}
+    assert rank_units(cited, similarity, citation_weight=1.0) == ["popular", "close"]
+    assert rank_units(cited, similarity, citation_weight=0.0) == ["close", "popular"]
+
+
+def test_priority_units_come_first_and_are_not_repeated():
+    sub = graph()
+    rows = rows_for(sub.unit_ids() | {"u_plain"})
+    ctx = assemble("What?", sub, rows, {}, [], count, priority_units=("u_plain",))
+    units = [i.ref for i in ctx.items if i.label.startswith("T")]
+    assert units[0] == "u_plain" and units.count("u_plain") == 1
+    other = assemble("What?", sub, rows_for(sub.unit_ids()), {}, [], count, priority_units=("x",))
+    assert "x" not in {i.ref for i in other.items}  # a unit with no text is skipped
 
 
 def test_the_candidate_list_is_capped_at_the_most_cited():

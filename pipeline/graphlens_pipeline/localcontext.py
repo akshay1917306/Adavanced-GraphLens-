@@ -28,6 +28,9 @@ TOTAL_TOKENS = 8000
 SHARES = {"units": 0.45, "entities": 0.25, "reports": 0.20}  # the other 10% is reserved
 MAX_UNIT_TOKENS = 450
 MAX_UNIT_CANDIDATES = 300
+CITATION_WEIGHT = (
+    0.25  # how much "cited by many entities" counts against closeness (tuned on the easy questions)
+)
 TOP_REPORTS = 3
 REPORT_LEVEL = 1
 MAX_ENTITY_DESCRIPTION = 220
@@ -86,11 +89,13 @@ def candidate_units(subgraph: Subgraph, limit: int = MAX_UNIT_CANDIDATES) -> Cou
     return Counter(dict(sorted(cited.items(), key=lambda kv: (-kv[1], kv[0]))[:limit]))
 
 
-def rank_units(cited: Counter, similarity: dict[str, float]) -> list[str]:
-    """Half by how often the unit is cited, half by how close it is to the question."""
+def rank_units(
+    cited: Counter, similarity: dict[str, float], citation_weight: float = CITATION_WEIGHT
+) -> list[str]:
+    """Best first: how often the entities cite the unit, against how close it is to the question."""
     cites = _unit({u: float(c) for u, c in cited.items()})
     close = _unit({u: similarity.get(u, 0.0) for u in cited})
-    score = {u: 0.5 * cites[u] + 0.5 * close[u] for u in cited}
+    score = {u: citation_weight * cites[u] + (1 - citation_weight) * close[u] for u in cited}
     return sorted(cited, key=lambda u: (-score[u], u))
 
 
@@ -181,6 +186,8 @@ def assemble(
     reports: list[dict],
     count,
     total_tokens: int = TOTAL_TOKENS,
+    citation_weight: float = CITATION_WEIGHT,
+    priority_units: tuple[str, ...] = (),
 ) -> LocalContext:
     """Build the labelled, budgeted context. `rows` are the text units fetched from Postgres,
     `similarity` the cosine of each to the question, `count` a token counter."""
@@ -217,7 +224,12 @@ def assemble(
 
     # text units, best first, each cut to at most 450 tokens
     unit_blocks = []
-    for unit_id in rank_units(candidate_units(subgraph), similarity):
+    ranked = rank_units(candidate_units(subgraph), similarity, citation_weight)
+    # units that must come first (for example the best hits of a plain search), then the rest
+    ordered = [u for u in priority_units if u in rows] + [
+        u for u in ranked if u not in priority_units
+    ]
+    for unit_id in ordered:
         row = rows.get(unit_id)
         if not row:
             continue
