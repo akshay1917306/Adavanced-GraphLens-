@@ -1,0 +1,468 @@
+{
+  "version": 1,
+  "corpus": "qa_v0",
+  "status": "DRAFT by Claude, waiting for the owner's review",
+  "note": "20 pairs with a known shortest path, found by a breadth-first search in Python (not the Cypher query relate mode uses). The owner checks that each pair and path make sense.",
+  "questions": [
+    {
+      "id": "R01",
+      "kind": "relate",
+      "question": "How is ILP related to multi-hop reading comprehension?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "ILP",
+      "b": "multi-hop reading comprehension",
+      "expected_hops": 1,
+      "known_path": [
+        "ILP",
+        "multi-hop reading comprehension"
+      ],
+      "predicates": [
+        "ADDRESSES"
+      ],
+      "a_id": "e_82039b828c64",
+      "b_id": "e_a048a8ab0d89",
+      "review": "draft"
+    },
+    {
+      "id": "R02",
+      "kind": "relate",
+      "question": "How is OLTQA model related to Open Long-Tailed QA (OLTQA)?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "OLTQA model",
+      "b": "Open Long-Tailed QA (OLTQA)",
+      "expected_hops": 1,
+      "known_path": [
+        "OLTQA model",
+        "Open Long-Tailed QA (OLTQA)"
+      ],
+      "predicates": [
+        "ADDRESSES"
+      ],
+      "a_id": "e_84b2e7559f56",
+      "b_id": "e_6155f2a0f8d9",
+      "review": "draft"
+    },
+    {
+      "id": "R03",
+      "kind": "relate",
+      "question": "How is TF-IDF related to ODQA?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "TF-IDF",
+      "b": "ODQA",
+      "expected_hops": 1,
+      "known_path": [
+        "TF-IDF",
+        "ODQA"
+      ],
+      "predicates": [
+        "ADDRESSES"
+      ],
+      "a_id": "e_b7cf9f715eeb",
+      "b_id": "e_2999a8664e11",
+      "review": "draft"
+    },
+    {
+      "id": "R04",
+      "kind": "relate",
+      "question": "How is multi-step quantitative reasoning related to FinQANet+CompAQT?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "multi-step quantitative reasoning",
+      "b": "FinQANet+CompAQT",
+      "expected_hops": 1,
+      "known_path": [
+        "multi-step quantitative reasoning",
+        "FinQANet+CompAQT"
+      ],
+      "predicates": [
+        "ADDRESSES"
+      ],
+      "a_id": "e_2052d6824845",
+      "b_id": "e_570fbae8b00e",
+      "review": "draft"
+    },
+    {
+      "id": "R05",
+      "kind": "relate",
+      "question": "How is rule-enhanced learning related to AnyBURL?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "rule-enhanced learning",
+      "b": "AnyBURL",
+      "expected_hops": 1,
+      "known_path": [
+        "rule-enhanced learning",
+        "AnyBURL"
+      ],
+      "predicates": [
+        "USES"
+      ],
+      "a_id": "e_e9eb87f66e1e",
+      "b_id": "e_4316cd6c69c4",
+      "review": "draft"
+    },
+    {
+      "id": "R06",
+      "kind": "relate",
+      "question": "How is Back KD related to QA model?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "Back KD",
+      "b": "QA model",
+      "expected_hops": 2,
+      "known_path": [
+        "Back KD",
+        "Long-Tailed Question Answering in an Open World",
+        "QA model"
+      ],
+      "predicates": [
+        "USES",
+        "USES"
+      ],
+      "a_id": "e_b82f5a17e77d",
+      "b_id": "e_6d26e2b47c58",
+      "review": "draft"
+    },
+    {
+      "id": "R07",
+      "kind": "relate",
+      "question": "How is Chain-of-Thought related to EntailmentBankQA?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "Chain-of-Thought",
+      "b": "EntailmentBankQA",
+      "expected_hops": 2,
+      "known_path": [
+        "Chain-of-Thought",
+        "Faithful Question Answering with Monte-Carlo Planning",
+        "EntailmentBankQA"
+      ],
+      "predicates": [
+        "USES",
+        "USES"
+      ],
+      "a_id": "e_a2c0f83df6e8",
+      "b_id": "e_4df76b5773e8",
+      "review": "draft"
+    },
+    {
+      "id": "R08",
+      "kind": "relate",
+      "question": "How is DPR-PAQ related to TriviaQA?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "DPR-PAQ",
+      "b": "TriviaQA",
+      "expected_hops": 2,
+      "known_path": [
+        "DPR-PAQ",
+        "You Only Need One Model for Open-domain Question Answering",
+        "TriviaQA"
+      ],
+      "predicates": [
+        "USES",
+        "USES"
+      ],
+      "a_id": "e_7476ff9eca5f",
+      "b_id": "e_2335714691c5",
+      "review": "draft"
+    },
+    {
+      "id": "R09",
+      "kind": "relate",
+      "question": "How is EviGen related to FiD-KD?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "EviGen",
+      "b": "FiD-KD",
+      "expected_hops": 2,
+      "known_path": [
+        "EviGen",
+        "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+        "FiD-KD"
+      ],
+      "predicates": [
+        "USES",
+        "USES"
+      ],
+      "a_id": "e_fefd3270dd89",
+      "b_id": "e_93c7ca6efcca",
+      "review": "draft"
+    },
+    {
+      "id": "R10",
+      "kind": "relate",
+      "question": "How is MQA-3H related to PLM?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "MQA-3H",
+      "b": "PLM",
+      "expected_hops": 2,
+      "known_path": [
+        "MQA-3H",
+        "ReasoningLM: Enabling Structural Subgraph Reasoning in Pre-trained Language Models for Question Answering over Knowledge Graph",
+        "PLM"
+      ],
+      "predicates": [
+        "USES",
+        "PROPOSES"
+      ],
+      "a_id": "e_3ec98800fc91",
+      "b_id": "e_4518ed63f05c",
+      "review": "draft"
+    },
+    {
+      "id": "R11",
+      "kind": "relate",
+      "question": "How is RoBERTa-large related to FinQANet?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "RoBERTa-large",
+      "b": "FinQANet",
+      "expected_hops": 2,
+      "known_path": [
+        "RoBERTa-large",
+        "Improving compositional generalization for multi-step quantitative reasoning in question answering",
+        "FinQANet"
+      ],
+      "predicates": [
+        "USES",
+        "USES"
+      ],
+      "a_id": "e_7570e677f6c5",
+      "b_id": "e_2aedd7670b2f",
+      "review": "draft"
+    },
+    {
+      "id": "R12",
+      "kind": "relate",
+      "question": "How is Static MKD related to T5-base?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "Static MKD",
+      "b": "T5-base",
+      "expected_hops": 2,
+      "known_path": [
+        "Static MKD",
+        "Long-Tailed Question Answering in an Open World",
+        "T5-base"
+      ],
+      "predicates": [
+        "USES",
+        "USES"
+      ],
+      "a_id": "e_f6856c319a24",
+      "b_id": "e_4f30e002cfac",
+      "review": "draft"
+    },
+    {
+      "id": "R13",
+      "kind": "relate",
+      "question": "How is T5-large related to LLMs?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "T5-large",
+      "b": "LLMs",
+      "expected_hops": 2,
+      "known_path": [
+        "T5-large",
+        "Faithful Question Answering with Monte-Carlo Planning",
+        "LLMs"
+      ],
+      "predicates": [
+        "USES",
+        "USES"
+      ],
+      "a_id": "e_95020682276d",
+      "b_id": "e_ef4eecb0bd4d",
+      "review": "draft"
+    },
+    {
+      "id": "R14",
+      "kind": "relate",
+      "question": "How is causal inference related to counterfactual examples?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "causal inference",
+      "b": "counterfactual examples",
+      "expected_hops": 2,
+      "known_path": [
+        "causal inference",
+        "disconnected reasoning",
+        "counterfactual examples"
+      ],
+      "predicates": [
+        "ADDRESSES",
+        "ADDRESSES"
+      ],
+      "a_id": "e_5980ca9d0d71",
+      "b_id": "e_3cc8c1f3d89c",
+      "review": "draft"
+    },
+    {
+      "id": "R15",
+      "kind": "relate",
+      "question": "How is sequence-based methods related to quantitative reasoning?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "sequence-based methods",
+      "b": "quantitative reasoning",
+      "expected_hops": 2,
+      "known_path": [
+        "sequence-based methods",
+        "our proposed framework",
+        "quantitative reasoning"
+      ],
+      "predicates": [
+        "IMPROVES_ON",
+        "ADDRESSES"
+      ],
+      "a_id": "e_d76e63881cc8",
+      "b_id": "e_ace3ad3754c6",
+      "review": "draft"
+    },
+    {
+      "id": "R16",
+      "kind": "relate",
+      "question": "How is GPT-3 related to SQuAD?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "GPT-3",
+      "b": "SQuAD",
+      "expected_hops": 3,
+      "known_path": [
+        "GPT-3",
+        "KG-FiD: Infusing Knowledge Graph in Fusion-in-Decoder for Open-Domain Question Answering",
+        "REALM",
+        "SQuAD"
+      ],
+      "predicates": [
+        "USES",
+        "USES",
+        "EVALUATED_ON"
+      ],
+      "a_id": "e_dc2011a31296",
+      "b_id": "e_ddaabebe0d7b",
+      "review": "draft"
+    },
+    {
+      "id": "R17",
+      "kind": "relate",
+      "question": "How is InstructGPT (zero-shot) related to gpt-4?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "InstructGPT (zero-shot)",
+      "b": "gpt-4",
+      "expected_hops": 3,
+      "known_path": [
+        "InstructGPT (zero-shot)",
+        "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+        "GPT4-eval",
+        "gpt-4"
+      ],
+      "predicates": [
+        "USES",
+        "PROPOSES",
+        "USES"
+      ],
+      "a_id": "e_886470d86824",
+      "b_id": "e_1e2eb81b4ff5",
+      "review": "draft"
+    },
+    {
+      "id": "R18",
+      "kind": "relate",
+      "question": "How is MetaQA related to EXAQT?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "MetaQA",
+      "b": "EXAQT",
+      "expected_hops": 3,
+      "known_path": [
+        "MetaQA",
+        "PullNet",
+        "TimeQuestions",
+        "EXAQT"
+      ],
+      "predicates": [
+        "EVALUATED_ON",
+        "EVALUATED_ON",
+        "EVALUATED_ON"
+      ],
+      "a_id": "e_196064a569fa",
+      "b_id": "e_13361dc848ca",
+      "review": "draft"
+    },
+    {
+      "id": "R19",
+      "kind": "relate",
+      "question": "How is NELL23K related to ComplEx?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "NELL23K",
+      "b": "ComplEx",
+      "expected_hops": 3,
+      "known_path": [
+        "NELL23K",
+        "TransE",
+        "WikiKG90Mv2",
+        "ComplEx"
+      ],
+      "predicates": [
+        "EVALUATED_ON",
+        "EVALUATED_ON",
+        "EVALUATED_ON"
+      ],
+      "a_id": "e_e9fda317992a",
+      "b_id": "e_095f99adbf48",
+      "review": "draft"
+    },
+    {
+      "id": "R20",
+      "kind": "relate",
+      "question": "How is state verifier V related to KGQA?",
+      "expected_modes": [
+        "relate"
+      ],
+      "a": "state verifier V",
+      "b": "KGQA",
+      "expected_hops": 3,
+      "known_path": [
+        "state verifier V",
+        "Faithful Question Answering with Monte-Carlo Planning",
+        "ChatGPT",
+        "KGQA"
+      ],
+      "predicates": [
+        "PROPOSES",
+        "USES",
+        "ADDRESSES"
+      ],
+      "a_id": "e_ce3c245623ef",
+      "b_id": "e_2b35f20788b3",
+      "review": "draft"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "corpus": "qa_v0",
+  "status": "DRAFT by Claude, waiting for the owner's review",
+  "note": "5 questions far outside the papers and 5 near the topic about things that are not in the 25 papers (a database search found no text unit with RETRO, Mistral, MS MARCO, Gemini, SuperGLUE or Claude 2). The right answer is a refusal.",
+  "questions": [
+    {
+      "id": "U01",
+      "kind": "unanswerable",
+      "question": "What is the capital of France?",
+      "why_unanswerable": "out of domain",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U02",
+      "kind": "unanswerable",
+      "question": "How do I bake sourdough bread at home?",
+      "why_unanswerable": "out of domain",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U03",
+      "kind": "unanswerable",
+      "question": "Which team won the 2018 FIFA World Cup?",
+      "why_unanswerable": "out of domain",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U04",
+      "kind": "unanswerable",
+      "question": "What are the common side effects of ibuprofen?",
+      "why_unanswerable": "out of domain",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U05",
+      "kind": "unanswerable",
+      "question": "How tall is Mount Everest?",
+      "why_unanswerable": "out of domain",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U06",
+      "kind": "unanswerable",
+      "question": "What nDCG@10 does the RETRO model reach on the BEIR benchmark?",
+      "why_unanswerable": "RETRO is not in the papers",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U07",
+      "kind": "unanswerable",
+      "question": "How many parameters does the Mistral 7B model have, and what context window does it support?",
+      "why_unanswerable": "Mistral is not in the papers",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U08",
+      "kind": "unanswerable",
+      "question": "What MRR@10 did the top system reach on the MS MARCO passage ranking leaderboard?",
+      "why_unanswerable": "MS MARCO is not in the papers",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U09",
+      "kind": "unanswerable",
+      "question": "What accuracy does Gemini Ultra reach on SuperGLUE?",
+      "why_unanswerable": "Gemini and SuperGLUE are not in the papers",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    },
+    {
+      "id": "U10",
+      "kind": "unanswerable",
+      "question": "What did the authors of the Claude 2 technical report conclude about long-context question answering?",
+      "why_unanswerable": "Claude 2 is not in the papers",
+      "expected_modes": [
+        "local",
+        "baseline",
+        "global",
+        "relate"
+      ],
+      "review": "draft"
+    }
+  ]
+}

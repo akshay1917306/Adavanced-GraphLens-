@@ -94,3 +94,41 @@ def render_verdict_sheet(items: list[dict]) -> str:
             lines.append(f"| {name} | {winner} | {reasons} |")
         lines += ["", "**Your decision:** ", ""]
     return "\n".join(lines) + "\n"
+
+
+def render_relate_review(questions: list[dict]) -> str:
+    lines = [
+        "# Relate pairs: review",
+        "",
+        "Each pair has a path that exists in the graph (found by a plain breadth-first",
+        "search). The graph is not perfect (relation precision 0.81), so please check that the",
+        "pair and the path make sense for someone who wants to know how two things are",
+        "connected. Answer per ID: `OK`, `DROP` (not a useful pair) or `CHANGE: ...`.",
+        "",
+        "| ID | Pair | Hops | Known path | Relations | Your decision |",
+        "|---|---|---|---|---|---|",
+    ]
+    for q in questions:
+        path = " → ".join(q["known_path"]).replace("|", "/")
+        lines.append(
+            f"| {q['id']} | {q['a']} and {q['b']} | {q['expected_hops']} | {path} |"
+            f" {', '.join(q['predicates'])} | |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def render_unanswerable_review(questions: list[dict]) -> str:
+    lines = [
+        "# Unanswerable questions: review",
+        "",
+        "The right answer to each question below is a refusal, because the 25 papers do not",
+        "contain the answer. Five are far outside the topic; five are close to it but about",
+        "things that are not in the papers. Answer per ID: `OK`, `DROP` or `CHANGE: ...` (for",
+        "example if you think a paper does answer it).",
+        "",
+        "| ID | Question | Why it cannot be answered | Your decision |",
+        "|---|---|---|---|",
+    ]
+    for q in questions:
+        lines.append(f"| {q['id']} | {q['question']} | {q['why_unanswerable']} | |")
+    return "\n".join(lines) + "\n"

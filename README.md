@@ -4,7 +4,7 @@ GraphLens turns a document collection into a knowledge graph and answers questio
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is built on a branch and waits for the owner's review and approval.**
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is done and tagged `phase-3`. Phase 4 (local search, router, relate, citation check) is built and evaluated, and waits for the owner's review and approval.**
 > The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
 > used for answers, and its relation precision is 0.81 and entity-resolution F1 0.79, below the target). There is no web interface for
 > questions (Phase 5). Development data: 25 open-licensed research papers.
@@ -16,8 +16,9 @@ by following the graph, showing the evidence for every answer. It is built from 
 | 0. Setup and decisions | Approved, merged, tag `phase-0` |
 | 1. Baseline RAG and evaluation set v0 | Approved, merged, tag `phase-1` |
 | 2. Extraction and graph | Approved, merged, tag `phase-2` ([plan](docs/phases/phase-2-extraction/BRIEF.md), [walkthrough](docs/phases/phase-2-extraction/WALKTHROUGH.md)) |
-| 3. Communities and global search | Built on branch `phase-3/communities`, **not approved or pushed** ([plan](docs/phases/phase-3-communities/BRIEF.md), [walkthrough](docs/phases/phase-3-communities/WALKTHROUGH.md)) |
-| 4 to 8 | Planned, see [docs/phases](docs/phases/README.md) |
+| 3. Communities and global search | Approved, merged, tag `phase-3` ([plan](docs/phases/phase-3-communities/BRIEF.md), [walkthrough](docs/phases/phase-3-communities/WALKTHROUGH.md)) |
+| 4. Local search, router, relate, citation check | Plan written, waiting for owner approval ([plan](docs/phases/phase-4-local-search/BRIEF.md)) |
+| 5 to 8 | Planned, see [docs/phases](docs/phases/README.md) |
 
 ## What works today
 
@@ -44,7 +45,9 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Global win rate against the baseline: 100% on comprehensiveness and diversity (20 questions) | **Measured** with caveats (answers are 3.4 times longer; same-family judge; interval 84% to 100%) |
 | Global search speed and cost: 8.4 s median and about half a cent per question | **Measured** (one query at a time) |
 | Owner rating of communities and judge spot-check | Pending |
-| Router, local search, relate, citation support check | Planned (Phase 4) |
+| Local search (entity linking, 2-hop expansion, PageRank, cited context), relate mode, router, citation check | Implemented, commands `local-ask`, `relate`, `ask-auto` |
+| Local correctness on 30 hard multi-hop questions: 70% vs 53% for plain RAG (9 wins, 19 ties, 2 losses) | **Measured**: below the 75% target; intervals overlap (52-83% vs 36-70%) |
+| Citation support 98% (122 of 124); refusal 8 of 10 (target 90% missed); relate 20 of 20 paths | **Measured**, see [Phase 4 STATUS](docs/phases/phase-4-local-search/STATUS.md) |
 | Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |
 | CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
 
@@ -125,4 +128,6 @@ database and Qdrant collections.
 - Licenses come from the ACL Anthology policy page, not from each PDF.
 - Not production-ready and not security-reviewed; do not expose it to the internet.
 
-**Next planned phase:** owner review and approval of Phase 3, then Phase 4 (local search, router, relate, citation check).
+- Phase 4: local search reaches 70% correct on 30 hard questions (target 75%), better than plain RAG by about 17 points but not statistically separated; community reports add nothing to local answers; two unanswerable questions were answered because a generic word or a model name matched an entity; only 11 of 20 relate explanations passed the citation check; the baseline rerank was not built; p95 latency was not measured; the judge is the same model family.
+
+**Next planned phase:** Phase 5 (API and screens), not started; Phase 4 waits for the owner's review and approval.

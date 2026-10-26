@@ -144,6 +144,78 @@ def main(argv: list[str] | None = None) -> int:
     geval.add_argument("--dry-run", action="store_true", help="estimate the cost, call no model")
     geval.add_argument("--out-dir", type=Path, default=Path("/out"))
     geval.add_argument("--label", default="")
+    link = sub.add_parser(
+        "link-entities", help="show which entities a question links to (local, no cost)"
+    )
+    link.add_argument("question", nargs="*")
+    link.add_argument("--index-version", default="idx2-full-g0")
+    link.add_argument("--min-vector-score", type=float, default=0.79)
+    link.add_argument(
+        "--file", type=Path, default=None, help="a questions.json: link every question"
+    )
+    lgraph = sub.add_parser(
+        "local-graph-eval",
+        help="free ablation: how many evidence units each retrieval step reaches (no model)",
+    )
+    lgraph.add_argument("--index-version", default="idx2-full-g0")
+    lgraph.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
+    lgraph.add_argument("--kind", default="local")
+    lgraph.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    lctx = sub.add_parser(
+        "local-context", help="show the context local search would send (no model, no cost)"
+    )
+    lctx.add_argument("question")
+    lctx.add_argument("--index-version", default="idx2-full-g0")
+    lctx.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    lctx.add_argument("--show", action="store_true", help="print the whole prompt text")
+    lask = sub.add_parser(
+        "local-ask", help="answer a specific question from the graph (about half a cent)"
+    )
+    lask.add_argument("question")
+    lask.add_argument("--index-version", default="idx2-full-g0")
+    lask.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    lask.add_argument("--show-context", action="store_true")
+    rel = sub.add_parser(
+        "relate",
+        help="how are two things connected? (paths are free; the explanation costs ~0.3 cent)",
+    )
+    rel.add_argument("question")
+    rel.add_argument("--index-version", default="idx2-full-g0")
+    rel.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    rel.add_argument("--paths-only", action="store_true", help="find paths, call no model")
+    ask_any = sub.add_parser(
+        "ask-auto", help="pick the right mode and answer (local, global, relate or baseline)"
+    )
+    ask_any.add_argument("question")
+    ask_any.add_argument("--mode", choices=["local", "global", "relate", "baseline"], default=None)
+    ask_any.add_argument("--index-version", default="idx2-full-g0")
+    ask_any.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    ask_any.add_argument(
+        "--route-only", action="store_true", help="show the chosen mode, answer nothing"
+    )
+    reval = sub.add_parser(
+        "route-eval", help="router accuracy on labeled questions, rules only (no model, no cost)"
+    )
+    reval.add_argument("--index-version", default="idx2-full-g0")
+    reval.add_argument(
+        "--questions", type=Path, nargs="+", default=[eval_dir / "questions.json"],
+    )  # fmt: skip
+    reval.add_argument("--show-misses", action="store_true")
+    p4 = sub.add_parser(
+        "review-phase4", help="write the review pages for the new Phase 4 question sets (no cost)"
+    )
+    p4.add_argument("--dir", type=Path, default=Path("/data/eval/phase4"))
+    p4.add_argument("--out-dir", type=Path, default=Path("/out"))
+    leval = sub.add_parser(
+        "local-eval", help="the small paid Phase 4 evaluation (about $0.4; use --dry-run first)"
+    )
+    leval.add_argument("--index-version", default="idx2-full-g0")
+    leval.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    leval.add_argument("--dir", type=Path, default=Path("/data/eval/phase4"))
+    leval.add_argument("--out-dir", type=Path, default=Path("/out"))
+    leval.add_argument("--max-cost-usd", type=float, default=0.6)
+    leval.add_argument("--dry-run", action="store_true")
+    leval.add_argument("--label", default="")
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -250,6 +322,33 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "global-bench":
         return _global_bench(args)
+
+    if args.command == "link-entities":
+        return _link_entities(args)
+
+    if args.command == "local-context":
+        return _local_context(engine, args)
+
+    if args.command == "local-ask":
+        return _local_ask(engine, args)
+
+    if args.command == "relate":
+        return _relate(engine, args)
+
+    if args.command == "ask-auto":
+        return _ask_auto(engine, args)
+
+    if args.command == "route-eval":
+        return _route_eval(args)
+
+    if args.command == "local-eval":
+        return _local_eval(engine, args)
+
+    if args.command == "review-phase4":
+        return _review_phase4(args)
+
+    if args.command == "local-graph-eval":
+        return _local_graph_eval(engine, args)
 
     if args.command == "community-quality":
         return _community_quality(engine, args)
@@ -573,6 +672,635 @@ def _community_reports(engine, args) -> int:
                result.tokens_in, result.tokens_out, stats)  # fmt: skip
     print(json.dumps({**stats, "cost_usd": result.cost_usd}, indent=2))
     return 0 if complete else 1
+
+
+def _local_graph_eval(engine, args) -> int:
+    import json
+    import statistics
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.linking import EntityIndex, link_question
+    from graphlens_pipeline.localgraph import (
+        build_subgraph,
+        evidence_coverage,
+        seeds_only_subgraph,
+    )
+    from graphlens_pipeline.ontology import load_ontology
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    predicates = load_ontology(args.ontology).predicate_names
+    questions = [
+        q
+        for q in json.loads(args.questions.read_text(encoding="utf-8"))["questions"]
+        if q["kind"] == args.kind
+    ]
+    embedder = FastEmbedder()
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import search_passages
+
+    qdrant = QdrantClient(url=os.environ["QDRANT_URL"])
+    variants = {
+        "0 plain RAG baseline (6 passages)": [],
+        "1 entity linking only": [],
+        "2 + expansion (2 hops, ranked by similarity)": [],
+        "3 + personalized PageRank": [],
+        "4 + budgeted context (text units really shown)": [],
+    }
+    seed_hits = []
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        from graphlens_pipeline.localanswer import prepare_local
+
+        deps = _local_deps(engine, driver, args)
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        for q in questions:
+            wanted = {e["unit_id"] for e in q["evidence"]}
+            link = link_question(
+                driver, embedder.dense_query, index, q["question"], args.index_version
+            )
+            vector = embedder.dense_query(link.question)
+            seed_hits.append(len(link.seeds) > 0)
+            passages = search_passages(qdrant, engine, embedder, q["question"], k=6)
+            base_hit = len(wanted & {p.unit_id for p in passages}) / len(wanted)
+            variants["0 plain RAG baseline (6 passages)"].append((base_hit, len(passages)))
+            rungs = [
+                seeds_only_subgraph(driver, link.seeds),
+                build_subgraph(driver, link.seeds, vector, predicates, args.index_version,
+                               use_pagerank=False),
+                build_subgraph(driver, link.seeds, vector, predicates, args.index_version),
+            ]  # fmt: skip
+            early, context, _ = prepare_local(deps, q["question"])
+            shown = {i.ref for i in context.items if i.label.startswith("T")} if context else set()
+            variants["4 + budgeted context (text units really shown)"].append(
+                (len(wanted & shown) / len(wanted), len(shown))
+            )
+            for name, graph in zip(list(variants)[1:4], rungs, strict=True):
+                variants[name].append((evidence_coverage(graph, wanted), len(graph.nodes)))
+    print(f"{len(questions)} {args.kind} questions; share of gold evidence units reached")
+    print("  (the baseline row counts text units; the graph rows count nodes)")
+    for name, rows in variants.items():
+        coverage = statistics.mean(c for c, _ in rows)
+        full = sum(1 for c, _ in rows if c == 1.0)
+        nodes = statistics.mean(n for _, n in rows)
+        print(
+            f"  {name}: {coverage:.0%} on average, all units reached for {full}, {nodes:.0f} nodes"
+        )
+    print(f"  questions with at least one seed: {sum(seed_hits)} of {len(seed_hits)}")
+    return 0
+
+
+def _local_deps(engine, driver, args):
+    """Local search wired to the real databases and the local embedding model."""
+    import tiktoken
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import search_passages
+    from graphlens_pipeline.embed import LIVE_ALIAS, FastEmbedder
+    from graphlens_pipeline.linking import EntityIndex, link_question
+    from graphlens_pipeline.localanswer import LocalDeps
+    from graphlens_pipeline.localcontext import (
+        postgres_unit_rows,
+        qdrant_unit_vectors,
+        seed_reports,
+        similarity_to_question,
+    )
+    from graphlens_pipeline.localgraph import build_subgraph
+    from graphlens_pipeline.ontology import load_ontology
+
+    encoder = tiktoken.get_encoding("o200k_base")
+    embedder = FastEmbedder()
+    client = QdrantClient(url=os.environ["QDRANT_URL"])
+    predicates = load_ontology(args.ontology).predicate_names
+    index = EntityIndex.from_neo4j(driver, args.index_version)
+    return LocalDeps(
+        link=lambda q: link_question(driver, embedder.dense_query, index, q, args.index_version),
+        subgraph=lambda lk: build_subgraph(
+            driver, lk.seeds, embedder.dense_query(lk.question), predicates, args.index_version
+        ),
+        reports=lambda lk: seed_reports(driver, lk.seeds, args.index_version),
+        unit_rows=lambda ids: postgres_unit_rows(engine, ids),
+        unit_similarity=lambda lk, ids: similarity_to_question(
+            embedder.dense_query(lk.question), qdrant_unit_vectors(client, ids, LIVE_ALIAS)
+        ),
+        count_tokens=lambda s: len(encoder.encode(s)),
+        index=index,
+        plain_hits=lambda q: [p.unit_id for p in search_passages(client, engine, embedder, q, k=6)],
+    )
+
+
+def _review_phase4(args) -> int:
+    import json
+
+    from graphlens_pipeline.evalset import render_review
+    from graphlens_pipeline.reviewsheets import render_relate_review, render_unanswerable_review
+
+    def load(name: str) -> list[dict]:
+        return json.loads((args.dir / name).read_text(encoding="utf-8"))["questions"]
+
+    (args.out_dir / "REVIEW_LOCAL_HARD.md").write_text(
+        render_review(load("local_hard.json")), encoding="utf-8"
+    )
+    (args.out_dir / "REVIEW_RELATE.md").write_text(
+        render_relate_review(load("relate_pairs.json")), encoding="utf-8"
+    )
+    (args.out_dir / "REVIEW_UNANSWERABLE.md").write_text(
+        render_unanswerable_review(load("unanswerable.json")), encoding="utf-8"
+    )
+    print("wrote REVIEW_LOCAL_HARD.md, REVIEW_RELATE.md, REVIEW_UNANSWERABLE.md")
+    return 0
+
+
+def _local_eval(engine, args) -> int:
+    """The lean paid evaluation of Phase 4 (see localeval.py). --dry-run only estimates."""
+    import dataclasses
+    import json
+    import time
+    from datetime import date
+
+    import tiktoken
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import AnswerError, answer_question
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.globalsearch import select_communities
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localanswer import answer_local
+    from graphlens_pipeline.localcontext import postgres_unit_rows
+    from graphlens_pipeline.localeval import (
+        AnswerRecord,
+        check_support,
+        paired,
+        refusal_accuracy,
+        run_correctness,
+        summarize,
+        support_sample,
+    )
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.relate import answer_relate
+    from graphlens_pipeline.router import route_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+
+    def load(path):
+        return json.loads(path.read_text(encoding="utf-8"))["questions"]
+
+    hard = load(args.dir / "local_hard.json")
+    unanswerable = load(args.dir / "unanswerable.json")
+    pairs = load(args.dir / "relate_pairs.json")
+    n_hard, n_un, n_rel = len(hard), len(unanswerable), len(pairs)
+    # per-call prices checked on real calls: a local answer about $0.0035, a baseline answer
+    # $0.0013, a judge call $0.0004, a support check $0.001, a relate explanation $0.0016
+    estimate = (
+        n_hard * (0.0013 + 2 * 0.0035) + 3 * n_hard * 0.0004 + 20 * 0.001
+        + n_un * 0.5 * 0.0035 + n_rel * 0.0016 + 80 * 0.3 * 0.0003
+    )  # fmt: skip
+    if args.dry_run:
+        print(json.dumps({
+            "hard_questions": n_hard, "systems": 3, "answers": 3 * n_hard,
+            "correctness_judgements": 3 * n_hard, "support_checks": 20,
+            "unanswerable_questions": n_un, "relate_pairs": n_rel,
+            "cost_usd_estimate": round(estimate, 3),
+            "cost_usd_with_margin": round(estimate * 1.4, 3),
+        }, indent=2))  # fmt: skip
+        print("Per-call prices come from real calls; nothing was spent.")
+        return 0
+
+    llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    encoder = tiktoken.get_encoding("o200k_base")
+    predicates = load_ontology(args.ontology).predicate_names
+    qdrant = QdrantClient(url=os.environ["QDRANT_URL"])
+    embedder = FastEmbedder()
+    spent = 0.0
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = _local_deps(engine, driver, args)
+        index = deps.index
+        no_reports = dataclasses.replace(deps, reports=lambda lk: [])
+
+        def local_fn(variant):
+            def run(question):
+                started = time.monotonic()
+                answer, context = answer_local(variant, llm, question)
+                cited = [c for c in answer.check.cited if c.startswith("T")]
+                passages = {}
+                if context:
+                    shown = context.by_label()
+                    passages = {c: shown[c].text for c in cited if c in shown}
+                return AnswerRecord(
+                    "local", answer.text, answer.status, answer.cost_usd,
+                    round(time.monotonic() - started, 2), answer.check.status,
+                    answer.check.cited, passages,
+                )  # fmt: skip
+
+            return run
+
+        def baseline_fn(question):
+            started = time.monotonic()
+            try:
+                result = answer_question(question, qdrant, engine, embedder, llm, k=6)
+            except AnswerError as error:
+                raise LlmError(f"baseline failed: {error}") from error
+            return AnswerRecord(
+                "baseline", result.answer, "refused" if result.refused else "answered",
+                result.cost_usd or 0.0, round(time.monotonic() - started, 2),
+            )  # fmt: skip
+
+        fns = {"baseline": baseline_fn, "local_no_reports": local_fn(no_reports),
+               "local": local_fn(deps)}  # fmt: skip
+        rows, cost, skipped = run_correctness(
+            engine, llm, hard, fns, args.max_cost_usd,
+            on_progress=lambda d, n, c: print(f"  answers {d}/{n}, ${c:.4f}"),
+        )  # fmt: skip
+        spent += cost
+        summary = summarize(rows)
+
+        support = {"checked": 0, "supported": 0, "answers": 0}
+        for row in support_sample(rows, "local", 20):
+            if spent >= args.max_cost_usd:
+                break
+            try:
+                checked, supported, price = check_support(engine, llm, row)
+            except LlmError:
+                continue
+            spent += price
+            support["checked"] += checked
+            support["supported"] += supported
+            support["answers"] += 1
+        support["precision"] = (
+            round(support["supported"] / support["checked"], 3) if support["checked"] else None
+        )
+
+        def status_of(question: str) -> str:
+            route = route_question(question, index, llm)
+            if route.mode == "relate":
+                result = answer_relate(
+                    driver, llm, index, question, predicates, args.index_version,
+                    lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+                )  # fmt: skip
+                return result.status
+            if route.mode == "global":
+                chosen = select_communities(
+                    driver, embedder.dense_query, question, args.index_version
+                )
+                if not chosen:
+                    return "no_report"
+                return "answered"
+            if route.mode == "baseline":
+                try:
+                    return "refused" if answer_question(
+                        question, qdrant, engine, embedder, llm, k=6
+                    ).refused else "answered"  # fmt: skip
+                except AnswerError:
+                    return "refused"
+            return fns["local"](question).status
+
+        statuses = {}
+        for q in unanswerable:
+            if spent >= args.max_cost_usd:
+                break
+            statuses[q["id"]] = status_of(q["question"])
+        refusal = refusal_accuracy(statuses)
+
+        relate = {"pairs": 0, "path_found": 0, "right_length": 0, "answered": 0, "verified": 0}
+        for q in pairs:
+            if spent >= args.max_cost_usd:
+                break
+            result = answer_relate(
+                driver, llm, index, q["question"], predicates, args.index_version,
+                lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+            )  # fmt: skip
+            spent += result.cost_usd
+            relate["pairs"] += 1
+            relate["path_found"] += bool(result.paths)
+            relate["right_length"] += (
+                bool(result.paths) and result.paths[0].length == q["expected_hops"]
+            )
+            relate["answered"] += result.status == "answered"
+            relate["verified"] += result.check.status == "verified"
+
+    label = args.label or date.today().isoformat()
+    report = {
+        "correctness": summary,
+        "local_vs_baseline": paired(rows, "local", "baseline"),
+        "local_vs_no_reports": paired(rows, "local", "local_no_reports"),
+        "support": support, "refusal": refusal, "relate": relate,
+        "skipped_by_cap": skipped, "cost_usd": round(spent, 4),
+        "answers": [
+            {"id": r.question_id, "system": r.system, "status": r.record.status,
+             "verdict": r.verdict, "reason": r.reason, "text": r.record.text,
+             "check": r.record.check_status, "failed": r.failed}
+            for r in rows
+        ],
+    }  # fmt: skip
+    (args.out_dir / f"local-eval-{label}.json").write_text(
+        json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8"
+    )
+    for system, s in summary.items():
+        print(f"{system}: {s['correct']} correct, {s['partial']} partial, {s['incorrect']} "
+              f"incorrect of {s['questions']} (share correct {s['share_correct']}, "
+              f"interval {s['ci95']}), mean {s['mean_seconds']} s")  # fmt: skip
+    print("local vs baseline:", report["local_vs_baseline"])
+    print("citation support:", support)
+    print("refusal:", refusal)
+    print("relate:", relate)
+    print(f"cost ${spent:.4f}")
+    return 0
+
+
+def _route_eval(args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EntityIndex
+    from graphlens_pipeline.router import route_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+    questions = [
+        q
+        for path in args.questions
+        for q in json.loads(path.read_text(encoding="utf-8"))["questions"]
+    ]
+
+    def acceptable(q: dict) -> set[str]:
+        """A one-fact question about a named paper may go to baseline or local; a multi-hop
+        one to local; a corpus-wide one to global; a pair question to relate."""
+        if q.get("expected_modes"):
+            return set(q["expected_modes"])
+        if q["kind"] == "global":
+            return {"global"}
+        if q["kind"] == "relate":
+            return {"relate"}
+        return {"baseline", "local"} if q.get("hops", 1) <= 1 else {"local"}
+
+    right = 0
+    by_kind: dict[str, list[int]] = {}
+    for q in questions:
+        route = route_question(q["question"], index)
+        ok = route.mode in acceptable(q)
+        right += ok
+        by_kind.setdefault(q["kind"], []).append(int(ok))
+        if args.show_misses and not ok:
+            print(f"  MISS {q['id']}: routed {route.mode} ({route.confidence:.2f}), "
+                  f"expected {sorted(acceptable(q))}: {q['question'][:90]}")  # fmt: skip
+    share = right / len(questions)
+    print(f"router (rules only): {right} of {len(questions)} acceptable ({share:.0%})")
+    for kind, results in sorted(by_kind.items()):
+        print(f"  {kind}: {sum(results)} of {len(results)}")
+    return 0
+
+
+def _ask_auto(engine, args) -> int:
+    """Route the question, then run the chosen mode through the same commands as before."""
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EntityIndex
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.router import route_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    llm = None
+    if not args.route_only:
+        try:
+            llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+        except LlmError as error:
+            print(f"Cannot start: {error}", file=sys.stderr)
+            return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+    route = route_question(args.question, index, llm, args.mode)
+    note = " (low confidence)" if route.ran_as_fallback else ""
+    print(
+        f"mode: {route.mode}{note} | chosen by {route.source}, confidence {route.confidence:.2f}"
+        f" | {route.reason}"
+    )
+    if route.ran_as_fallback:
+        print("  The question was unclear, so it ran as local. Force a mode with --mode.")
+    if args.route_only:
+        return 0
+    args.show_context = False
+    args.paths_only = False
+    if route.mode == "local":
+        return _local_ask(engine, args)
+    if route.mode == "relate":
+        return _relate(engine, args)
+    if route.mode == "global":
+        args.level, args.max_reports, args.threshold = 1, 40, None
+        args.no_dynamic, args.select_only = False, False
+        return _global_ask(args)
+    return _ask(engine, args.question, 6)
+
+
+def _relate(engine, args) -> int:
+    import tiktoken
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EmptyQuestion, EntityIndex
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localcontext import postgres_unit_rows
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.relate import answer_relate, find_paths, link_pair, shared_communities
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    predicates = load_ontology(args.ontology).predicate_names
+    encoder = tiktoken.get_encoding("o200k_base")
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        try:
+            if args.paths_only:
+                ends, early = link_pair(index, args.question)
+                if early:
+                    print(f"{early.status}: {early.reason} {'; '.join(early.options)}")
+                    return 0
+                paths = find_paths(driver, ends[0].id, ends[1].id, predicates, args.index_version)
+                print(f"{ends[0].name}  <->  {ends[1].name}: {len(paths)} path(s)")
+                for path in paths:
+                    names = " | ".join(f"{h.predicate}" for h in path.hops)
+                    print("  " + " - ".join(n["name"] for n in path.nodes) + f"   [{names}]")
+                if not paths:
+                    for c in shared_communities(driver, ends[0].id, ends[1].id, args.index_version):
+                        print(f"  shared community (level {c['level']}): {c['title']}")
+                return 0
+            llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+            answer = answer_relate(
+                driver, llm, index, args.question, predicates, args.index_version,
+                lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+            )  # fmt: skip
+        except (EmptyQuestion, LlmError) as error:
+            print(f"Cannot answer: {error}")
+            return 1
+    print(f"mode: relate | status: {answer.status} | {' <-> '.join(answer.ends)}")
+    for path in answer.paths:
+        print("  " + " - ".join(n["name"] for n in path.nodes))
+    if answer.text:
+        print(chr(10) + answer.text + chr(10))
+        print(f"citation check: {answer.check.status}; cited {answer.check.cited}")
+        if answer.check.unknown_labels:
+            print(f"  labels not in the context: {answer.check.unknown_labels}")
+        for sentence in answer.check.unsupported:
+            print(f"  names an entity the context never mentions: {sentence}")
+    else:
+        print(answer.reason, "; ".join(answer.options))
+        for c in answer.shared_communities:
+            print(f"  shared community (level {c['level']}, {c['size']} entities): {c['title']}")
+        print(answer.suggestion)
+    print(f"cost ${answer.cost_usd:.5f}")
+    return 0
+
+
+def _local_ask(engine, args) -> int:
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EmptyQuestion
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localanswer import answer_local
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = _local_deps(engine, driver, args)
+        try:
+            answer, context = answer_local(deps, llm, args.question)
+        except EmptyQuestion as error:
+            print(f"Cannot answer: {error}")
+            return 1
+    print(f"mode: local | status: {answer.status} | seeds: {', '.join(answer.seeds) or '-'}")
+    if answer.status == "answered":
+        print(chr(10) + answer.text + chr(10))
+        check = answer.check
+        print(f"citation check: {check.status}; cited {check.cited}")
+        if check.unknown_labels:
+            print(f"  labels not in the context: {check.unknown_labels}")
+        for sentence in check.unsupported:
+            print(f"  names an entity the context never mentions: {sentence}")
+    else:
+        print(answer.reason)
+        if answer.options:
+            print("options: " + "; ".join(answer.options))
+        print(answer.suggestion)
+    print(f"cost ${answer.cost_usd:.5f}, {answer.tokens_in} tokens in, {answer.seconds} s")
+    if args.show_context and context:
+        print(context.prompt)
+    return 0
+
+
+def _local_context(engine, args) -> int:
+    import tiktoken
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.embed import LIVE_ALIAS, FastEmbedder
+    from graphlens_pipeline.linking import EntityIndex, link_question
+    from graphlens_pipeline.localcontext import (
+        assemble,
+        candidate_units,
+        postgres_unit_rows,
+        qdrant_unit_vectors,
+        seed_reports,
+        similarity_to_question,
+    )
+    from graphlens_pipeline.localgraph import build_subgraph
+    from graphlens_pipeline.ontology import load_ontology
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    qdrant_url = os.environ.get("QDRANT_URL")
+    if not (uri and user and password and qdrant_url):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    encoder = tiktoken.get_encoding("o200k_base")
+    embedder = FastEmbedder()
+    predicates = load_ontology(args.ontology).predicate_names
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        link = link_question(driver, embedder.dense_query, index, args.question, args.index_version)
+        if not link.confident:
+            print(f"Not enough to go on (best vector score {link.best_vector_score:.3f}).")
+            return 0
+        vector = embedder.dense_query(link.question)
+        graph = build_subgraph(driver, link.seeds, vector, predicates, args.index_version)
+        reports = seed_reports(driver, link.seeds, args.index_version)
+    cited = candidate_units(graph)
+    similarity = similarity_to_question(
+        vector, qdrant_unit_vectors(QdrantClient(url=qdrant_url), list(cited), LIVE_ALIAS)
+    )
+    rows = postgres_unit_rows(engine, list(cited))
+    context = assemble(
+        link.question, graph, rows, similarity, reports, lambda s: len(encoder.encode(s))
+    )
+    print("seeds:", ", ".join(f"{s.name} ({s.source}, w={s.weight})" for s in link.seeds))
+    print(f"subgraph: {len(graph.nodes)} nodes, {len(graph.edges)} edges, {graph.candidates} found")
+    print(f"context tokens: {context.tokens} (total {context.total_tokens} of 8000)")
+    print(f"left out: {context.left_out}; items: {len(context.items)}")
+    if args.show:
+        print(context.prompt)
+    return 0
+
+
+def _link_entities(args) -> int:
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.linking import EmptyQuestion, EntityIndex, link_question
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    questions = list(args.question)
+    if args.file:
+        document = json.loads(args.file.read_text(encoding="utf-8"))
+        questions += [f"{q['id']}|{q['question']}" for q in document["questions"]]
+    if not questions:
+        print("Give a question or --file.", file=sys.stderr)
+        return 2
+    embedder = FastEmbedder()
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        for item in questions:
+            label, _, text = item.partition("|") if "|" in item and args.file else ("", "", item)
+            try:
+                result = link_question(
+                    driver, embedder.dense_query, index, text, args.index_version,
+                    args.min_vector_score,
+                )  # fmt: skip
+            except EmptyQuestion as error:
+                print(f"{label}: {error}")
+                continue
+            names = ", ".join(
+                f"{s.name} ({s.type}, {s.source}{' AMBIGUOUS' if s.ambiguous else ''}"
+                f"{'' if s.source == 'name' else f' {s.score:.3f}'})"
+                for s in result.seeds
+            )
+            print(f"{label} best vector {result.best_vector_score:.3f} | {names or 'no seeds'}")
+    return 0
 
 
 def _global_bench(args) -> int:

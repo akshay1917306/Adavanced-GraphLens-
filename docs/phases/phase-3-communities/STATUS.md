@@ -4,11 +4,10 @@ Last updated: 2026-10-25
 
 ## State
 
-**Approved by the owner on 2026-10-25 and being pushed.** Everything in the plan is built and
+**Approved by the owner on 2026-10-25, merged (PR #4) and tagged `phase-3` (ce6f4de).** Everything in the plan is built and
 run. The owner approved without doing the two review samples (20 community ratings, 10 judge
 verdict checks); those two checklist items stay open and are carried into Phase 4.
-Local branch `phase-3/communities`, branched from `main` at 6409007 (tagged `phase-2`, merged as
-PR #3). Nothing from Phase 3 is pushed.
+Branch `phase-3/communities` was branched from `main` at 6409007 and merged with CI green.
 
 ## Completed
 
