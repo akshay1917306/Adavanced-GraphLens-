@@ -161,6 +161,13 @@ def main(argv: list[str] | None = None) -> int:
     lgraph.add_argument("--questions", type=Path, default=eval_dir / "questions.json")
     lgraph.add_argument("--kind", default="local")
     lgraph.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    lctx = sub.add_parser(
+        "local-context", help="show the context local search would send (no model, no cost)"
+    )
+    lctx.add_argument("question")
+    lctx.add_argument("--index-version", default="idx2-full-g0")
+    lctx.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    lctx.add_argument("--show", action="store_true", help="print the whole prompt text")
     bench = sub.add_parser(
         "global-bench", help="time and price fresh global searches, no cache (costs money)"
     )
@@ -270,6 +277,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "link-entities":
         return _link_entities(args)
+
+    if args.command == "local-context":
+        return _local_context(engine, args)
 
     if args.command == "local-graph-eval":
         return _local_graph_eval(args)
@@ -656,6 +666,58 @@ def _local_graph_eval(args) -> int:
             f"  {name}: {coverage:.0%} on average, all units reached for {full}, {nodes:.0f} nodes"
         )
     print(f"  questions with at least one seed: {sum(seed_hits)} of {len(seed_hits)}")
+    return 0
+
+
+def _local_context(engine, args) -> int:
+    import tiktoken
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.embed import LIVE_ALIAS, FastEmbedder
+    from graphlens_pipeline.linking import EntityIndex, link_question
+    from graphlens_pipeline.localcontext import (
+        assemble,
+        candidate_units,
+        postgres_unit_rows,
+        qdrant_unit_vectors,
+        seed_reports,
+        similarity_to_question,
+    )
+    from graphlens_pipeline.localgraph import build_subgraph
+    from graphlens_pipeline.ontology import load_ontology
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    qdrant_url = os.environ.get("QDRANT_URL")
+    if not (uri and user and password and qdrant_url):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    encoder = tiktoken.get_encoding("o200k_base")
+    embedder = FastEmbedder()
+    predicates = load_ontology(args.ontology).predicate_names
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        link = link_question(driver, embedder.dense_query, index, args.question, args.index_version)
+        if not link.confident:
+            print(f"Not enough to go on (best vector score {link.best_vector_score:.3f}).")
+            return 0
+        vector = embedder.dense_query(link.question)
+        graph = build_subgraph(driver, link.seeds, vector, predicates, args.index_version)
+        reports = seed_reports(driver, link.seeds, args.index_version)
+    cited = candidate_units(graph)
+    similarity = similarity_to_question(
+        vector, qdrant_unit_vectors(QdrantClient(url=qdrant_url), list(cited), LIVE_ALIAS)
+    )
+    rows = postgres_unit_rows(engine, list(cited))
+    context = assemble(
+        link.question, graph, rows, similarity, reports, lambda s: len(encoder.encode(s))
+    )
+    print("seeds:", ", ".join(f"{s.name} ({s.source}, w={s.weight})" for s in link.seeds))
+    print(f"subgraph: {len(graph.nodes)} nodes, {len(graph.edges)} edges, {graph.candidates} found")
+    print(f"context tokens: {context.tokens} (total {context.total_tokens} of 8000)")
+    print(f"left out: {context.left_out}; items: {len(context.items)}")
+    if args.show:
+        print(context.prompt)
     return 0
 
 
