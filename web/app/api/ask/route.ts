@@ -10,5 +10,5 @@ export async function POST(request: Request) {
       { status: 413 },
     );
   }
-  return forward("/api/v1/ask", { method: "POST", body });
+  return forward(request, "/api/v1/ask", { method: "POST", body });
 }

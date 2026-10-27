@@ -75,6 +75,7 @@ services:
       REDIS_URL: redis://redis:6379/0
       ADMIN_API_KEY: ${ADMIN_API_KEY:-}
       ANSWER_MODE: ${ANSWER_MODE:-replay}
+      VISITOR_TOKEN_SECRET: ${VISITOR_TOKEN_SECRET:-}
       INDEX_VERSION: ${INDEX_VERSION:-idx2-full-g0}
     ports:
       - "127.0.0.1:${API_PORT:-8000}:8000"
@@ -92,6 +93,7 @@ services:
     build: ./web
     environment:
       API_URL: http://api:8000
+      COOKIE_SECURE: ${COOKIE_SECURE:-}
     ports:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
     depends_on:

@@ -3,11 +3,13 @@
 import hmac
 import logging
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import Depends, FastAPI, Header, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.ask import AskService, EngineUnavailable, get_ask_service, set_ask_service
 from app.config import get_settings
@@ -21,6 +23,14 @@ from app.schemas import (
     FeedbackResponse,
 )
 from app.store import Store, get_store
+from app.visitor import (
+    VisitorNotConfigured,
+    VisitorRequired,
+    get_visitor,
+    issue_token,
+    signing_secret,
+    verify_token,
+)
 
 log = logging.getLogger("graphlens.api")
 
@@ -54,6 +64,16 @@ async def engine_unavailable(request: Request, error: EngineUnavailable) -> JSON
     return _error("engine_unavailable", "The answer engine is not available right now.", 503)
 
 
+@app.exception_handler(VisitorRequired)
+async def visitor_required(request: Request, error: VisitorRequired) -> JSONResponse:
+    return _error("visitor_required", "A valid visitor token is required.", 401)
+
+
+@app.exception_handler(VisitorNotConfigured)
+async def visitor_not_configured(request: Request, error: VisitorNotConfigured) -> JSONResponse:
+    return _error("visitor_not_configured", "Visitor tokens are not set up.", 503)
+
+
 @app.exception_handler(Exception)
 async def internal_error(request: Request, error: Exception) -> JSONResponse:
     log.error("unhandled error: %s", type(error).__name__)  # type only: no text, no stack
@@ -69,16 +89,41 @@ def health(response: Response) -> dict:
     return result
 
 
+class VisitorRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    token: str | None = Field(default=None, max_length=200)
+
+
+class VisitorResponse(BaseModel):
+    token: str
+    max_age_seconds: int
+
+
+@app.post("/api/v1/visitor", response_model=VisitorResponse)
+def visitor(body: VisitorRequest, store: Annotated[Store, Depends(get_store)]) -> VisitorResponse:
+    """Give the browser a signed token: renewed for a known visitor, else for a new visitor."""
+    secret = signing_secret()
+    ttl = get_settings().visitor_token_ttl_days * 86400
+    known = verify_token(body.token or "", secret)
+    if known is None or not store.visitor_exists(known):
+        known = store.create_visitor()
+    return VisitorResponse(token=issue_token(known, secret, ttl), max_age_seconds=ttl)
+
+
 @app.post("/api/v1/ask", response_model=AskResponse)
 def ask(
     body: AskRequest,
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
     service: Annotated[AskService, Depends(get_ask_service)],
     store: Annotated[Store, Depends(get_store)],
 ) -> AskResponse:
     """Answer one question with its evidence. A refusal or a clarify request is a normal 200."""
     response = service.ask(body.question, body.compare)
     try:
-        answer_id = store.save_answer(body.question, response.answer, get_settings().index_version)
+        answer_id = store.save_answer(
+            visitor_id, body.question, response.answer, get_settings().index_version
+        )
     except Exception as error:  # the answer is still useful without the record
         log.error("could not save the answer: %s", type(error).__name__)
         return response.model_copy(update={"saved": False})
@@ -87,9 +132,12 @@ def ask(
 
 @app.post("/api/v1/feedback", response_model=None)
 def feedback(
-    body: FeedbackRequest, store: Annotated[Store, Depends(get_store)]
+    body: FeedbackRequest,
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
 ) -> FeedbackResponse | JSONResponse:
-    if not store.save_feedback(body.answer_id, body.rating, body.reason, body.comment):
+    saved = store.save_feedback(visitor_id, body.answer_id, body.rating, body.reason, body.comment)
+    if not saved:
         return _error("unknown_answer", "No such answer.", 404)
     return FeedbackResponse(saved=True)
 

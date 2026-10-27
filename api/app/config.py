@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     # Key for the read-only status page. Empty means the status endpoint is switched off.
     admin_api_key: SecretStr = SecretStr("")
 
+    # Signs the anonymous visitor token. Empty means no token can be issued (deny by default).
+    visitor_token_secret: SecretStr = SecretStr("")
+    visitor_token_ttl_days: int = 365
+
     # The only browser origin allowed to call the API (CORS).
     web_origin: str = "http://localhost:3000"
 

@@ -1,6 +1,6 @@
 """Saving answers, feedback and reading the run status, in the tables that already exist.
 
-There is no sign-in yet (Phase 6), so every request belongs to one anonymous local visitor.
+Every row belongs to an anonymous visitor (signed token, see visitor.py); there is no sign-in.
 All SQL is parameterised; no text from a question or an answer is ever put into a query string.
 """
 
@@ -12,7 +12,6 @@ from sqlalchemy import Engine, create_engine, text
 from app.config import get_settings
 from app.schemas import Answer
 
-LOCAL_VISITOR = "local-demo"  # marker in visitors.ip_hash for the single local visitor
 TITLE_CHARS = 80
 
 
@@ -20,28 +19,28 @@ class Store:
     def __init__(self, engine: Engine) -> None:
         self._engine = engine
 
-    def _visitor_id(self, conn) -> UUID:
-        row = conn.execute(
-            text("SELECT id FROM visitors WHERE ip_hash = :marker ORDER BY first_seen_at LIMIT 1"),
-            {"marker": LOCAL_VISITOR},
-        ).first()
-        if row:
-            conn.execute(
-                text("UPDATE visitors SET last_seen_at = now() WHERE id = :id"), {"id": row[0]}
-            )
-            return row[0]
-        return conn.execute(
-            text("INSERT INTO visitors (ip_hash) VALUES (:marker) RETURNING id"),
-            {"marker": LOCAL_VISITOR},
-        ).scalar_one()
+    def create_visitor(self) -> UUID:
+        with self._engine.begin() as conn:
+            return conn.execute(
+                text("INSERT INTO visitors DEFAULT VALUES RETURNING id")
+            ).scalar_one()
 
-    def save_answer(self, question: str, answer: Answer, index_version: str) -> str:
+    def visitor_exists(self, visitor_id: UUID) -> bool:
+        with self._engine.begin() as conn:
+            found = conn.execute(
+                text("UPDATE visitors SET last_seen_at = now() WHERE id = :id RETURNING id"),
+                {"id": visitor_id},
+            ).first()
+        return found is not None
+
+    def save_answer(
+        self, visitor_id: UUID, question: str, answer: Answer, index_version: str
+    ) -> str:
         """Store the question, the answer, its metadata and its citations. Returns the answer id."""
         with self._engine.begin() as conn:
-            visitor = self._visitor_id(conn)
             conversation = conn.execute(
                 text("INSERT INTO conversations (visitor_id, title) VALUES (:v, :t) RETURNING id"),
-                {"v": visitor, "t": question[:TITLE_CHARS]},
+                {"v": visitor_id, "t": question[:TITLE_CHARS]},
             ).scalar_one()
             message = (
                 "INSERT INTO messages (conversation_id, role, content, mode_requested) "
@@ -89,13 +88,22 @@ class Store:
         return str(answer_id)
 
     def save_feedback(
-        self, answer_id: UUID, rating: str, reason: str | None, comment: str | None
+        self,
+        visitor_id: UUID,
+        answer_id: UUID,
+        rating: str,
+        reason: str | None,
+        comment: str | None,
     ) -> bool:
-        """Store or replace the visitor's rating. False when there is no such answer."""
+        """Store or replace the visitor's rating. False when the answer is not this visitor's."""
         with self._engine.begin() as conn:
             known = conn.execute(
-                text("SELECT 1 FROM messages WHERE id = :id AND role = 'assistant'"),
-                {"id": answer_id},
+                text(
+                    "SELECT 1 FROM messages m JOIN conversations c ON c.id = m.conversation_id "
+                    "WHERE m.id = :id AND m.role = 'assistant' AND c.visitor_id = :v "
+                    "AND c.deleted_at IS NULL"
+                ),
+                {"id": answer_id, "v": visitor_id},
             ).first()
             if not known:
                 return False
@@ -109,7 +117,7 @@ class Store:
                 ),
                 {
                     "m": answer_id,
-                    "v": self._visitor_id(conn),
+                    "v": visitor_id,
                     "rating": rating,
                     "reason": reason,
                     "comment": comment,
