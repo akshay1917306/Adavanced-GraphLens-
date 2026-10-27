@@ -183,6 +183,18 @@ def main(argv: list[str] | None = None) -> int:
     rel.add_argument("--index-version", default="idx2-full-g0")
     rel.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     rel.add_argument("--paths-only", action="store_true", help="find paths, call no model")
+    rexp = sub.add_parser(
+        "export-replay",
+        help="build the saved-answer file for the UI from a finished evaluation (no model, free)",
+    )
+    rexp.add_argument("--eval-json", type=Path, required=True)
+    rexp.add_argument("--questions", type=Path, required=True, help="local_hard.json")
+    rexp.add_argument("--unanswerable", type=Path, required=True, help="unanswerable.json")
+    rexp.add_argument("--out", type=Path, required=True)
+    rexp.add_argument("--count", type=int, default=5, help="how many answered questions")
+    rexp.add_argument("--refuse", nargs="*", default=["U01", "U05"], help="unanswerable ids")
+    rexp.add_argument("--index-version", default="idx2-full-g0")
+    rexp.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     ask_any = sub.add_parser(
         "ask-auto", help="pick the right mode and answer (local, global, relate or baseline)"
     )
@@ -334,6 +346,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "relate":
         return _relate(engine, args)
+
+    if args.command == "export-replay":
+        return _export_replay(engine, args)
 
     if args.command == "ask-auto":
         return _ask_auto(engine, args)
@@ -1164,6 +1179,64 @@ def _relate(engine, args) -> int:
             print(f"  shared community (level {c['level']}, {c['size']} entities): {c['title']}")
         print(answer.suggestion)
     print(f"cost ${answer.cost_usd:.5f}")
+    return 0
+
+
+def _export_replay(engine, args) -> int:
+    """Free: rebuild passages and graphs for saved answers; keep only entries that still match."""
+    import json
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.replayexport import (
+        baseline_entry,
+        build_local_entry,
+        build_refusal_entry,
+    )
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    saved = json.loads(args.eval_json.read_text(encoding="utf-8"))["answers"]
+    by_system = {(a["id"], a["system"]): a for a in saved}
+    questions = {
+        q["id"]: q["question"]
+        for q in json.loads(args.questions.read_text(encoding="utf-8"))["questions"]
+    }
+    refusals = {
+        q["id"]: q["question"]
+        for q in json.loads(args.unanswerable.read_text(encoding="utf-8"))["questions"]
+    }
+    entries, skipped = [], []
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = _local_deps(engine, driver, args)
+        for qid, question in questions.items():
+            if len(entries) >= args.count:
+                break
+            local = by_system.get((qid, "local"))
+            base = by_system.get((qid, "baseline"))
+            if not (local and base and local["status"] == "answered"):
+                continue
+            if local["verdict"] != "correct" or local["check"] != "verified":
+                continue
+            entry, why = build_local_entry(deps, deps.index, question, local)
+            if entry is None:
+                skipped.append((qid, why))
+                continue
+            entries.append(
+                {"id": qid, "question": question, "answer": entry, "baseline": baseline_entry(base)}
+            )
+        for qid in args.refuse:
+            entry, why = build_refusal_entry(deps, refusals[qid])
+            if entry is None:
+                skipped.append((qid, why))
+                continue
+            entries.append({"id": qid, "question": refusals[qid], "answer": entry})
+    args.out.write_text(json.dumps({"entries": entries}, indent=1, ensure_ascii=False), "utf-8")
+    print(f"wrote {len(entries)} entries to {args.out}")
+    for qid, why in skipped:
+        print(f"  skipped {qid}: {why}")
     return 0
 
 

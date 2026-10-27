@@ -30,6 +30,18 @@ class Settings(BaseSettings):
     qdrant_url: str = "http://localhost:6333"
     redis_url: str = "redis://localhost:6379/0"
 
+    # Index version the answers are read from (stored with every answer).
+    index_version: str = "idx2-full-g0"
+
+    # Where answers come from: "replay" (saved answers, no model) or "off" (no engine).
+    answer_mode: str = "replay"
+
+    # Key for the read-only status page. Empty means the status endpoint is switched off.
+    admin_api_key: SecretStr = SecretStr("")
+
+    # The only browser origin allowed to call the API (CORS).
+    web_origin: str = "http://localhost:3000"
+
     # Seconds to wait for each dependency in the health check.
     health_timeout_s: float = 3.0
 
