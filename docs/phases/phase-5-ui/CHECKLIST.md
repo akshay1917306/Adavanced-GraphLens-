@@ -41,8 +41,8 @@ Mark an item only after it was run, and say where it was run.
       **Result:** API unit tests (500 and rejected input); the screen shows only plain messages for API down and network down (checked in the browser).
 - [x] Keyboard use works; contrast checked; every control has a label
       **Result:** contrast ratios computed for both themes: all text pairs at least 5.0 (AA needs 4.5); every control has a label; graph dots are focusable buttons. A full keyboard walk-through by hand was not done.
-- [ ] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green
-      Partly: ruff, 32 API tests, eslint, tsc and next build pass in Docker; CI not run yet.
+- [x] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green
+      **Result:** passed in Docker, and all 4 CI jobs (pipeline, api, web, compose) passed on PR #7.
 - [x] Real screens checked in the built-in browser
       **Result:** done on 2026-10-27 (desktop dark, mobile light); two fixes came from it (stale rating state, overlapping graph labels).
 

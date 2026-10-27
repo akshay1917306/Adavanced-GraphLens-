@@ -46,7 +46,7 @@ explorer (all later or backlog).
 | Browser: API down and network down | plain messages |
 | Built web files searched for keys and internal addresses | none found |
 | Contrast, both themes | all pairs at least 5.0 |
-| CI | not run yet |
+| CI (PR #7) | all 4 jobs passed |
 
 ## 4. Honest limits
 
