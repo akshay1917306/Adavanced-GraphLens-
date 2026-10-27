@@ -5,7 +5,7 @@ import logging
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends, FastAPI, Header, Request, Response, status
+from fastapi import Depends, FastAPI, Header, Query, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -18,9 +18,15 @@ from app.replay import ReplayService
 from app.schemas import (
     AskRequest,
     AskResponse,
+    ConversationDetail,
+    DeletedCounts,
     ErrorResponse,
     FeedbackRequest,
     FeedbackResponse,
+    HistoryList,
+    Preferences,
+    SavedList,
+    SaveRequest,
 )
 from app.store import Store, get_store
 from app.visitor import (
@@ -41,7 +47,7 @@ app = FastAPI(title="GraphLens API", version="0.0.1")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[get_settings().web_origin],
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type"],
 )
 
@@ -140,6 +146,95 @@ def feedback(
     if not saved:
         return _error("unknown_answer", "No such answer.", 404)
     return FeedbackResponse(saved=True)
+
+
+@app.get("/api/v1/history", response_model=HistoryList)
+def history(
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+) -> HistoryList:
+    return HistoryList(items=store.list_history(visitor_id, limit))
+
+
+@app.get("/api/v1/history/{conversation_id}", response_model=None)
+def history_item(
+    conversation_id: UUID,
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> ConversationDetail | JSONResponse:
+    found = store.get_conversation(visitor_id, conversation_id)
+    if found is None:
+        return _error("not_found", "No such conversation.", 404)
+    return ConversationDetail(**found)
+
+
+@app.delete("/api/v1/history/{conversation_id}", response_model=None)
+def delete_history_item(
+    conversation_id: UUID,
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> dict | JSONResponse:
+    if not store.delete_conversation(visitor_id, conversation_id):
+        return _error("not_found", "No such conversation.", 404)
+    return {"deleted": True}
+
+
+@app.delete("/api/v1/me", response_model=DeletedCounts)
+def delete_my_data(
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> DeletedCounts:
+    """Delete this visitor and everything stored for them. The token stops working."""
+    return DeletedCounts(**store.delete_visitor_data(visitor_id))
+
+
+@app.get("/api/v1/saved", response_model=SavedList)
+def saved(
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> SavedList:
+    return SavedList(items=store.list_saved(visitor_id))
+
+
+@app.post("/api/v1/saved", response_model=None)
+def save_answer(
+    body: SaveRequest,
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> dict | JSONResponse:
+    if not store.save_for_later(visitor_id, body.answer_id, body.note):
+        return _error("unknown_answer", "No such answer.", 404)
+    return {"saved": True}
+
+
+@app.delete("/api/v1/saved/{answer_id}", response_model=None)
+def unsave_answer(
+    answer_id: UUID,
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> dict | JSONResponse:
+    if not store.delete_saved(visitor_id, answer_id):
+        return _error("not_found", "Not saved.", 404)
+    return {"deleted": True}
+
+
+@app.get("/api/v1/preferences", response_model=Preferences)
+def get_preferences(
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> Preferences:
+    return Preferences(**store.get_preferences(visitor_id))
+
+
+@app.put("/api/v1/preferences", response_model=Preferences)
+def put_preferences(
+    body: Preferences,
+    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    store: Annotated[Store, Depends(get_store)],
+) -> Preferences:
+    store.set_preferences(visitor_id, body.theme, body.default_mode, body.evidence_panel_open)
+    return body
 
 
 @app.get("/api/v1/status", response_model=None)

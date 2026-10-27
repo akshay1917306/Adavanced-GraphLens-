@@ -4,7 +4,7 @@ Last updated: 2026-10-27
 
 ## State
 
-**Plan approved by the owner on 2026-10-27; build in progress (step 1 done).** Branch
+**Plan approved by the owner on 2026-10-27; build in progress (steps 1 and 2 done).** Branch
 `phase-6/hardening` from `main` at 0593c11 (Phase 5 tagged `phase-5`). Nothing pushed.
 
 ## Completed
@@ -26,6 +26,20 @@ Last updated: 2026-10-27
   for the first visitor's answer, the owner can rate it, a forged cookie is replaced by a new
   visitor, non-JSON posts and direct API calls without a token are refused; the cookie is not
   readable from page JavaScript; the screen still works.
+- Step 2 (API only; the screen comes in step 4): `GET /api/v1/history`, `GET` and `DELETE
+  /api/v1/history/{id}`, `DELETE /api/v1/me` (deletes the visitor and everything under them, returns
+  the counts), `GET`, `POST` and `DELETE /api/v1/saved`, `GET` and `PUT /api/v1/preferences`.
+  Every query is limited to the visitor's own rows and returns "not found" for anything else;
+  every route refuses a missing or forged token. History shows question, answer text, mode, check
+  status and rating; the passages and graph are not stored (no schema change), so an old answer
+  cannot be re-opened with its sources.
+- Checked: 90 API tests pass in Docker (two-visitor tests on a temporary Postgres: privacy of
+  history, saved answers and preferences, hard delete of one conversation and of everything,
+  other visitor untouched), ruff clean. By hand with curl on the running stack: the second visitor
+  cannot open, delete or save the first visitor's rows; delete-all removes the visitor and the old
+  token stops working.
+- Test rows from these curl checks (a few visitors and conversations) are in the local database;
+  they are cleaned at the end of the phase.
 - Known gap until step 5: `POST /api/v1/visitor` can create visitors without limit (rate limits
   come in step 5).
 
@@ -41,4 +55,4 @@ None.
 
 ## Exact next action
 
-Step 2: history list, open one, delete one, delete all, saved answers and preferences (API and tests).
+Step 3 is already covered by step 2's tests; next is step 4 (screen: history, delete with confirmation, save, preferences), then step 5 (rate limits and cost cap).
