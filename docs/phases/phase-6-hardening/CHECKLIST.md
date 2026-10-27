@@ -4,7 +4,8 @@ Mark an item only after it was run, and say where it was run.
 
 ## Build
 
-- [ ] Signed visitor token: forged, expired and missing tokens never reach another visitor's data
+- [x] Signed visitor token: forged, expired and missing tokens never reach another visitor's data
+      **Result:** unit and store tests in Docker (65 pass) and a curl check against the running stack, 2026-10-27.
 - [ ] History list, open one, delete one, delete all my data (rows really gone), save with note, preferences
 - [ ] Every data route checks ownership; reading or deleting another visitor's row returns "not found"
 - [ ] Rate limits per visitor and per address; 429 with `Retry-After`; counters reset
