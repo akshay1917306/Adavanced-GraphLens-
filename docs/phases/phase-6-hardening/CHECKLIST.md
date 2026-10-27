@@ -15,7 +15,8 @@ Mark an item only after it was run, and say where it was run.
 - [x] Daily cost cap stops model calls and says so (tested with a fake model)
       **Result:** unit test with a fake model costing 0.6 per answer and a cap of 1.0: third answer refused with `daily_limit`. Not exercised live (replay answers cost 0).
 - [ ] Admin status writes an audit-log row; wrong or missing key is refused
-- [ ] Screen: history, delete with confirmation, save, preferences, rate-limit message
+- [x] Screen: history, delete with confirmation, save, preferences, rate-limit message
+      **Result:** checked by script in the built-in browser, 2026-10-27 (see STATUS); keyboard-only walk-through not done.
 
 ## Security and quality
 

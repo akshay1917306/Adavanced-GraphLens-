@@ -6,12 +6,13 @@ import EvidenceGraph from "./EvidenceGraph";
 
 interface Props {
   answer: Answer;
+  defaultOpen: boolean;
   selectedLabel: string | null;
   onSelectLabel: (label: string) => void;
 }
 
 // "Why this answer": the sources used and the small evidence graph. Text only, never HTML.
-export default function EvidencePanel({ answer, selectedLabel, onSelectLabel }: Props) {
+export default function EvidencePanel({ answer, defaultOpen, selectedLabel, onSelectLabel }: Props) {
   const [nodeId, setNodeId] = useState<string | null>(null);
   const byRef = new Map(answer.citations.filter((c) => c.ref_id).map((c) => [c.ref_id as string, c]));
   const nameOf = new Map(answer.nodes.map((n) => [n.id, n.label]));
@@ -19,8 +20,10 @@ export default function EvidencePanel({ answer, selectedLabel, onSelectLabel }: 
   const nodePassage = selectedNode ? byRef.get(selectedNode.id) : undefined;
 
   return (
-    <section className="panel" aria-labelledby="why-title">
-      <h2 id="why-title">Why this answer</h2>
+    <details className="panel" open={defaultOpen}>
+      <summary>
+        <h2 id="why-title">Why this answer</h2>
+      </summary>
 
       {answer.citations.length > 0 && (
         <>
@@ -75,6 +78,6 @@ export default function EvidencePanel({ answer, selectedLabel, onSelectLabel }: 
           </p>
         </>
       )}
-    </section>
+    </details>
   );
 }

@@ -89,6 +89,10 @@ export async function forward(request: Request, path: string, options: Options =
   if (sendsJson && !(request.headers.get("content-type") ?? "").startsWith("application/json")) {
     return jsonError("invalid_request", "The request must be JSON.", 415);
   }
+  // A page on another site must not be able to change this visitor's data.
+  if (method !== "GET" && request.headers.get("sec-fetch-site") === "cross-site") {
+    return jsonError("forbidden", "Cross-site requests are not allowed.", 403);
+  }
   const ip = clientIp(request);
   try {
     let token: string | null = null;

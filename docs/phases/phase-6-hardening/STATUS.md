@@ -4,7 +4,7 @@ Last updated: 2026-10-27
 
 ## State
 
-**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2 and 5 done; the screen, headers, audits and load test remain).** Branch
+**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2, 4 and 5 done; headers and logs, audit log, audits and load test remain).** Branch
 `phase-6/hardening` from `main` at 0593c11 (Phase 5 tagged `phase-5`). Nothing pushed.
 
 ## Completed
@@ -56,6 +56,21 @@ Last updated: 2026-10-27
   reset after one minute was tested only with the fake clock, not waited out live.
 - Not yet: the 100-per-day limit and the cost cap were tested with fake counters, not live; the
   screen message for 429 was not looked at in the browser.
+- Step 4 (screen): tabs Ask, My questions, Saved, Settings. My questions lists past questions with
+  "Ask again" (re-runs the full question) and Delete with an inline confirmation; Save under an
+  answer; Saved with an editable note and Remove; Settings with theme, "Why this answer" open by
+  default, and "Delete all my data" (confirmation, then the counts removed). New web routes
+  forward history, saved, preferences and delete-all; ids are checked as UUIDs before they reach
+  an API path; cross-site non-GET requests are refused (`Sec-Fetch-Site`).
+- Checked: web `next build`, eslint and tsc pass in Docker. In the built-in browser, driven by
+  script: ask, save, history list, delete shows a confirmation and Cancel keeps the row, Yes
+  deletes it, Ask again returns to the Ask tab with the full question, saved note persists, theme
+  and panel preferences are stored on the server and still apply after a reload, delete-all removed
+  10 questions and 1 saved answer and the next visit starts clean, the 429 message appears in the
+  red notice, no sideways scroll at 375 px on all four tabs.
+- Not done: keyboard-only walk-through of the new tabs; screenshots of every new tab were not
+  reviewed one by one (the Ask tab with the 429 message was); `default_mode` is stored but has no
+  control (modes stay automatic, CR-0001); no automated web tests.
 - Many test rows (visitors, conversations) exist in the local database after these checks;
   they are cleaned at the end of the phase.
 
@@ -71,4 +86,4 @@ None.
 
 ## Exact next action
 
-Step 4: the screen (history, delete with confirmation, save, preferences, the 429 message), then steps 6 to 9 (headers and logs, admin audit log, audits and secret scan, load test).
+Step 6 (security headers, request ids, log hygiene, admin audit log), then step 7 (audits and secret scanner in CI), step 8 (load test), step 9 (docs and report).

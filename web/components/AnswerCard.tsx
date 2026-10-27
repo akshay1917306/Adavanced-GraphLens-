@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { call } from "@/lib/client";
 import type { Answer, CheckStatus } from "@/lib/types";
 
 const CITATION = /\[((?:[TEC]\d+)(?:\s*,\s*[TEC]\d+)*)\]/g;
@@ -56,8 +57,15 @@ interface Props {
 export default function AnswerCard({ title, answer, answerId, canRate, onPickLabel }: Props) {
   const [rating, setRating] = useState<"up" | "down" | null>(null);
   const [note, setNote] = useState("");
+  const [kept, setKept] = useState(false);
   const labels = new Set(answer.citations.map((c) => c.label));
   const badge = BADGE[answer.check_status];
+
+  async function keep() {
+    const res = await call("/api/saved", "POST", { answer_id: answerId });
+    setKept(res.ok);
+    setNote(res.ok ? "Saved to “Saved answers”." : res.message);
+  }
 
   async function rate(value: "up" | "down") {
     setNote("");
@@ -112,6 +120,9 @@ export default function AnswerCard({ title, answer, answerId, canRate, onPickLab
           </button>
           <button type="button" aria-label="Not helpful" aria-pressed={rating === "down"} onClick={() => rate("down")}>
             👎 No
+          </button>
+          <button type="button" aria-pressed={kept} onClick={keep}>
+            {kept ? "Saved" : "Save"}
           </button>
           <span role="status" className="muted">
             {note}
