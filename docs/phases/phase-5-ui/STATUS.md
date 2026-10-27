@@ -4,8 +4,7 @@ Last updated: 2026-10-27
 
 ## State
 
-**Owner approved Phase 5 on 2026-10-27 (done and checked as listed below). Checkpoint (push, PR, CI, merge, tag) in progress.** Branch `phase-5/api-ui` from `main`
-at a9748ef. Nothing pushed.
+**Phase 5 is done: approved by the owner on 2026-10-27, PR #7 merged (CI green, 4 jobs), tag `phase-5` on the merge commit 8506e32.** Branch `phase-5/api-ui` is merged.
 
 ## Completed
 
@@ -50,4 +49,4 @@ None.
 
 ## Exact next action
 
-Push `phase-5/api-ui`, open the PR, wait for CI, merge, tag `phase-5`.
+Phase 6 (user data and hardening) is not started; it needs its own plan and the owner's approval.

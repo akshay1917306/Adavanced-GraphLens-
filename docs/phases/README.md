@@ -10,7 +10,7 @@ approval, a merged pull request, and a `phase-N` tag.
 | 2. Extraction and graph | [phase-2-extraction](phase-2-extraction/) | Approved, merged, tag `phase-2` |
 | 3. Communities and global search | [phase-3-communities](phase-3-communities/) | Approved, merged, tag `phase-3` |
 | 4. Local search, router, relate, citation check | [phase-4-local-search](phase-4-local-search/) | Approved, merged, tag `phase-4` |
-| 5. Product UI | [phase-5-ui](phase-5-ui/) | Built on a local branch, waiting for owner approval |
+| 5. Product UI | [phase-5-ui](phase-5-ui/) | Approved, merged, tag `phase-5` |
 | 6. User data and hardening | phase-6-hardening | Planned |
 | 7. Evaluate and launch | phase-7-launch | Planned |
 | 8. v1.5 | phase-8-v1-5 | Later |
