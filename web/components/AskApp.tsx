@@ -129,6 +129,7 @@ export default function AskApp() {
             )}
             <div className={result.baseline ? "cols two" : "cols"}>
               <AnswerCard
+                key={result.answer_id}
                 title={result.baseline ? "GraphLens" : "Answer"}
                 answer={result.answer}
                 answerId={result.answer_id}

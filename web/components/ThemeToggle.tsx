@@ -1,22 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 type Theme = "system" | "light" | "dark";
 const ORDER: Theme[] = ["system", "light", "dark"];
+const KEY = "graphlens-theme";
 
-// Only a per-viewer convenience: if storage is blocked, the page still works.
+// Only a per-viewer convenience: if storage is blocked, the page still works (system theme).
+const listeners = new Set<() => void>();
+
+function read(): Theme {
+  try {
+    const saved = localStorage.getItem(KEY);
+    return saved === "light" || saved === "dark" ? saved : "system";
+  } catch {
+    return "system";
+  }
+}
+
+function write(value: Theme) {
+  try {
+    if (value === "system") localStorage.removeItem(KEY);
+    else localStorage.setItem(KEY, value);
+  } catch {
+    /* ignore: the choice then lasts only until the page is closed */
+  }
+  listeners.forEach((notify) => notify());
+}
+
+function subscribe(notify: () => void) {
+  listeners.add(notify);
+  return () => {
+    listeners.delete(notify);
+  };
+}
+
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("system");
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("graphlens-theme");
-      if (saved === "light" || saved === "dark") setTheme(saved);
-    } catch {
-      /* storage blocked: keep the system theme */
-    }
-  }, []);
+  const theme = useSyncExternalStore(subscribe, read, () => "system" as Theme);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -25,14 +45,7 @@ export default function ThemeToggle() {
   }, [theme]);
 
   function next() {
-    const value = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length];
-    setTheme(value);
-    try {
-      if (value === "system") localStorage.removeItem("graphlens-theme");
-      else localStorage.setItem("graphlens-theme", value);
-    } catch {
-      /* ignore */
-    }
+    write(ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length]);
   }
 
   return (

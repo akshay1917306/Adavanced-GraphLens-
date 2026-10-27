@@ -7,7 +7,7 @@ import EvidenceGraph from "./EvidenceGraph";
 interface Props {
   answer: Answer;
   selectedLabel: string | null;
-  onSelectLabel: (label: string | null) => void;
+  onSelectLabel: (label: string) => void;
 }
 
 // "Why this answer": the sources used and the small evidence graph. Text only, never HTML.

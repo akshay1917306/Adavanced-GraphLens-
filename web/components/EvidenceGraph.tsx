@@ -84,10 +84,9 @@ export default function EvidenceGraph({ nodes, links, selectedId, onSelect }: Pr
               className="graph-link"
               strokeDasharray={low ? "5 4" : undefined}
               markerEnd={`url(#${markerId})`}
-            />
-            <text x={(x1 + x2) / 2} y={(y1 + y2) / 2 - 3} className="graph-predicate" textAnchor="middle">
-              {link.predicate}
-            </text>
+            >
+              <title>{link.predicate}</title>
+            </line>
           </g>
         );
       })}
