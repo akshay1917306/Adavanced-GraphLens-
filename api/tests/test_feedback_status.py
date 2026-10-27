@@ -21,6 +21,9 @@ class FakeStore:
         self.calls.append((str(answer_id), rating, reason, comment))
         return self.known
 
+    def audit(self, action, target=None):
+        self.calls.append(("audit", action))
+
     def status(self):
         return {"runs": [], "quality_checks": [], "answers_saved": 0, "feedback_saved": 0}
 

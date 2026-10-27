@@ -13,12 +13,14 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.ask import AskService, EngineUnavailable, get_ask_service, set_ask_service
 from app.config import get_settings
+from app.hardening import configure_logging, hardening
 from app.health import run_checks
 from app.ratelimit import (
     DailyCapReached,
     Limiter,
     LimiterUnavailable,
     RateLimited,
+    admin_limit,
     ask_limits,
     current_visitor,
     get_limiter,
@@ -47,6 +49,7 @@ from app.visitor import (
     verify_token,
 )
 
+configure_logging()
 log = logging.getLogger("graphlens.api")
 
 if get_settings().answer_mode == "replay":
@@ -59,6 +62,9 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type"],
 )
+
+
+app.middleware("http")(hardening)  # added after CORS, so it wraps it
 
 
 def _error(code: str, message: str, http_status: int) -> JSONResponse:
@@ -109,7 +115,10 @@ async def limiter_unavailable(request: Request, error: LimiterUnavailable) -> JS
 
 @app.exception_handler(Exception)
 async def internal_error(request: Request, error: Exception) -> JSONResponse:
-    log.error("unhandled error: %s", type(error).__name__)  # type only: no text, no stack
+    request_id = getattr(request.state, "request_id", "-")
+    log.error(
+        "unhandled error %s request_id=%s", type(error).__name__, request_id
+    )  # no text, no stack
     return _error("internal_error", "Something went wrong.", 500)
 
 
@@ -275,7 +284,7 @@ def put_preferences(
     return body
 
 
-@app.get("/api/v1/status", response_model=None)
+@app.get("/api/v1/status", response_model=None, dependencies=[Depends(admin_limit)])
 def run_status(
     store: Annotated[Store, Depends(get_store)],
     x_admin_key: Annotated[str | None, Header()] = None,
@@ -285,7 +294,9 @@ def run_status(
     if not key:
         return _error("admin_disabled", "The status page is switched off.", 403)
     if x_admin_key is None or not hmac.compare_digest(x_admin_key, key):
+        store.audit("status_denied")
         return _error("unauthorized", "Missing or wrong admin key.", 401)
+    store.audit("status_view")
     return store.status()
 
 

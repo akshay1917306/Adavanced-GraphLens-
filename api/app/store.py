@@ -274,6 +274,14 @@ class Store:
                 {"v": visitor_id, "t": theme, "m": default_mode, "p": panel_open},
             )
 
+    def audit(self, action: str, target: str | None = None) -> None:
+        """Write one row to the admin audit log (no user account exists yet, so no user id)."""
+        with self._engine.begin() as conn:
+            conn.execute(
+                text("INSERT INTO admin_audit_log (action, target) VALUES (:a, :t)"),
+                {"a": action, "t": target},
+            )
+
     def status(self) -> dict:
         """Read-only summary: the latest index runs, the latest run's quality checks, counts."""
         with self._engine.connect() as conn:

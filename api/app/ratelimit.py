@@ -106,6 +106,14 @@ def visitor_creation_limit(
     limiter.hit("visitor-new", ip, get_settings().rate_visitor_ip_per_min, 60)
 
 
+def admin_limit(
+    ip: Annotated[str, Depends(client_ip)],
+    limiter: Annotated[Limiter, Depends(get_limiter)],
+) -> None:
+    """Slows down guessing of the admin key."""
+    limiter.hit("admin", ip, get_settings().rate_admin_ip_per_min, 60)
+
+
 def current_visitor(
     visitor: Annotated[UUID, Depends(get_visitor)],
     limiter: Annotated[Limiter, Depends(get_limiter)],

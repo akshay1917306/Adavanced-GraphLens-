@@ -18,6 +18,7 @@ def store(migrated_db):
     with engine.begin() as conn:
         conn.execute(text("DELETE FROM conversations"))
         conn.execute(text("DELETE FROM visitors"))
+        conn.execute(text("DELETE FROM admin_audit_log"))
     engine.dispose()
 
 
@@ -44,6 +45,14 @@ def test_answer_trace_and_feedback_round_trip(store):
     assert tuple(meta) == ("local", "verified", False)
     assert visitors == 1  # the one visitor made above
     assert store.status()["answers_saved"] == 1
+
+
+def test_the_admin_audit_log_gets_a_row_per_action(store):
+    store.audit("status_view")
+    store.audit("status_denied", "x")
+    with store._engine.connect() as conn:
+        rows = conn.execute(text("SELECT action, target FROM admin_audit_log ORDER BY id")).all()
+    assert rows == [("status_view", None), ("status_denied", "x")]
 
 
 def test_feedback_for_an_unknown_answer_is_refused(store):

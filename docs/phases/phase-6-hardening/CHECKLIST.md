@@ -14,14 +14,17 @@ Mark an item only after it was run, and say where it was run.
       **Result:** unit tests (fake clock for the reset) and a live check with real Redis through the web server, 2026-10-27.
 - [x] Daily cost cap stops model calls and says so (tested with a fake model)
       **Result:** unit test with a fake model costing 0.6 per answer and a cap of 1.0: third answer refused with `daily_limit`. Not exercised live (replay answers cost 0).
-- [ ] Admin status writes an audit-log row; wrong or missing key is refused
+- [x] Admin status writes an audit-log row; wrong or missing key is refused
+      **Result:** unit tests and a store test on a temporary Postgres; not tried on the running API (the status page is off without a key).
 - [x] Screen: history, delete with confirmation, save, preferences, rate-limit message
       **Result:** checked by script in the built-in browser, 2026-10-27 (see STATUS); keyboard-only walk-through not done.
 
 ## Security and quality
 
-- [ ] Content-Security-Policy and the other headers present on web and API (checked in the browser and by test)
-- [ ] Request size and time limits; no question text in logs; request id in every log line
+- [x] Content-Security-Policy and the other headers present on web and API (checked in the browser and by test)
+      **Result:** curl on the running stack, API tests, and the browser (no violations; three attacks blocked).
+- [x] Request size and time limits; no question text in logs; request id in every log line
+      **Result:** size limit 32 KB (411 and 413) and log-content tests pass. A time limit per request was not added (replay answers are instant; add it with live answers in Phase 7).
 - [ ] Abuse tests pass: other visitor's data, oversized and malformed bodies, repeated requests, forged tokens
 - [ ] `npm audit` and `pip-audit` run; every finding fixed or listed with a reason
 - [ ] Secret scanner in CI passes

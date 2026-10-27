@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     rate_ask_ip_per_min: int = 30
     rate_general_per_min: int = 120
     rate_visitor_ip_per_min: int = 10
+    rate_admin_ip_per_min: int = 10
     # Most money model calls may cost per UTC day; reaching it stops further answers.
     daily_cost_cap_usd: float = 1.0
     # Shared with the web server; it lets the web server tell the API the client address.

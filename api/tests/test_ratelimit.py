@@ -122,6 +122,9 @@ class FakeStore:
     def save_answer(self, visitor_id, question, answer, index_version):
         return str(uuid4())
 
+    def get_preferences(self, visitor_id):
+        return {"theme": "system", "default_mode": "auto", "evidence_panel_open": True}
+
 
 @pytest.fixture
 def make(monkeypatch):

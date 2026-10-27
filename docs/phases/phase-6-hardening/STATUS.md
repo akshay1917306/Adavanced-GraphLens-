@@ -4,7 +4,7 @@ Last updated: 2026-10-27
 
 ## State
 
-**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2, 4 and 5 done; headers and logs, audit log, audits and load test remain).** Branch
+**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2, 4, 5 and 6 done; audits, secret scanner and load test remain).** Branch
 `phase-6/hardening` from `main` at 0593c11 (Phase 5 tagged `phase-5`). Nothing pushed.
 
 ## Completed
@@ -71,6 +71,28 @@ Last updated: 2026-10-27
 - Not done: keyboard-only walk-through of the new tabs; screenshots of every new tab were not
   reviewed one by one (the Ask tab with the 429 message was); `default_mode` is stored but has no
   control (modes stay automatic, CR-0001); no automated web tests.
+- Step 6 (hardening): API middleware (`api/app/hardening.py`) adds a request id (a sane one from
+  the caller is kept, anything else replaced), `X-Content-Type-Options`, `Referrer-Policy`,
+  `Cache-Control: no-store`, `X-Frame-Options` and a strict CSP (not on `/docs`), refuses POST and
+  PUT without `Content-Length` (411) or over 32 KB (413), and writes one JSON log line per request
+  with request id, method, route template, status and milliseconds only; uvicorn's own access log
+  (which prints URLs) is switched off. Admin status writes an `admin_audit_log` row for every view
+  and every refused key, and guessing is limited to 10 per minute per address. Web: `proxy.ts`
+  sets a CSP with a fresh nonce on every request (the page is rendered per request), `next.config.ts`
+  sets the fixed headers and `no-store` on `/api/*`. `upgrade-insecure-requests` is left out until
+  HTTPS (Phase 7).
+- Checked: 113 API tests pass in Docker (headers on success and error, request id handling, 411,
+  413, logs contain no marker text from body, query string or token, unexpected error logged by
+  type and request id only, audit rows, admin guess limit, audit row on a temporary Postgres), ruff
+  clean, web build, eslint and tsc pass. On the running stack by curl: headers on page, `/api/*`
+  and API; 411 and 413; request-id log lines. In the browser: the app works under the CSP with no
+  violations and all 10 scripts carry the nonce; an inline `onerror` handler, an iframe to another
+  site and a fetch to another origin were each blocked and reported. A script added from devtools
+  ran (strict-dynamic trusts scripts created by trusted code), so that test proves nothing.
+- Not checked: the audit log against the running API (no `ADMIN_API_KEY` is set, so the status
+  page is off there); `style-src` has no `unsafe-inline`, no violation was seen, but not every
+  state of every tab was exercised under it; 429 responses to the page's own calls appear in the
+  console when many test requests were sent in one minute.
 - Many test rows (visitors, conversations) exist in the local database after these checks;
   they are cleaned at the end of the phase.
 
@@ -86,4 +108,4 @@ None.
 
 ## Exact next action
 
-Step 6 (security headers, request ids, log hygiene, admin audit log), then step 7 (audits and secret scanner in CI), step 8 (load test), step 9 (docs and report).
+Step 7 (npm audit, a Python dependency audit, secret scanner in CI), step 8 (load test), step 9 (docs, WALKTHROUGH, README, CI, test-row cleanup, report).
