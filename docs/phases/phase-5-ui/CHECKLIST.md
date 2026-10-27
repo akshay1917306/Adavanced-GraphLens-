@@ -31,11 +31,16 @@ Mark an item only after it was run, and say where it was run.
 
 ## Security and quality
 
-- [ ] API listens on 127.0.0.1; CORS limited to the web origin
-- [ ] Answer text is rendered as text only (a test with `<script>` in an answer)
-- [ ] No key or secret in the web bundle (searched)
-- [ ] Errors carry no stack trace or internal names
-- [ ] Keyboard use works; contrast checked; every control has a label
+- [x] API listens on 127.0.0.1
+      **Result:** Docker publishes ports 8000 and 3000 on 127.0.0.1 only (compose); CORS test passes (only the web origin is allowed).
+- [x] Answer text is rendered as text only
+      **Result:** checked by hand in the browser with a fake answer holding script and image tags: no element created, nothing executed. No automated web test exists.
+- [x] No key or secret in the web bundle
+      **Result:** searched the built static files in the image: no key pattern, no OPENAI, NEO4J, POSTGRES, ADMIN_API_KEY or API address; the web container only has API_URL.
+- [x] Errors carry no stack trace
+      **Result:** API unit tests (500 and rejected input); the screen shows only plain messages for API down and network down (checked in the browser).
+- [x] Keyboard use works
+      **Result:** contrast ratios computed for both themes: all text pairs at least 5.0 (AA needs 4.5); every control has a label; graph dots are focusable buttons. A full keyboard walk-through by hand was not done.
 - [ ] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green
       Partly: ruff, 32 API tests, eslint, tsc and next build pass in Docker; CI not run yet.
 - [x] Real screens checked in the built-in browser
@@ -43,5 +48,5 @@ Mark an item only after it was run, and say where it was run.
 
 ## Docs and review
 
-- [ ] WALKTHROUGH.md, README, STATUS.md, DECISIONS.md updated
+- [x] WALKTHROUGH.md, README, STATUS.md, DECISIONS.md updated
 - [ ] Owner clicked through the screens

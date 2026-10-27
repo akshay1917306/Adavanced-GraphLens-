@@ -4,7 +4,7 @@ Last updated: 2026-10-26
 
 ## State
 
-**Plan approved by the owner; build in progress (steps 1 to 4 done, steps 5 to 7 partly covered, checks and docs next).** Branch `phase-5/api-ui` from `main`
+**Plan approved by the owner; build in progress (all build steps and docs done; waiting for the owner's click-through and approval).** Branch `phase-5/api-ui` from `main`
 at a9748ef. Nothing pushed.
 
 ## Completed
@@ -37,9 +37,8 @@ at a9748ef. Nothing pushed.
 - Checked: `next build`, `eslint`, `tsc` pass in Docker; screens checked in the built-in browser
   (see CHECKLIST). A few rows from these browser tests are in the local database (one anonymous
   visitor, a few conversations, one rating).
-- Not done: a test that proves a `<script>` in an answer stays text (React escapes text and no
-  raw HTML is used, but there is no web test setup); keyboard-only and contrast checks; the
-  API-down error message on screen; clarify example.
+- Done by hand in the browser later: script text stays text, API-down messages, contrast, secret search of the bundle.
+- Not done: automated web tests; full keyboard-only and screen-reader walk-through; clarify example; CI run.
 
 ## Blockers
 
@@ -51,4 +50,4 @@ None.
 
 ## Exact next action
 
-Finish checks (keyboard, contrast, no-secret search of the bundle, script-in-answer test), WALKTHROUGH, README, DECISIONS, CI, A to J report.
+Owner clicks through the screens and approves; then push, PR, CI, merge, tag `phase-5`.

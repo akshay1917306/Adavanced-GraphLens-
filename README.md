@@ -4,10 +4,9 @@ GraphLens turns a document collection into a knowledge graph and answers questio
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is done and tagged `phase-3`. Phase 4 (local search, router, relate, citation check) is built and evaluated, and waits for the owner's review and approval.**
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is done and tagged `phase-3`. Phase 4 (local search, router, relate, citation check) is done and tagged `phase-4`. Phase 5 (API and one Ask screen) is built on a local branch and waits for the owner's review and approval.**
 > The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
-> used for answers, and its relation precision is 0.81 and entity-resolution F1 0.79, below the target). There is no web interface for
-> questions (Phase 5). Development data: 25 open-licensed research papers.
+> used for answers, and its relation precision is 0.81 and entity-resolution F1 0.79, below the target). The Ask screen (Phase 5) shows saved answers only; live answers are not wired in. Development data: 25 open-licensed research papers.
 
 ## Status
 
@@ -48,7 +47,8 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Local search (entity linking, 2-hop expansion, PageRank, cited context), relate mode, router, citation check | Implemented, commands `local-ask`, `relate`, `ask-auto` |
 | Local correctness on 30 hard multi-hop questions: 70% vs 53% for plain RAG (9 wins, 19 ties, 2 losses) | **Measured**: below the 75% target; intervals overlap (52-83% vs 36-70%) |
 | Citation support 98% (122 of 124); refusal 8 of 10 (target 90% missed); relate 20 of 20 paths | **Measured**, see [Phase 4 STATUS](docs/phases/phase-4-local-search/STATUS.md) |
-| Question-answering web UI | Planned (Phase 5); simpler design proposed in [CR-0001](docs/adr/CR-0001-simplified-dashboard.md) |
+| Ask screen and API (`ask`, `feedback`, `examples`, read-only `status`) in replay mode | Built on branch `phase-5/api-ui`; checked in the browser, see [Phase 5 STATUS](docs/phases/phase-5-ui/STATUS.md) |
+| Live answers from the screen (search code inside the API) | Not built; package version conflict to settle first |
 | CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
 
 ## Prerequisites
@@ -66,7 +66,7 @@ Run in PowerShell (or any shell) inside the repository folder. Create `.env` fir
 `.env.example`, then put your own passwords and `OPENAI_API_KEY` in it. Never commit `.env`.
 
 ```bash
-docker compose up -d                                 # databases and API
+docker compose up -d                                 # databases, API and web screen
 docker compose run --rm pipeline index               # ingest and embed the 25 papers
 docker compose run --rm pipeline ask "What makes ConditionalQA hard?"
 ```
@@ -77,6 +77,7 @@ If `data/corpus/qa_v0/pdfs/` is empty, first run
 | URL | What you see |
 |---|---|
 | http://localhost:8000/api/v1/health | JSON with `"status":"ok"` and four services |
+| http://localhost:3000 | The Ask screen (saved example questions, answer, sources, evidence graph) |
 | http://localhost:8000/docs | API documentation |
 | http://localhost:6333/dashboard | Qdrant dashboard (collection `units_qa_v0_baseline_2`, 751 points; other collections there, such as `dinosaurs`, are Qdrant sample data) |
 | http://localhost:7474 | Neo4j Browser (sign in as `neo4j` with `NEO4J_PASSWORD`; the graph is there once `graph-load` has run) |
@@ -130,4 +131,6 @@ database and Qdrant collections.
 
 - Phase 4: local search reaches 70% correct on 30 hard questions (target 75%), better than plain RAG by about 17 points but not statistically separated; community reports add nothing to local answers; two unanswerable questions were answered because a generic word or a model name matched an entity; only 11 of 20 relate explanations passed the citation check; the baseline rerank was not built; p95 latency was not measured; the judge is the same model family.
 
-**Next planned phase:** Phase 5 (API and screens), not started; Phase 4 waits for the owner's review and approval.
+- Phase 5: the screen replays 5 real saved answers and 2 refusals; any other question gets a refusal. Replayed answers show no cost or latency. Only local mode is replayed (no relate or global). There is no sign-in; one anonymous visitor owns all saved answers and ratings. No automated test proves script text stays text in the page (checked by hand in the browser).
+
+**Next planned phase:** Phase 6 (user data and hardening), not started; Phase 5 waits for the owner's approval.
