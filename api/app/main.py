@@ -14,6 +14,16 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.ask import AskService, EngineUnavailable, get_ask_service, set_ask_service
 from app.config import get_settings
 from app.health import run_checks
+from app.ratelimit import (
+    DailyCapReached,
+    Limiter,
+    LimiterUnavailable,
+    RateLimited,
+    ask_limits,
+    current_visitor,
+    get_limiter,
+    visitor_creation_limit,
+)
 from app.replay import ReplayService
 from app.schemas import (
     AskRequest,
@@ -32,7 +42,6 @@ from app.store import Store, get_store
 from app.visitor import (
     VisitorNotConfigured,
     VisitorRequired,
-    get_visitor,
     issue_token,
     signing_secret,
     verify_token,
@@ -80,6 +89,24 @@ async def visitor_not_configured(request: Request, error: VisitorNotConfigured) 
     return _error("visitor_not_configured", "Visitor tokens are not set up.", 503)
 
 
+@app.exception_handler(RateLimited)
+async def rate_limited(request: Request, error: RateLimited) -> JSONResponse:
+    message = f"Too many requests. Please try again in {error.retry_after} seconds."
+    response = _error("rate_limited", message, 429)
+    response.headers["Retry-After"] = str(error.retry_after)
+    return response
+
+
+@app.exception_handler(DailyCapReached)
+async def daily_cap(request: Request, error: DailyCapReached) -> JSONResponse:
+    return _error("daily_limit", "The daily limit for answers has been reached. Try tomorrow.", 429)
+
+
+@app.exception_handler(LimiterUnavailable)
+async def limiter_unavailable(request: Request, error: LimiterUnavailable) -> JSONResponse:
+    return _error("limiter_unavailable", "The service is busy. Please try again shortly.", 503)
+
+
 @app.exception_handler(Exception)
 async def internal_error(request: Request, error: Exception) -> JSONResponse:
     log.error("unhandled error: %s", type(error).__name__)  # type only: no text, no stack
@@ -106,7 +133,11 @@ class VisitorResponse(BaseModel):
     max_age_seconds: int
 
 
-@app.post("/api/v1/visitor", response_model=VisitorResponse)
+@app.post(
+    "/api/v1/visitor",
+    response_model=VisitorResponse,
+    dependencies=[Depends(visitor_creation_limit)],
+)
 def visitor(body: VisitorRequest, store: Annotated[Store, Depends(get_store)]) -> VisitorResponse:
     """Give the browser a signed token: renewed for a known visitor, else for a new visitor."""
     secret = signing_secret()
@@ -117,15 +148,22 @@ def visitor(body: VisitorRequest, store: Annotated[Store, Depends(get_store)]) -
     return VisitorResponse(token=issue_token(known, secret, ttl), max_age_seconds=ttl)
 
 
-@app.post("/api/v1/ask", response_model=AskResponse)
+@app.post(
+    "/api/v1/ask",
+    response_model=AskResponse,
+    dependencies=[Depends(ask_limits)],
+)
 def ask(
     body: AskRequest,
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     service: Annotated[AskService, Depends(get_ask_service)],
     store: Annotated[Store, Depends(get_store)],
+    limiter: Annotated[Limiter, Depends(get_limiter)],
 ) -> AskResponse:
     """Answer one question with its evidence. A refusal or a clarify request is a normal 200."""
     response = service.ask(body.question, body.compare)
+    spent = response.answer.cost_usd + (response.baseline.cost_usd if response.baseline else 0.0)
+    limiter.record_cost(spent)  # counts toward today's cap, even if saving fails below
     try:
         answer_id = store.save_answer(
             visitor_id, body.question, response.answer, get_settings().index_version
@@ -139,7 +177,7 @@ def ask(
 @app.post("/api/v1/feedback", response_model=None)
 def feedback(
     body: FeedbackRequest,
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> FeedbackResponse | JSONResponse:
     saved = store.save_feedback(visitor_id, body.answer_id, body.rating, body.reason, body.comment)
@@ -150,7 +188,7 @@ def feedback(
 
 @app.get("/api/v1/history", response_model=HistoryList)
 def history(
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
 ) -> HistoryList:
@@ -160,7 +198,7 @@ def history(
 @app.get("/api/v1/history/{conversation_id}", response_model=None)
 def history_item(
     conversation_id: UUID,
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> ConversationDetail | JSONResponse:
     found = store.get_conversation(visitor_id, conversation_id)
@@ -172,7 +210,7 @@ def history_item(
 @app.delete("/api/v1/history/{conversation_id}", response_model=None)
 def delete_history_item(
     conversation_id: UUID,
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> dict | JSONResponse:
     if not store.delete_conversation(visitor_id, conversation_id):
@@ -182,7 +220,7 @@ def delete_history_item(
 
 @app.delete("/api/v1/me", response_model=DeletedCounts)
 def delete_my_data(
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> DeletedCounts:
     """Delete this visitor and everything stored for them. The token stops working."""
@@ -191,7 +229,7 @@ def delete_my_data(
 
 @app.get("/api/v1/saved", response_model=SavedList)
 def saved(
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> SavedList:
     return SavedList(items=store.list_saved(visitor_id))
@@ -200,7 +238,7 @@ def saved(
 @app.post("/api/v1/saved", response_model=None)
 def save_answer(
     body: SaveRequest,
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> dict | JSONResponse:
     if not store.save_for_later(visitor_id, body.answer_id, body.note):
@@ -211,7 +249,7 @@ def save_answer(
 @app.delete("/api/v1/saved/{answer_id}", response_model=None)
 def unsave_answer(
     answer_id: UUID,
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> dict | JSONResponse:
     if not store.delete_saved(visitor_id, answer_id):
@@ -221,7 +259,7 @@ def unsave_answer(
 
 @app.get("/api/v1/preferences", response_model=Preferences)
 def get_preferences(
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> Preferences:
     return Preferences(**store.get_preferences(visitor_id))
@@ -230,7 +268,7 @@ def get_preferences(
 @app.put("/api/v1/preferences", response_model=Preferences)
 def put_preferences(
     body: Preferences,
-    visitor_id: Annotated[UUID, Depends(get_visitor)],
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
     store: Annotated[Store, Depends(get_store)],
 ) -> Preferences:
     store.set_preferences(visitor_id, body.theme, body.default_mode, body.evidence_panel_open)

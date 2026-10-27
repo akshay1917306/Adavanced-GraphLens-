@@ -10,8 +10,10 @@ Mark an item only after it was run, and say where it was run.
       **Result:** API only so far; 90 tests in Docker plus a curl check on the running stack, 2026-10-27. Screen not built yet.
 - [x] Every data route checks ownership; reading or deleting another visitor's row returns "not found"
       **Result:** tests for all 9 data routes with a missing or forged token (401) and two-visitor store tests, plus curl.
-- [ ] Rate limits per visitor and per address; 429 with `Retry-After`; counters reset
-- [ ] Daily cost cap stops model calls and says so (tested with a fake model)
+- [x] Rate limits per visitor and per address; 429 with `Retry-After`; counters reset
+      **Result:** unit tests (fake clock for the reset) and a live check with real Redis through the web server, 2026-10-27.
+- [x] Daily cost cap stops model calls and says so (tested with a fake model)
+      **Result:** unit test with a fake model costing 0.6 per answer and a cap of 1.0: third answer refused with `daily_limit`. Not exercised live (replay answers cost 0).
 - [ ] Admin status writes an audit-log row; wrong or missing key is refused
 - [ ] Screen: history, delete with confirmation, save, preferences, rate-limit message
 
