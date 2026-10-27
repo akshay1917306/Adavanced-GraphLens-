@@ -1,10 +1,10 @@
 # Phase 5 status
 
-Last updated: 2026-10-26
+Last updated: 2026-10-27
 
 ## State
 
-**Plan approved by the owner; build in progress (all build steps and docs done; waiting for the owner's click-through and approval).** Branch `phase-5/api-ui` from `main`
+**Owner approved Phase 5 on 2026-10-27 (done and checked as listed below). Checkpoint (push, PR, CI, merge, tag) in progress.** Branch `phase-5/api-ui` from `main`
 at a9748ef. Nothing pushed.
 
 ## Completed
@@ -50,4 +50,4 @@ None.
 
 ## Exact next action
 
-Owner clicks through the screens and approves; then push, PR, CI, merge, tag `phase-5`.
+Push `phase-5/api-ui`, open the PR, wait for CI, merge, tag `phase-5`.
