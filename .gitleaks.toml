@@ -1,0 +1,15 @@
+title = "GraphLens secret scan"
+
+[extend]
+useDefault = true
+
+# Fake keys that the tests use on purpose to prove that real-looking keys are redacted, and the
+# placeholder in .env.example. Only these exact strings are allowed; any other key-like string
+# anywhere in the repository (or its history) still fails the scan.
+[allowlist]
+description = "Fake test keys and the example placeholder"
+regexes = [
+  '''sk-proj-abcdEFGH1234567890xyz''',
+  '''sk-abcdefghijklmnopqrstuvwx''',
+  '''sk-placeholder-not-a-real-key''',
+]
