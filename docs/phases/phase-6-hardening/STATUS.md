@@ -1,10 +1,10 @@
 # Phase 6 status
 
-Last updated: 2026-10-27
+Last updated: 2026-10-28
 
 ## State
 
-**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2 and 4 to 8 done; final docs, cleanup and the two-profile check remain).** Branch
+**Plan approved by the owner on 2026-10-27; build in progress (all build steps and docs done; waiting for CI and the owner's review and approval).** Branch
 `phase-6/hardening` from `main` at 0593c11 (Phase 5 tagged `phase-5`). Nothing pushed.
 
 ## Completed
@@ -115,6 +115,11 @@ Last updated: 2026-10-27
   The rate limits were raised for the run through environment variables and restored afterwards
   (checked: 10 per minute per visitor and 30 per address are back). Not covered: a real model call,
   the API process itself for retrieval, long runs, global search, relate mode.
+- Step 9: two-profile check in the browser (see CHECKLIST), 5 more abuse tests (123 API tests
+  pass), the local database cleaned of all test rows (43 visitors, 389 conversations from today's
+  checks and load test; the corpus tables are unchanged: 35 documents, 751 text units, 3,173 cache
+  rows; about 33 Redis limit counters remain and expire by themselves), WALKTHROUGH, README and
+  DECISIONS updated.
 - Downloads made with the owner's yes: `pip-audit` (in a throwaway container) and the
   `ghcr.io/gitleaks/gitleaks:v8.21.2` image.
 - Many test rows (visitors, conversations) exist in the local database after these checks;
@@ -132,4 +137,4 @@ None.
 
 ## Exact next action
 
-Step 9: clean the test rows, check two separate browser profiles, write WALKTHROUGH, update README and DECISIONS, push nothing until CI and the owner's approval, then the A to J report.
+Owner reviews and approves; then push `phase-6/hardening`, open the PR, watch CI (including the new `secrets` and `audit` jobs, which have never run), merge, tag `phase-6`. Nothing is pushed yet.

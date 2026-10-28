@@ -25,7 +25,8 @@ Mark an item only after it was run, and say where it was run.
       **Result:** curl on the running stack, API tests, and the browser (no violations; three attacks blocked).
 - [x] Request size and time limits; no question text in logs; request id in every log line
       **Result:** size limit 32 KB (411 and 413) and log-content tests pass. A time limit per request was not added (replay answers are instant; add it with live answers in Phase 7).
-- [ ] Abuse tests pass: other visitor's data, oversized and malformed bodies, repeated requests, forged tokens
+- [x] Abuse tests pass: other visitor's data, oversized and malformed bodies, repeated requests, forged tokens
+      **Result:** in the 123 API tests (`test_visitor`, `test_userdata_*`, `test_hardening`, `test_ratelimit`, `test_storage_errors`), including broken JSON, form bodies and hostile ids.
 - [x] `npm audit` and `pip-audit` run; every finding fixed or listed with a reason
       **Result:** web 0, API 0; pipeline pypdf and pillow listed with reasons in `AUDIT.md` (accepted risk D59, confirmed by the owner).
 - [x] Secret scanner in CI passes
@@ -33,9 +34,11 @@ Mark an item only after it was run, and say where it was run.
 - [x] Load test: 1, 3 and 10 at once on replay and on the free retrieval path; median, p95, errors reported
       **Result:** `LOAD_TEST.md`. Replay: 0 errors, p95 at most 226 ms. Retrieval: 0 failures, p95 1.3 s at 3 and 5.9 s at 10 at once; scaling limit noted.
 - [ ] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green
-- [ ] Real screens checked in the built-in browser, including two separate profiles
+      Partly: all pass in Docker (123 API tests, 400 pipeline tests); **CI has not run on GitHub for this branch**, including the new `secrets` and `audit` jobs.
+- [x] Real screens checked in the built-in browser, including two separate profiles
+      **Result:** two identities (`localhost` and `127.0.0.1`): no access in either direction (404), settings and delete-all stay separate. Keyboard-only walk-through not done.
 
 ## Docs and review
 
-- [ ] WALKTHROUGH.md, README, STATUS.md, DECISIONS.md updated
+- [x] WALKTHROUGH.md, README, STATUS.md, DECISIONS.md updated
 - [ ] Owner tried two browser profiles and approved Phase 6

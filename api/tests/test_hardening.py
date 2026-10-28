@@ -173,3 +173,39 @@ def test_without_a_configured_key_the_status_page_is_off_and_not_audited(make):
     client, store = make(admin_key="")
     assert client.get("/api/v1/status", headers={"X-Admin-Key": "anything"}).status_code == 403
     assert store.audit_rows == []
+
+
+def test_a_broken_json_body_is_a_plain_422_that_does_not_echo_it(make):
+    client, _ = make()
+    broken = '{"question": "' + MARKER + " unfinished"
+    response = client.post(
+        "/api/v1/ask", content=broken, headers={"Content-Type": "application/json"}
+    )
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "invalid_request"
+    assert MARKER not in response.text
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/api/v1/history/..%2F..%2Fetc%2Fpasswd",
+        "/api/v1/history/1;DROP TABLE messages",
+        "/api/v1/saved/%27%20OR%201=1",
+    ],
+)
+def test_ids_that_are_not_uuids_never_reach_the_database(make, path):
+    client, _ = make()
+    response = client.get(path) if "saved" not in path else client.delete(path)
+    assert response.status_code in (404, 422)
+    assert "DROP" not in response.text
+
+
+def test_a_body_that_is_not_json_at_all_is_refused(make):
+    client, _ = make()
+    response = client.post(
+        "/api/v1/ask",
+        content=b"question=hello",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+    assert response.status_code == 422

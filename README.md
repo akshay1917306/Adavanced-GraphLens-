@@ -4,7 +4,7 @@ GraphLens turns a document collection into a knowledge graph and answers questio
 by following the graph, showing the evidence for every answer. It is built from the
 *Advanced GraphLens Pipeline Blueprint v1.0* (2026-10-17).
 
-> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is done and tagged `phase-3`. Phase 4 (local search, router, relate, citation check) is done and tagged `phase-4`. Phase 5 (API and one Ask screen) is done and tagged `phase-5`.**
+> **Status: Phase 1 (Baseline RAG and evaluation set v0) is done and tagged `phase-1`. Phase 2 (graph) is done and tagged `phase-2`. Phase 3 (communities and global search) is done and tagged `phase-3`. Phase 4 (local search, router, relate, citation check) is done and tagged `phase-4`. Phase 5 (API and one Ask screen) is done and tagged `phase-5`. Phase 6 (user data and hardening) is built on a local branch and waits for the owner's review and approval.**
 > The plain vector RAG works and is measured. A first knowledge graph exists in Neo4j (not yet
 > used for answers, and its relation precision is 0.81 and entity-resolution F1 0.79, below the target). The Ask screen (Phase 5) shows saved answers only; live answers are not wired in. Development data: 25 open-licensed research papers.
 
@@ -49,6 +49,9 @@ by following the graph, showing the evidence for every answer. It is built from 
 | Citation support 98% (122 of 124); refusal 8 of 10 (target 90% missed); relate 20 of 20 paths | **Measured**, see [Phase 4 STATUS](docs/phases/phase-4-local-search/STATUS.md) |
 | Ask screen and API (`ask`, `feedback`, `examples`, read-only `status`) in replay mode | Implemented (tag `phase-5`); checked in the browser, see [Phase 5 STATUS](docs/phases/phase-5-ui/STATUS.md) |
 | Live answers from the screen (search code inside the API) | Not built; package version conflict to settle first |
+| Private history, saved answers, settings and delete-all for anonymous visitors (signed cookie) | Built on branch `phase-6/hardening`; two-profile check done, see [Phase 6 STATUS](docs/phases/phase-6-hardening/STATUS.md) |
+| Rate limits, daily cost cap, security headers and CSP, audit log, request ids and log hygiene | Built on branch `phase-6/hardening`; 123 API tests pass |
+| Dependency audit, secret scan, load test | **Measured**: web and API have no known advisories, pipeline has 2 accepted ones (D59), no secret in git history, no errors up to 10 concurrent requests |
 | CI for the `pipeline/` folder | Implemented (all 4 jobs passed on GitHub for Phase 1) |
 
 ## Prerequisites
@@ -133,4 +136,6 @@ database and Qdrant collections.
 
 - Phase 5: the screen replays 5 real saved answers and 2 refusals; any other question gets a refusal. Replayed answers show no cost or latency. Only local mode is replayed (no relate or global). There is no sign-in; one anonymous visitor owns all saved answers and ratings. No automated test proves script text stays text in the page (checked by hand in the browser).
 
-**Next planned phase:** Phase 6 (user data and hardening), not started.
+- Phase 6: anonymous visitors only (no sign-in); a stolen cookie works until it expires or the data is deleted; no HTTPS, backups or monitoring; the cost cap and time limits were never exercised with a real model; retrieval does about 2 to 3 questions per second per process; `pypdf` and `pillow` have known advisories that are accepted for now; CI has not run on this branch.
+
+**Next planned phase:** Phase 7 (evaluate and launch: live answers with your OpenAI key, backups, HTTPS), not started; Phase 6 waits for the owner's approval.
