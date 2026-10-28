@@ -4,7 +4,7 @@ Last updated: 2026-10-27
 
 ## State
 
-**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2, 4, 5 and 6 done; audits, secret scanner and load test remain).** Branch
+**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2, 4, 5, 6 and 7 done; load test and final docs remain).** Branch
 `phase-6/hardening` from `main` at 0593c11 (Phase 5 tagged `phase-5`). Nothing pushed.
 
 ## Completed
@@ -98,6 +98,17 @@ Last updated: 2026-10-27
   pass; live: Postgres stopped, 503, started, 200), and the web app has `error.tsx` and
   `global-error.tsx` (a plain message and "Try again"; checked in the browser with a temporary
   crashing page that was deleted again; `global-error.tsx` was not triggered).
+- Step 7 (audits and secret scan; details in `AUDIT.md`): `npm audit` 0 vulnerabilities; API
+  `pip-audit` none; pipeline `pip-audit` found `pypdf` 6.19.0 (11) and `pillow` 12.3.0 (38). pypdf
+  6.21.2 passes all 400 pipeline tests but changes the extracted text of all 25 corpus PDFs
+  (whitespace only in the 3 compared), which would force paid re-extraction, and pillow is capped
+  by `fastembed`, so both stay pinned as an accepted risk (D59, proposed; owner to confirm). I
+  tried the upgrade and reverted it, so `uv.lock` is unchanged. Gitleaks scanned 87 commits: no
+  real secret, `.env` never committed; one made-up test token is allowlisted by its exact value, and a
+  negative check shows a real-looking key is still caught. CI got two jobs: `secrets` (gitleaks)
+  and `audit` (npm and API). Neither CI job has run on GitHub yet.
+- Downloads made with the owner's yes: `pip-audit` (in a throwaway container) and the
+  `ghcr.io/gitleaks/gitleaks:v8.21.2` image.
 - Many test rows (visitors, conversations) exist in the local database after these checks;
   they are cleaned at the end of the phase.
 
@@ -113,4 +124,4 @@ None.
 
 ## Exact next action
 
-Step 7 (npm audit, a Python dependency audit, secret scanner in CI), step 8 (load test), step 9 (docs, WALKTHROUGH, README, CI, test-row cleanup, report).
+Step 8 (load test on replay and on the free retrieval path), step 9 (docs, WALKTHROUGH, README, CI, test-row cleanup, two-profile browser check, report).
