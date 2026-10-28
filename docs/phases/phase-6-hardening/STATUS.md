@@ -4,7 +4,7 @@ Last updated: 2026-10-27
 
 ## State
 
-**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2, 4, 5, 6 and 7 done; load test and final docs remain).** Branch
+**Plan approved by the owner on 2026-10-27; build in progress (steps 1, 2 and 4 to 8 done; final docs, cleanup and the two-profile check remain).** Branch
 `phase-6/hardening` from `main` at 0593c11 (Phase 5 tagged `phase-5`). Nothing pushed.
 
 ## Completed
@@ -107,6 +107,14 @@ Last updated: 2026-10-27
   real secret, `.env` never committed; one made-up test token is allowlisted by its exact value, and a
   negative check shows a real-looking key is still caught. CI got two jobs: `secrets` (gitleaks)
   and `audit` (npm and API). Neither CI job has run on GitHub yet.
+- Step 8 (load test; details in `LOAD_TEST.md`): replay asks straight at the API and through the
+  web server, 60 requests per level from 10 visitors: 0 errors at 1, 3 and 10 at once, p95 at most
+  226 ms. Retrieval path of local search with the real databases and no model call: 0 failures, but
+  throughput stays at about 2 to 3 questions per second, so median 0.5 s (1 at once), 1.1 s (3) and
+  4.7 s (10, p95 5.9 s); 10 at once would miss the p95 under 8 s target once a model call is added.
+  The rate limits were raised for the run through environment variables and restored afterwards
+  (checked: 10 per minute per visitor and 30 per address are back). Not covered: a real model call,
+  the API process itself for retrieval, long runs, global search, relate mode.
 - Downloads made with the owner's yes: `pip-audit` (in a throwaway container) and the
   `ghcr.io/gitleaks/gitleaks:v8.21.2` image.
 - Many test rows (visitors, conversations) exist in the local database after these checks;
@@ -124,4 +132,4 @@ None.
 
 ## Exact next action
 
-Step 8 (load test on replay and on the free retrieval path), step 9 (docs, WALKTHROUGH, README, CI, test-row cleanup, two-profile browser check, report).
+Step 9: clean the test rows, check two separate browser profiles, write WALKTHROUGH, update README and DECISIONS, push nothing until CI and the owner's approval, then the A to J report.

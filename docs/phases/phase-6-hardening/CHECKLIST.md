@@ -30,7 +30,8 @@ Mark an item only after it was run, and say where it was run.
       **Result:** web 0, API 0; pipeline pypdf and pillow listed with reasons in `AUDIT.md` (accepted risk D59, confirmed by the owner).
 - [x] Secret scanner in CI passes
       **Result:** gitleaks passes locally on 87 commits (negative check catches a real-looking key); the CI job is committed but has not run on GitHub yet.
-- [ ] Load test: 1, 3 and 10 at once on replay and on the free retrieval path; median, p95, errors reported
+- [x] Load test: 1, 3 and 10 at once on replay and on the free retrieval path; median, p95, errors reported
+      **Result:** `LOAD_TEST.md`. Replay: 0 errors, p95 at most 226 ms. Retrieval: 0 failures, p95 1.3 s at 3 and 5.9 s at 10 at once; scaling limit noted.
 - [ ] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green
 - [ ] Real screens checked in the built-in browser, including two separate profiles
 
