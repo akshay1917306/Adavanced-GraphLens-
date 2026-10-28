@@ -93,6 +93,11 @@ Last updated: 2026-10-27
   page is off there); `style-src` has no `unsafe-inline`, no violation was seen, but not every
   state of every tab was exercised under it; 429 responses to the page's own calls appear in the
   console when many test requests were sent in one minute.
+- Error-handling catalogue: `docs/ERROR_HANDLING.md`. Two of its gaps were fixed: a database that is
+  down now gives 503 `storage_unavailable` with `Retry-After` (connect timeout 3 s; 118 API tests
+  pass; live: Postgres stopped, 503, started, 200), and the web app has `error.tsx` and
+  `global-error.tsx` (a plain message and "Try again"; checked in the browser with a temporary
+  crashing page that was deleted again; `global-error.tsx` was not triggered).
 - Many test rows (visitors, conversations) exist in the local database after these checks;
   they are cleaned at the end of the phase.
 

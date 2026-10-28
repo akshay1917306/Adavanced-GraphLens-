@@ -93,7 +93,7 @@ never echoed back.
 | 401, 403 | `unauthorized`, `admin_disabled` | Wrong or missing admin key, or no key configured | Audit row written; guessing is limited | Done |
 | 500 | `internal_error` | Any unexpected exception | Generic message; log has only the exception type and request id | Done |
 | 200 with `saved: false` | | Saving the answer failed | The answer is still shown, rating and saving are switched off | Done |
-| **500** | `internal_error` | **Postgres down or a query fails** (also for visitor lookup) | Returns the generic 500 | **Gap**: should be a clear 503 "storage unavailable" with a short `Retry-After` |
+| 503 | `storage_unavailable` | Postgres down, connection lost, or no free connection | `Retry-After: 5`, plain message, log has only the exception type and request id; connect timeout is 3 seconds. Other database errors (a broken query) stay a generic 500 because they are our bugs | Done (5 tests; live: database stopped, then started again) |
 | 503 | health | `GET /api/v1/health` when any of the four services is down | Reports which one | Done |
 | Time | | A request that runs too long | No per-request time limit yet | **Gap**: needed when live answers arrive (Phase 7) |
 
@@ -110,7 +110,7 @@ never echoed back.
 | `localStorage` blocked | Theme still works for the session | Done |
 | Rating or saving fails | Short message next to the button | Done |
 | Example list cannot load | The list is simply empty (no message) | Partly (harmless) |
-| An exception while a React component renders | No error boundary exists, so Next.js shows its default error page | **Gap**: add `app/error.tsx` and `app/global-error.tsx` with a plain message and a "Try again" button |
+| An exception while a React component renders | `app/error.tsx` shows a plain message, a short reference code and a "Try again" button; `app/global-error.tsx` does the same if the layout itself fails. The error text is never shown | Done for a failing page (checked in the browser with a temporary crashing page); `global-error.tsx` is built but was not triggered |
 | Cookie rejected by the browser | Every request makes a new visitor, so history never appears | Partly: limited to 10 new visitors a minute per address; no message |
 
 ## 8. Infrastructure and configuration
@@ -120,20 +120,18 @@ never echoed back.
 | Docker engine stopped (seen after a reboot) | Commands fail with an engine message | Manual: start Docker Desktop and re-run |
 | Slow or dropped network (PyPI, npm, GitHub, OpenAI) | Retry loops and caches in the image builds; push retried in scripts | Partly |
 | Redis down | Asks and data routes are refused with 503 | Done |
-| Postgres, Neo4j or Qdrant down | Health reports it; the search path fails (see sections 5 and 6) | Partly |
+| Postgres down | API answers 503 `storage_unavailable` and recovers when Postgres is back | Done |
+| Neo4j or Qdrant down | Health reports it; the command-line search fails (see section 5) | Partly |
 | Secrets missing (`PROXY_SECRET`, `ADMIN_API_KEY`) | Address falls back to the socket address; status page stays off | Done |
 | Disk full, corrupted volume, lost database | Not handled | **Gap**: no backup or restore yet (Phase 7) |
 | Nobody notices a failure | Only JSON logs; no alerts or dashboards (D55) | **Gap** by decision |
 
-## 9. What I recommend next (needs your yes where marked)
+## 9. What is still open
 
-1. **Map database errors to 503** with a short `Retry-After` instead of a generic 500, so the
-   screen can say "storage is busy, try again". Small change, with tests.
-2. **Add the React error boundary** (`error.tsx`, `global-error.tsx`) so a rendering bug shows a
-   plain message and a retry button.
-3. **Per-request time limit and retry with a short back-off** for Neo4j and Qdrant calls when live
+1. **Per-request time limit and a short retry with back-off** for Neo4j and Qdrant calls when live
    answers are wired in (Phase 7).
-4. **Decision for you:** Redis down currently **blocks** answers (fail closed). The alternative is
+2. **Decision for you:** Redis down currently **blocks** answers (fail closed). The alternative is
    to allow answers without limits (fail open), which is friendlier but removes the cost and abuse
    protection. I recommend keeping fail closed.
-5. **Backup and restore** of Postgres and the Neo4j volume before any real use (Phase 7).
+3. **Backup and restore** of Postgres and the Neo4j volume before any real use (Phase 7).
+4. `global-error.tsx` has not been triggered; it only matters if the layout itself fails.

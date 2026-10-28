@@ -334,5 +334,9 @@ class Store:
 
 @lru_cache
 def get_store() -> Store:
-    engine = create_engine(get_settings().database_url.get_secret_value(), pool_pre_ping=True)
+    engine = create_engine(
+        get_settings().database_url.get_secret_value(),
+        pool_pre_ping=True,
+        connect_args={"connect_timeout": 3},  # a down database fails in 3 seconds, not 4 or more
+    )
     return Store(engine)

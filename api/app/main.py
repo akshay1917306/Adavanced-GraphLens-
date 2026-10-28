@@ -10,6 +10,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy.exc import InterfaceError, OperationalError
+from sqlalchemy.exc import TimeoutError as PoolTimeout
 
 from app.ask import AskService, EngineUnavailable, get_ask_service, set_ask_service
 from app.config import get_settings
@@ -111,6 +113,21 @@ async def daily_cap(request: Request, error: DailyCapReached) -> JSONResponse:
 @app.exception_handler(LimiterUnavailable)
 async def limiter_unavailable(request: Request, error: LimiterUnavailable) -> JSONResponse:
     return _error("limiter_unavailable", "The service is busy. Please try again shortly.", 503)
+
+
+@app.exception_handler(OperationalError)
+@app.exception_handler(InterfaceError)
+@app.exception_handler(PoolTimeout)
+async def storage_unavailable(request: Request, error: Exception) -> JSONResponse:
+    """The database cannot be reached or is out of connections: tell the caller to try again.
+    Other database errors (a bad query, a broken constraint) are our bugs and stay a plain 500."""
+    request_id = getattr(request.state, "request_id", "-")
+    log.error("storage unavailable %s request_id=%s", type(error).__name__, request_id)
+    response = _error(
+        "storage_unavailable", "Storage is busy. Please try again in a few seconds.", 503
+    )
+    response.headers["Retry-After"] = "5"
+    return response
 
 
 @app.exception_handler(Exception)
