@@ -32,7 +32,7 @@ hash-pinned set of 25 open-licence papers, with no upload feature, that is a poo
 Existing limits stay in force (file size, page count, encrypted and scanned files refused) and the
 parser runs only in the command-line pipeline, never inside the API process.
 
-**Rule I propose (D59):** keep `pypdf` 6.19.0 and `pillow` 12.3.0 for now as a **known, accepted
+**Rule (D59, confirmed by the owner on 2026-10-28):** keep `pypdf` 6.19.0 and `pillow` 12.3.0 for now as a **known, accepted
 risk**; before any feature that accepts PDFs or images from other people (v1.5), upgrade `pypdf`,
 re-ingest and re-baseline, and move `fastembed` and `pillow` together.
 

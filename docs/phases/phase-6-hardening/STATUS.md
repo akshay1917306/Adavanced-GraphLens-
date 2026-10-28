@@ -102,7 +102,7 @@ Last updated: 2026-10-27
   `pip-audit` none; pipeline `pip-audit` found `pypdf` 6.19.0 (11) and `pillow` 12.3.0 (38). pypdf
   6.21.2 passes all 400 pipeline tests but changes the extracted text of all 25 corpus PDFs
   (whitespace only in the 3 compared), which would force paid re-extraction, and pillow is capped
-  by `fastembed`, so both stay pinned as an accepted risk (D59, proposed; owner to confirm). I
+  by `fastembed`, so both stay pinned as an accepted risk (D59, confirmed by the owner on 2026-10-28). I
   tried the upgrade and reverted it, so `uv.lock` is unchanged. Gitleaks scanned 87 commits: no
   real secret, `.env` never committed; one made-up test token is allowlisted by its exact value, and a
   negative check shows a real-looking key is still caught. CI got two jobs: `secrets` (gitleaks)

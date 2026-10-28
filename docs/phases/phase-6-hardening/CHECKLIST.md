@@ -27,7 +27,7 @@ Mark an item only after it was run, and say where it was run.
       **Result:** size limit 32 KB (411 and 413) and log-content tests pass. A time limit per request was not added (replay answers are instant; add it with live answers in Phase 7).
 - [ ] Abuse tests pass: other visitor's data, oversized and malformed bodies, repeated requests, forged tokens
 - [x] `npm audit` and `pip-audit` run; every finding fixed or listed with a reason
-      **Result:** web 0, API 0; pipeline pypdf and pillow listed with reasons in `AUDIT.md` (accepted risk D59, owner to confirm).
+      **Result:** web 0, API 0; pipeline pypdf and pillow listed with reasons in `AUDIT.md` (accepted risk D59, confirmed by the owner).
 - [x] Secret scanner in CI passes
       **Result:** gitleaks passes locally on 87 commits (negative check catches a real-looking key); the CI job is committed but has not run on GitHub yet.
 - [ ] Load test: 1, 3 and 10 at once on replay and on the free retrieval path; median, p95, errors reported
