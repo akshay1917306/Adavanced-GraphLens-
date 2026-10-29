@@ -22,7 +22,9 @@ FALLBACK_BELOW = 0.6  # below this the question runs as local, with a note
 SPECIFIC_WEIGHT = 0.5
 
 RELATE_CUE = re.compile(
-    r"\b(relat(?:ed|ion|ionship|es)\b|connect(?:ed|ion|s)\b|links?\b|linked\b|path(?:s)? between"
+    # "link" alone is not a cue: "link prediction" is a task name, not a question about a relation
+    r"\b(relat(?:ed|ion|ionship|es)\b|connect(?:ed|ion|s)\b|links? (?:between|to|with)\b"
+    r"|linked (?:to|with)\b|path(?:s)? between"
     r"|what (?:links|connects)|how does .{1,60} (?:relate|connect)|in common)",
     re.IGNORECASE,
 )

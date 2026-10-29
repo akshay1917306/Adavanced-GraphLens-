@@ -8,12 +8,16 @@ import json
 import logging
 import re
 import time
+from contextvars import ContextVar
 from uuid import uuid4
 
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 
 log = logging.getLogger("graphlens.request")
+
+# the id of the request being handled, so calls to other services can carry it
+request_id_var: ContextVar[str] = ContextVar("request_id", default="-")
 
 REQUEST_ID_OK = re.compile(r"^[A-Za-z0-9._-]{8,64}$")
 MAX_BODY_BYTES = 32_768  # the largest legitimate body is a 4,000-character question
@@ -43,6 +47,7 @@ async def hardening(request: Request, call_next):
     supplied = request.headers.get("x-request-id", "")
     request_id = supplied if REQUEST_ID_OK.match(supplied) else uuid4().hex
     request.state.request_id = request_id
+    request_id_var.set(request_id)
 
     response: Response | None = None
     if request.method in ("POST", "PUT"):

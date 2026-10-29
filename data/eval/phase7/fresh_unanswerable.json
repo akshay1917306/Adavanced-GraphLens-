@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "note": "Ten out-of-corpus probes written on 2026-10-29 AFTER the linking rule was designed, so they were not used to tune it. They are probes, not an answer key: each 'why' was checked with a plain text search of the 751 text units, but the owner has not reviewed them.",
+  "questions": [
+    {"id": "F01", "kind": "unanswerable", "question": "What accuracy does GPT-4 reach on MMLU?", "why_unanswerable": "no text unit mentions GPT-4 together with accuracy; MMLU appears once, in a table about another model family", "review": "draft"},
+    {"id": "F02", "kind": "unanswerable", "question": "How does Llama 3 perform on long-context benchmarks?", "why_unanswerable": "Llama appears in 4 units, none about Llama 3 or long-context benchmarks", "review": "draft"},
+    {"id": "F03", "kind": "unanswerable", "question": "What did the authors of the GPT 4 technical report conclude about reasoning?", "why_unanswerable": "'GPT 4' appears once, as part of 'InstructGPT 4'; no technical report is discussed", "review": "draft"},
+    {"id": "F04", "kind": "unanswerable", "question": "What is the F1 score of Gemini 1.5 on SQuAD?", "why_unanswerable": "Gemini appears in no unit", "review": "draft"},
+    {"id": "F05", "kind": "unanswerable", "question": "How many parameters does PaLM 2 have?", "why_unanswerable": "PaLM 2 appears in 13 units but none mentions parameters", "review": "draft"},
+    {"id": "F06", "kind": "unanswerable", "question": "What performance does Mixtral reach on HumanEval?", "why_unanswerable": "Mixtral and HumanEval appear in no unit", "review": "draft"},
+    {"id": "F07", "kind": "unanswerable", "question": "What precision did BERT 5 reach?", "why_unanswerable": "there is no BERT 5", "review": "draft"},
+    {"id": "F08", "kind": "unanswerable", "question": "Which GPU was used to train Claude 3?", "why_unanswerable": "Claude appears in 4 units, none about training hardware", "review": "draft"},
+    {"id": "F09", "kind": "unanswerable", "question": "What is the recall of ChatGPT on TriviaQA?", "why_unanswerable": "ChatGPT and TriviaQA never appear in the same unit", "review": "draft"},
+    {"id": "F10", "kind": "unanswerable", "question": "What does the Mistral 7B paper say about sliding window attention?", "why_unanswerable": "Mistral and sliding window appear in no unit", "review": "draft"}
+  ]
+}

@@ -17,6 +17,7 @@ from app.ask import AskService, EngineUnavailable, get_ask_service, set_ask_serv
 from app.config import get_settings
 from app.hardening import configure_logging, hardening
 from app.health import run_checks
+from app.live import EngineTimeout, LiveService
 from app.ratelimit import (
     DailyCapReached,
     Limiter,
@@ -54,8 +55,18 @@ from app.visitor import (
 configure_logging()
 log = logging.getLogger("graphlens.api")
 
-if get_settings().answer_mode == "replay":
+_mode = get_settings().answer_mode
+if _mode == "replay":
     set_ask_service(ReplayService())
+elif _mode == "live":
+    _s = get_settings()
+    set_ask_service(
+        LiveService(
+            _s.search_service_url,
+            _s.search_service_key.get_secret_value(),
+            _s.search_timeout_seconds,
+        )
+    )
 
 app = FastAPI(title="GraphLens API", version="0.0.1")
 app.add_middleware(
@@ -85,6 +96,11 @@ async def invalid_request(request: Request, error: RequestValidationError) -> JS
 @app.exception_handler(EngineUnavailable)
 async def engine_unavailable(request: Request, error: EngineUnavailable) -> JSONResponse:
     return _error("engine_unavailable", "The answer engine is not available right now.", 503)
+
+
+@app.exception_handler(EngineTimeout)
+async def engine_timeout(request: Request, error: EngineTimeout) -> JSONResponse:
+    return _error("engine_timeout", "The answer took too long. Please try again.", 504)
 
 
 @app.exception_handler(VisitorRequired)
@@ -321,4 +337,7 @@ def run_status(
 def examples(service: Annotated[AskService, Depends(get_ask_service)]) -> dict:
     """Questions the current engine can answer in full (replay mode), for the example chips."""
     listing = getattr(service, "examples", None)
-    return {"questions": listing() if listing else []}
+    return {
+        "questions": listing() if listing else [],
+        "live": bool(getattr(service, "live", False)),
+    }

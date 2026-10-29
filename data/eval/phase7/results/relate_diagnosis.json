@@ -1,0 +1,467 @@
+{
+ "causes": {
+  "verified": 11,
+  "a sentence names an entity that is not in the context": 9
+ },
+ "cost_usd": 0.0141,
+ "answers": [
+  {
+   "id": "R01",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The path shows that ILP (Inductive Logic Programming) addresses multi-hop reading comprehension by aligning with human reasoning and generating interpretable rules useful for this task.\n\nHop 1: ILP addresses multi-hop reading comprehension. This is because ILP can induce interpretable rules that help infer complex relations across multiple pieces of information, similar to how humans reason. For example, ILP can generate a rule like \"if A is in B and B is part of country C, then A is in country C,\" which helps correctly answer queries requiring multi-hop inference. This contrasts with deep neural networks that may only implicitly encode context and sometimes make incorrect predictions by linking entities incorrectly [T1]. Furthermore, multi-hop reading comprehension tasks can be formally framed as ILP problems, where the task is to find an answer satisfying a relational query given background knowledge and examples, aligning with the ILP setting [T2].\n\nThus, ILP provides a framework to explicitly model and solve multi-hop reading comprehension by learning logical rules from data, making the reasoning process interpretable and structured [T1][T2].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "T1",
+    "T2"
+   ],
+   "cost_usd": 0.000636
+  },
+  {
+   "id": "R02",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "The OLTQA model facilitates knowledge sharing among head, tail, and unseen tasks by organizing itself into fine-grained components that are dynamically combined for each input.",
+    "In summary, the OLTQA model is a solution specifically developed to tackle the Open Long-Tailed QA problem by leveraging component-based knowledge sharing and LM-guided example retrieval and reranking ."
+   ],
+   "text": "The OLTQA model is designed to address the challenges posed by the Open Long-Tailed QA (OLTQA) task. Specifically, the OLTQA task involves learning from data that follows a long-tailed distribution and optimizing performance across both seen and unseen QA tasks. The OLTQA model facilitates knowledge sharing among head, tail, and unseen tasks by organizing itself into fine-grained components that are dynamically combined for each input. Additionally, it incorporates a retrieve-then-rerank framework to select in-context examples that guide a large pre-trained language model (LM) to generate knowledge-expressive text for QA tasks. This framework is trained in two stages: first, by knowledge distillation from the LM, and second, by joint training with an encoder-decoder QA model [T1][T2].\n\nIn summary, the OLTQA model is a solution specifically developed to tackle the Open Long-Tailed QA problem by leveraging component-based knowledge sharing and LM-guided example retrieval and reranking [T1][T2].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "T1",
+    "T2"
+   ],
+   "cost_usd": 0.0006156
+  },
+  {
+   "id": "R03",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "TF-IDF is related to ODQA as a sparse retrieval method used to improve the retriever component in ODQA systems. Specifically, ODQA models typically include a retriever that selects relevant text passages from a large external knowledge source, such as Wikipedia, and a reader that generates the answer. Early ODQA works used sparse retrieval methods like TF-IDF or BM25 to find relevant passages. Thus, TF-IDF addresses the challenge of retrieving pertinent information in ODQA by serving as a foundational retrieval technique before the advent of dense retrieval methods based on contextual embeddings [T1].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "T1"
+   ],
+   "cost_usd": 0.000368
+  },
+  {
+   "id": "R04",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "The passage explains that while additional parameters can sometimes harm performance on multi-step programs, the CompAQT component has a regularizing effect that helps with these complex reasoning tasks ."
+   ],
+   "text": "The path shows that FinQANet+CompAQT addresses multi-step quantitative reasoning in question answering. Specifically, FinQANet+CompAQT is designed to handle multi-step programs, which are a form of multi-step quantitative reasoning [T1]. The passage explains that while additional parameters can sometimes harm performance on multi-step programs, the CompAQT component has a regularizing effect that helps with these complex reasoning tasks [T1]. Furthermore, pre-training FinQANet+CompAQT on diverse datasets improves its performance on multi-step programs, indicating its focus on multi-step quantitative reasoning [T1].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "T1"
+   ],
+   "cost_usd": 0.000392
+  },
+  {
+   "id": "R05",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "Rule-enhanced learning uses AnyBURL, which is the state-of-the-art method for rule mining on knowledge graphs, to efficiently mine logical rules [T1]. Specifically, AnyBURL helps to extract rules that decompose a single relation into a composition of multiple relations, including inverse relations, and assigns confidence scores to these rules [T1]. Rule-enhanced learning then selects rules with confidence scores above a threshold to guide path searching and obtain high-quality path-query pairs, addressing the noisy sample challenge [T1].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "T1"
+   ],
+   "cost_usd": 0.0003588
+  },
+  {
+   "id": "R06",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "This indicates that the QA model is part of the knowledge distillation framework where Back KD is applied ."
+   ],
+   "text": "The connection between Back KD and the QA model is established through their use in the same research context, specifically in the Long-Tailed Question Answering in an Open World setting.\n\nHop 1: The paper uses the Back KD variant to evaluate the effect of removing a specific loss component (Lmkd) and training two retrievers (R1 and R2) using knowledge distilled from a model F. This shows that Back KD is a method applied in the training process involving knowledge distillation [T1].\n\nHop 2: The same paper uses the QA model F in the adaptive mutual knowledge distillation process. This indicates that the QA model is part of the knowledge distillation framework where Back KD is applied [T2][T3].\n\nIn summary, Back KD is a variant used in the training process of retrievers by distilling knowledge from the QA model F, linking Back KD directly to the QA model through their roles in the adaptive mutual knowledge distillation process.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "cost_usd": 0.0006908
+  },
+  {
+   "id": "R07",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between Chain-of-Thought and EntailmentBankQA is established through the intermediate use of a paper titled \"Faithful Question Answering with Monte-Carlo Planning.\"\n\nHop 1: The paper \"Faithful Question Answering with Monte-Carlo Planning\" employs Chain-of-Thought prompting with GPT-3 to enhance reasoning step quality in question answering tasks [T1].\n\nHop 2: This same paper uses the EntailmentBankQA dataset to evaluate the quality of entailment trees generated by models. Specifically, it performs manual evaluation on EntailmentBankQA to assess the validity and quality of the reasoning trees corresponding to selected answer options [T2][T3].\n\nIn summary, Chain-of-Thought is related to EntailmentBankQA because the paper that uses Chain-of-Thought prompting also uses EntailmentBankQA as a benchmark dataset to evaluate the reasoning quality of its models.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "cost_usd": 0.0006836
+  },
+  {
+   "id": "R08",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between DPR-PAQ and TriviaQA is established through a research paper titled \"You Only Need One Model for Open-domain Question Answering.\" \n\nHop 1: The paper uses the DPR-PAQ method as a baseline or comparison in its experiments [T1]. \n\nHop 2: The same paper evaluates its proposed model on the TriviaQA dataset, which is a standard open-domain question answering dataset [T2][T3]. \n\nThus, DPR-PAQ is related to TriviaQA in that the paper employing DPR-PAQ as a baseline also tests its model on TriviaQA, linking the method and the dataset through this shared evaluation context.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "cost_usd": 0.0005668000000000001
+  },
+  {
+   "id": "R09",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "The relation between EviGen and FiD-KD can be explained through two paths:\n\nPath 1:  \n- The paper titled \"Evaluating Open-Domain Question Answering in the Era of Large Language Models\" (E2) evaluates the EviGen method (E1) ."
+   ],
+   "text": "The relation between EviGen and FiD-KD can be explained through two paths:\n\nPath 1:  \n- The paper titled \"Evaluating Open-Domain Question Answering in the Era of Large Language Models\" (E2) evaluates the EviGen method (E1) [T1][T2].  \n- The same paper (E2) also uses the FiD-KD retriever paired with Fusion-In-Decoder (E3) [T1][T3].  \nThus, both EviGen and FiD-KD are methods evaluated or used within the same research paper.\n\nPath 2:  \n- EviGen (E1) was tested on a subset of the NQ-OPEN dataset (E4) [T4].  \n- FiD-KD (E3) is also evaluated on the NQ-OPEN dataset (E4) [T5].  \nThis shows that both EviGen and FiD-KD are evaluated on the same dataset, NQ-OPEN.\n\nIn summary, EviGen and FiD-KD are related in that they are both evaluated or used in the same research paper and both are tested on the NQ-OPEN dataset.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5"
+   ],
+   "cost_usd": 0.0010272
+  },
+  {
+   "id": "R10",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between MQA-3H and PLM is established through the paper \"ReasoningLM: Enabling Structural Subgraph Reasoning in Pre-trained Language Models\" [T1, T2].\n\nHop 1: The paper uses the MQA-3H dataset for experiments. This means that MQA-3H serves as a dataset on which the methods or models proposed in the paper are tested or evaluated [T1].\n\nHop 2: The same paper proposes tuning a pre-trained language model (PLM) to understand questions and perform reasoning on knowledge graphs. This indicates that the PLM is adapted or fine-tuned using data and methods described in the paper to improve its reasoning capabilities [T2].\n\nIn summary, MQA-3H is a dataset utilized by the paper that proposes a method to tune PLMs for reasoning tasks, thereby linking MQA-3H to PLM through the experimental use and tuning process described in the paper.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1",
+    "T2"
+   ],
+   "cost_usd": 0.0006204000000000001
+  },
+  {
+   "id": "R11",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between RoBERTa-large and FinQANet is established through their use in a particular research paper on improving compositional generalization for multi-step quantitative reasoning.\n\nHop 1: The paper uses RoBERTa-large to encode input data because all models report their best performance when using this model. This means RoBERTa-large serves as the input encoder for the models evaluated in the study [T1].\n\nHop 2: The same paper uses FinQANet as one of the baseline models applied to the FinQA dataset. FinQANet is a model proposed earlier and is included to compare performance before and after adding a new component called CompAQT [T2][T1].\n\nIn summary, RoBERTa-large is used as the input encoder within the study that also uses FinQANet as a baseline model. Thus, RoBERTa-large supports the encoding process in the evaluation of FinQANet among other models [T1][T2].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1",
+    "T2"
+   ],
+   "cost_usd": 0.0006352
+  },
+  {
+   "id": "R12",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "Hop 1: The paper uses the Static MKD variant as part of its methodology.",
+    "Specifically, Static MKD removes the adaptive mutual knowledge distillation loss (Lmkd) and performs mutual knowledge distillation based on the initial performance of components R1, R2, and F .",
+    "In summary, Static MKD is a variant of mutual knowledge distillation used in the paper, and T5-base is the underlying model architecture for the QA model to which Static MKD is applied ."
+   ],
+   "text": "The connection between Static MKD and T5-base is established through their use in the same paper on Long-Tailed Question Answering in an Open World.\n\nHop 1: The paper uses the Static MKD variant as part of its methodology. Specifically, Static MKD removes the adaptive mutual knowledge distillation loss (Lmkd) and performs mutual knowledge distillation based on the initial performance of components R1, R2, and F [T1].\n\nHop 2: The same paper uses T5-base to initialize the question answering (QA) model F. This means that the QA model in which Static MKD is applied is based on the T5-base architecture [T2].\n\nIn summary, Static MKD is a variant of mutual knowledge distillation used in the paper, and T5-base is the underlying model architecture for the QA model to which Static MKD is applied [T1][T2].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1",
+    "T2"
+   ],
+   "cost_usd": 0.0006048
+  },
+  {
+   "id": "R13",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between T5-large and LLMs is established through the paper \"Faithful Question Answering with Monte-Carlo Planning\" (FAME). \n\nHop 1: The paper uses the T5-large model as the base for its method FAME, similar to other methods like Entailer and NELLIE. This means T5-large is employed as a foundational language model in their approach [T1].\n\nHop 2: The same paper discusses the use of large language models (LLMs) in the context of question answering, noting that LLMs have achieved strong performances in this area. The controller in their method is implemented with a generative language model, which is an LLM [T2][T3].\n\nThus, T5-large is related to LLMs because it is used as a specific instance of an LLM within the FAME method for faithful question answering.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "cost_usd": 0.0006836
+  },
+  {
+   "id": "R14",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2",
+    "T3",
+    "T4"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "Path 1 explains the connection in two hops: First, causal inference is used to address the problem of disconnected reasoning in multi-hop question answering (QA), where models might answer questions correctly without proper multi-hop reasoning ."
+   ],
+   "text": "Path 1 explains the connection in two hops: First, causal inference is used to address the problem of disconnected reasoning in multi-hop question answering (QA), where models might answer questions correctly without proper multi-hop reasoning [T1][T2]. Second, counterfactual examples are also used to address disconnected reasoning by constructing examples that challenge the model to rely on proper reasoning paths rather than shortcuts [T3].\n\nPath 2 also has two hops: First, a paper on Counterfactual Multihop QA uses the theory of causal inference to formalize the multi-hop reasoning method, framing the problem in terms of causal effects [T4]. Second, this paper proposes constructing counterfactual examples to estimate causal effects in multi-hop QA, thereby reducing disconnected reasoning [T3].\n\nIn summary, causal inference provides a theoretical framework to understand and formalize multi-hop reasoning, while counterfactual examples are practical tools proposed within this framework to reduce disconnected reasoning by estimating causal effects. Thus, causal inference and counterfactual examples are connected through their shared goal of improving multi-hop QA by addressing disconnected reasoning [T1][T2][T3][T4].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "T1",
+    "T2",
+    "T3",
+    "T4"
+   ],
+   "cost_usd": 0.0009088000000000001
+  },
+  {
+   "id": "R15",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between sequence-based methods and quantitative reasoning is explained through a proposed framework that improves upon sequence-based methods and addresses quantitative reasoning.\n\nHop 1: The proposed framework improves on sequence-based methods because it outperforms all sequence-based methods on the WQSP dataset, indicating better performance than these methods [T1].\n\nHop 2: The proposed framework addresses quantitative reasoning by achieving considerable improvement on the quantitative reasoning question category, showing its effectiveness in handling such questions [T1].\n\nThus, sequence-based methods are related to quantitative reasoning through the proposed framework that both improves upon sequence-based methods and effectively addresses quantitative reasoning tasks.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "T1"
+   ],
+   "cost_usd": 0.00040280000000000003
+  },
+  {
+   "id": "R16",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "This shows KG-FiD is evaluated against both simpler models like GPT-3 and more complex ones like REALM.",
+    "In summary, GPT-3 is related to SQuAD through a chain of comparisons: GPT-3 is a baseline model compared to KG-FiD, KG-FiD is compared to REALM, and REALM is evaluated on SQuAD.",
+    "Thus, GPT-3's relation to SQuAD is via its comparison to methods that are directly evaluated on SQuAD."
+   ],
+   "text": "The connection between GPT-3 and SQuAD is indirect and involves intermediate methods:\n\n1. KG-FiD is a method that is compared with GPT-3, which is categorized as a baseline model that does not use an external knowledge source [T1]. This means GPT-3 is used as a reference point for models without external knowledge integration.\n\n2. KG-FiD is also compared with REALM, a method that involves additional large-scale pre-training [T1]. This shows KG-FiD is evaluated against both simpler models like GPT-3 and more complex ones like REALM.\n\n3. REALM is evaluated on the SQuAD dataset as an open-domain benchmark [T2]. This indicates that REALM's performance on SQuAD is documented and used as a standard for open-domain question answering.\n\nIn summary, GPT-3 is related to SQuAD through a chain of comparisons: GPT-3 is a baseline model compared to KG-FiD, KG-FiD is compared to REALM, and REALM is evaluated on SQuAD. Thus, GPT-3's relation to SQuAD is via its comparison to methods that are directly evaluated on SQuAD.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "T1",
+    "T2"
+   ],
+   "cost_usd": 0.00071
+  },
+  {
+   "id": "R17",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2",
+    "T3",
+    "T4"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between InstructGPT (zero-shot) and GPT-4 can be explained through the intermediary role of the paper \"Evaluating Open-Domain Question Answering in the Era of Large Language Models\" and the evaluation method GPT4-eval:\n\n1. The paper \"Evaluating Open-Domain Question Answering in the Era of Large Language Models\" uses InstructGPT (zero-shot) as one of the QA models it evaluates [T1][T2].\n\n2. The same paper proposes GPT4-eval, an evaluation method that uses GPT-4 prompting to assess QA models [T3][T4].\n\n3. GPT4-eval relies on GPT-4 to generate prompts for evaluating QA models, thus directly using GPT-4 in its evaluation process [T3].\n\nTherefore, InstructGPT (zero-shot) is related to GPT-4 through the evaluation framework GPT4-eval proposed in the paper, where GPT-4 is used to evaluate the performance of InstructGPT (zero-shot) among other models. This connection is indirect and mediated by the evaluation methodology [T1][T2][T3][T4].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7"
+   ],
+   "cost_usd": 0.0012988000000000001
+  },
+  {
+   "id": "R18",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "- A Semantic Framework based Query Generation method for Temporal Question Answering (SF-TQA) uses PullNet as a comparison baseline on TimeQuestions .",
+    "- The same SF-TQA method also uses EXAQT as a comparison baseline on TimeQuestions .",
+    "This indicates that both MetaQA and EXAQT are connected via their use as evaluation benchmarks or comparison baselines in temporal KGQA research, specifically involving PullNet and SF-TQA on datasets like MetaQA and TimeQuestions ."
+   ],
+   "text": "The connection between MetaQA and EXAQT can be explained through the following paths:\n\nPath 1:\n- PullNet, a method, is evaluated on the MetaQA dataset [T1].\n- PullNet is also evaluated on the TimeQuestions benchmark dataset [T2][T3].\n- EXAQT is evaluated on the TimeQuestions dataset, achieving better precision and Hit@1 scores [T2][T3].\n\nThis shows that both MetaQA and EXAQT are linked through the evaluation of PullNet on these datasets, with EXAQT being evaluated on the same dataset (TimeQuestions) as PullNet [T1][T2][T3].\n\nPath 2:\n- PullNet is evaluated on MetaQA [T1].\n- A Semantic Framework based Query Generation method for Temporal Question Answering (SF-TQA) uses PullNet as a comparison baseline on TimeQuestions [T2].\n- The same SF-TQA method also uses EXAQT as a comparison baseline on TimeQuestions [T2].\n\nThis indicates that both MetaQA and EXAQT are connected via their use as evaluation benchmarks or comparison baselines in temporal KGQA research, specifically involving PullNet and SF-TQA on datasets like MetaQA and TimeQuestions [T1][T2].\n\nIn summary, MetaQA and EXAQT are related through shared evaluation practices involving PullNet and temporal KGQA benchmarks, particularly TimeQuestions.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "cost_usd": 0.000906
+  },
+  {
+   "id": "R19",
+   "status": "answered",
+   "check": "verified",
+   "cited": [
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "unknown_labels": [],
+   "unsupported": [],
+   "text": "The connection between NELL23K and ComplEx is indirect and involves the TransE method and the WikiKG90Mv2 dataset.\n\nHop 1: TransE was evaluated on the NELL23K dataset, as shown in the experimental results in [T1]. This means that TransE's performance was tested using NELL23K.\n\nHop 2: TransE was also evaluated on the WikiKG90Mv2 dataset, as indicated in Table 3 of [T2] and [T3]. This shows that TransE's performance was tested on another dataset, WikiKG90Mv2.\n\nHop 3: ComplEx was evaluated on the WikiKG90Mv2 dataset as well, as shown in Table 3 of [T2] and [T3]. This means ComplEx's performance was tested on the same dataset as TransE in this context.\n\nTherefore, NELL23K is related to ComplEx through the shared evaluation of TransE on both NELL23K and WikiKG90Mv2, and the evaluation of ComplEx on WikiKG90Mv2. There is no direct evaluation of ComplEx on NELL23K mentioned here.",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "T1",
+    "T2",
+    "T3"
+   ],
+   "cost_usd": 0.000792
+  },
+  {
+   "id": "R20",
+   "status": "answered",
+   "check": "warning",
+   "cited": [
+    "T1",
+    "T2",
+    "T3",
+    "T4"
+   ],
+   "unknown_labels": [],
+   "unsupported": [
+    "Although LLMs can perform comparably on some datasets, they face challenges on complex multi-hop KGQA datasets, indicating the need for methods like the state verifier to improve reasoning quality in KGQA ."
+   ],
+   "text": "The relation between the state verifier V and KGQA can be explained through the following hops:\n\nHop 1: The paper \"Faithful Question Answering with Monte-Carlo Planning\" proposes the state verifier V to estimate the score of a state based on step validity and hypothesis faithfulness. This verifier assesses whether each reasoning step is valid and whether the hypothesis follows faithfully from the reasoning steps [T1].\n\nHop 2: This paper uses large language models (LLMs), including ChatGPT, to implement the reasoning controller and evaluate reasoning steps. It investigates whether faithful question answering (FQA) can be solved by ChatGPT, showing that while ChatGPT achieves high answer accuracy, it struggles with producing valid and faithful reasoning steps [T2][T3].\n\nHop 3: ChatGPT and other LLMs such as Davinci-003 are applied to KGQA tasks. Although LLMs can perform comparably on some datasets, they face challenges on complex multi-hop KGQA datasets, indicating the need for methods like the state verifier to improve reasoning quality in KGQA [T4].\n\nIn summary, the state verifier V is introduced in a method that uses LLMs like ChatGPT to improve the faithfulness and validity of reasoning steps, which are crucial for effective KGQA performance. Thus, V supports KGQA by ensuring the reasoning process behind answers is valid and faithful [T1][T2][T3][T4].",
+   "labels_in_context": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6"
+   ],
+   "cost_usd": 0.0012352
+  }
+ ]
+}

@@ -15,7 +15,13 @@ import time
 from collections import Counter
 from dataclasses import dataclass, field
 
-from graphlens_pipeline.linking import EntityIndex, LinkResult, name_matches
+from graphlens_pipeline.linking import (
+    STOP_WORDS,
+    STRONG_NAME_WEIGHT,
+    EntityIndex,
+    LinkResult,
+    name_matches,
+)
 from graphlens_pipeline.llm import Llm, LlmError, cost_usd
 from graphlens_pipeline.localcontext import LocalContext
 
@@ -39,7 +45,19 @@ def _flat(value: str) -> str:
     return re.sub(r"[^0-9a-z]+", "", value.casefold())
 
 
+# Words that make a phrase empty on its own: the graph has junk entities such as "part of".
+GENERIC_WORDS = STOP_WORDS | {"part", "of", "in", "on", "to", "a", "an", "or"}
 CITATION = re.compile(r"\[((?:[TEC]\d+)(?:\s*,\s*[TEC]\d+)*)\]")
+# The model sometimes refuses in plain words ("The provided context does not contain any information
+# about ...") instead of the marker. On 5 of 7 such cases in the Phase 7 probes it did so; it never
+# did on the 60 answerable development answers. Only a first sentence that is a plain refusal counts
+# (a "but" or a semicolon means the answer goes on to say something useful).
+SOFT_REFUSAL = re.compile(
+    r"^(?:the\s+)?(?:provided\s+)?(?:context|passages?|texts?|information|evidence)\b[^.]{0,80}?"
+    r"\b(?:does|do|did)\s+not\s+(?:explicitly\s+|directly\s+)?"
+    r"(?:contain|provide|mention|include|state|specify|have|describe|report|give)\b",
+    re.IGNORECASE,
+)
 SENTENCE = re.compile(r"(?<=[.!?])\s+")
 
 
@@ -108,6 +126,14 @@ def thin_evidence(context: LocalContext, question: str) -> LocalAnswer | None:
     return None
 
 
+def soft_refusal(text: str) -> str:
+    """The first sentence when the answer is a plain-words refusal, else an empty string."""
+    first = SENTENCE.split(text.strip(), maxsplit=1)[0]
+    if SOFT_REFUSAL.search(first) and not re.search(r"\bbut\b|\bhowever\b|;", first, re.IGNORECASE):
+        return first
+    return ""
+
+
 def check_citations(answer: str, context: LocalContext, index: EntityIndex | None) -> Check:
     """Every cited label must exist in the context; sentences naming entities the context never
     mentions are flagged."""
@@ -125,7 +151,11 @@ def check_citations(answer: str, context: LocalContext, index: EntityIndex | Non
                 continue
             for group in name_matches(clean, index):
                 key = _flat(group[0].matched)
-                if len(key) < 3 or key in known:
+                # a plain or very common word that is also an entity name ("complex", "relation",
+                # "QA model") proves nothing about the sentence: only real names are checked
+                if len(key) < 3 or key in known or group[0].weight < STRONG_NAME_WEIGHT:
+                    continue
+                if all(w.casefold() in GENERIC_WORDS for w in group[0].matched.split()):
                     continue
                 # the context may use another name of the same entity ("FiD" or the long form)
                 names = {
@@ -151,10 +181,17 @@ def generate(llm: Llm, context: LocalContext, link: LinkResult) -> LocalAnswer:
         cost_usd=cost_usd(reply.model, reply.tokens_in, reply.tokens_out) or 0.0,
         seeds=[s.name for s in link.seeds],
     )  # fmt: skip
+    soft = soft_refusal(text)
     if text.upper().startswith(REFUSAL):
         result.status, result.text = "refused", ""
         result.reason = "The model found no answer in the evidence that was gathered."
         result.suggestion = "Try naming the methods or datasets, or ask about something narrower."
+    elif soft:
+        result.status, result.text = "refused", ""
+        result.reason = soft
+        result.suggestion = (
+            "The papers may not cover this. Try a narrower question about what they do cover."
+        )
     result.seconds = round(time.monotonic() - started, 2)
     return result
 
@@ -171,6 +208,7 @@ class LocalDeps:
     count_tokens: object  # (text) -> int
     index: EntityIndex | None = None
     plain_hits: object = None  # (question) -> unit ids of a plain hybrid search, shown first
+    context_tokens: int = 8000  # the size of the context sent to the model
 
 
 def prepare_local(deps: LocalDeps, question: str):
@@ -190,8 +228,25 @@ def prepare_local(deps: LocalDeps, question: str):
     context = assemble(
         link.question, graph, deps.unit_rows(list(dict.fromkeys(cited + plain))),
         deps.unit_similarity(link, cited), deps.reports(link), deps.count_tokens,
-        priority_units=tuple(plain),
+        priority_units=tuple(plain), total_tokens=deps.context_tokens,
     )  # fmt: skip
+    context.graph = graph
+    evidence = _flat(" ".join(item.text for item in context.items))  # not the question itself
+    unseen = [
+        s for s in link.qualified if _flat(s.matched + s.qualifier) not in evidence
+    ]  # fmt: skip
+    if unseen:
+        name = unseen[0]
+        refusal = LocalAnswer(
+            link.question, "refused",
+            reason=(
+                f'The papers mention "{name.matched}" but say nothing about '
+                f'"{name.matched} {name.qualifier}".'
+            ),
+            suggestion=f'Ask about "{name.matched}" itself, or about something the papers cover.',
+            seeds=[s.name for s in link.seeds],
+        )  # fmt: skip
+        return refusal, None, link
     thin = thin_evidence(context, link.question)
     if thin:
         thin.seeds = [s.name for s in link.seeds]

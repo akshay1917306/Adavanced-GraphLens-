@@ -25,3 +25,6 @@ data/corpus/*/pdfs/
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
+
+# Database backups (large, local)
+backups/

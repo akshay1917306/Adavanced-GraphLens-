@@ -33,15 +33,14 @@ def make_context(prompt_extra="", labels=("T1", "T2", "E1", "C1")):
     return ctx
 
 
-INDEX = EntityIndex(
-    [
-        {"id": "i1", "name": "FiD", "type": "Method", "aliases": [], "mentions": 3, "sources": []},
-        {"id": "i2", "name": "Natural Questions", "type": "Dataset", "aliases": ["NQ"],
-         "mentions": 3, "sources": []},
-        {"id": "i3", "name": "ZetaNet", "type": "Method", "aliases": [], "mentions": 1,
-         "sources": []},
-    ]
-)  # fmt: skip
+INDEX_ROWS = [
+    {"id": "i1", "name": "FiD", "type": "Method", "aliases": [], "mentions": 3, "sources": []},
+    {"id": "i2", "name": "Natural Questions", "type": "Dataset", "aliases": ["NQ"],
+     "mentions": 3, "sources": []},
+    {"id": "i3", "name": "ZetaNet", "type": "Method", "aliases": [], "mentions": 1,
+     "sources": []},
+]  # fmt: skip
+INDEX = EntityIndex(INDEX_ROWS)
 
 
 # --- before answering -------------------------------------------------------------------------
@@ -60,8 +59,10 @@ def test_a_specific_ambiguous_name_asks_which_one_but_a_generic_one_does_not():
         linked(1, "QA", ambiguous=True, weight=0.2),
         linked(2, "QA", ambiguous=True, weight=0.2),
     ]
+    # a generic name in a question that is close to the graph (0.85, as real questions are)
     assert (
-        decide_before_answering(LinkResult("How is QA done?", [generic[0]], 0.0, [generic])) is None
+        decide_before_answering(LinkResult("How is QA done?", [generic[0]], 0.85, [generic]))
+        is None
     )
     two_names = [linked(3, "FiD")]
     assert (
@@ -235,3 +236,90 @@ def test_an_unreachable_model_gives_a_clear_refusal_not_a_crash():
 def test_an_empty_answer_is_still_checked_and_flagged(text):
     answer, _ = answer_local(make_deps(LinkResult("FiD?", [linked(1)], 0.9)), MockLlm(text), "FiD?")
     assert answer.status == "answered" and answer.check.status == "warning"
+
+
+# --- plain-words refusals, generic names, and versions the papers do not know (Phase 7) ---------
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "The provided context does not explicitly mention the accuracy of GPT-4 on MMLU. While "
+        "there are references to GPT-3 [T1], none gives that number.",
+        "The context does not provide a direct recall value for ChatGPT on TriviaQA.",
+        "The provided context does not contain any information about Llama 3.",
+    ],
+)
+def test_a_refusal_in_plain_words_is_a_refusal_with_its_own_sentence_as_the_reason(text):
+    link = LinkResult("Q?", [linked(1)], 0.9)
+    answer = generate(MockLlm(text), make_context(), link)
+    assert answer.status == "refused" and answer.text == ""
+    assert answer.reason.startswith(("The provided context", "The context")) and answer.suggestion
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "FiD uses DPR [T1].",
+        "The context does not state the size, but T5-small has about 60M parameters [T1].",
+        "KGT5 uses T5-small. The context does not mention a larger variant.",
+        "The model uses the provided context to retrieve passages [T1].",
+    ],
+)
+def test_a_real_answer_is_never_turned_into_a_refusal(text):
+    link = LinkResult("Q?", [linked(1)], 0.9)
+    answer = generate(MockLlm(text), make_context(), link)
+    assert answer.status == "answered" and answer.text == text
+
+
+def test_a_generic_word_that_is_also_an_entity_name_does_not_flag_a_sentence():
+    index = EntityIndex(
+        INDEX_ROWS
+        + [
+            {
+                "id": "g",
+                "name": "complex",
+                "type": "Method",
+                "aliases": [],
+                "mentions": 5,
+                "sources": [f"u_{n:012d}_0001" for n in range(12)],
+            }
+        ]  # fmt: skip
+    )
+    check = check_citations("FiD handles complex questions [T1].", make_context(), index)
+    assert check.status == "verified" and check.unsupported == []
+    strong = check_citations("FiD and ZetaNet [T1].", make_context(), index)
+    assert strong.status == "warning" and len(strong.unsupported) == 1
+
+
+def versioned_link(text_in_context=""):
+    seed = Linked("e9", "claude", "Method", 1.0, "name", "Claude", False, 0.15, True, "2")
+    return LinkResult("Claude 2 report?", [seed], 0.95, qualified=[seed]), text_in_context
+
+
+def test_a_version_the_papers_never_mention_is_refused_before_the_model_is_called():
+    link, _ = versioned_link()
+    llm = MockLlm()
+    answer, context = answer_local(make_deps(link), llm, link.question)
+    assert answer.status == "refused" and llm.calls == 0 and context is None
+    assert '"Claude"' in answer.reason and '"Claude 2"' in answer.reason
+
+
+def test_a_version_the_context_does_mention_goes_on_to_the_model():
+    link, _ = versioned_link()
+    deps = make_deps(link)
+    rows = {u: {"text": "Claude 2 was tested. " * 10, "title": "t", "paper_id": "p", "section": "s"}
+            for u in ["u_000000000000_0001", "u_000000000001_0001", "u_000000000002_0001",
+                      "u_000000000003_0001"]}  # fmt: skip
+    deps.unit_rows = lambda ids: rows
+    llm = MockLlm("Claude 2 was tested [T1].")
+    answer, _ = answer_local(deps, llm, link.question)
+    assert answer.status == "answered" and llm.calls == 1
+
+
+def test_a_junk_entity_made_of_function_words_does_not_flag_a_sentence():
+    junk = {"id": "j", "name": "part of", "type": "Method", "aliases": [], "mentions": 2,
+            "sources": ["u_aaaaaaaaaaaa_0001"]}  # fmt: skip
+    index = EntityIndex([*INDEX_ROWS, junk])
+    check = check_citations("FiD is part of the pipeline [T1].", make_context(), index)
+    assert check.status == "verified" and check.unsupported == []

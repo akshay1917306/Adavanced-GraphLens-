@@ -4,6 +4,7 @@ docker compose run --rm pipeline ingest
 """
 
 import argparse
+import logging
 import os
 import sys
 from pathlib import Path
@@ -183,6 +184,50 @@ def main(argv: list[str] | None = None) -> int:
     rel.add_argument("--index-version", default="idx2-full-g0")
     rel.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     rel.add_argument("--paths-only", action="store_true", help="find paths, call no model")
+    feval = sub.add_parser(
+        "final-eval",
+        help="the one clean final evaluation of Phase 7 (paid, about $0.4; use --dry-run first)",
+    )
+    feval.add_argument("--dir", type=Path, default=Path("/data/eval"))
+    feval.add_argument("--out-json", type=Path, required=True)
+    feval.add_argument("--out-md", type=Path, required=True)
+    feval.add_argument("--max-cost-usd", type=float, default=0.6)
+    feval.add_argument("--dry-run", action="store_true")
+    feval.add_argument("--index-version", default="idx2-full-g0")
+    feval.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    lvar = sub.add_parser(
+        "local-variant",
+        help="one local-search variant on a question file (paid, small; use --dry-run first)",
+    )
+    lvar.add_argument("--questions", type=Path, required=True)
+    lvar.add_argument("--mode", choices=["correctness", "refusal"], required=True)
+    lvar.add_argument(
+        "--system", required=True, help="a name for this variant (part of the cache key)"
+    )
+    lvar.add_argument("--context-tokens", type=int, default=8000)
+    lvar.add_argument("--previous", type=Path, help="an earlier evaluation file to compare with")
+    lvar.add_argument("--out", type=Path, required=True)
+    lvar.add_argument("--max-cost-usd", type=float, default=0.25)
+    lvar.add_argument("--dry-run", action="store_true")
+    lvar.add_argument("--index-version", default="idx2-full-g0")
+    lvar.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    rdiag = sub.add_parser(
+        "relate-diagnose",
+        help="why do relate explanations fail the citation check? (paid, about 1 cent)",
+    )
+    rdiag.add_argument("--pairs", type=Path, required=True)
+    rdiag.add_argument("--out", type=Path, required=True)
+    rdiag.add_argument("--max-cost-usd", type=float, default=0.03)
+    rdiag.add_argument("--index-version", default="idx2-full-g0")
+    rdiag.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    serve = sub.add_parser(
+        "serve-search",
+        help="run the internal search service for the API (needs the OpenAI key; not public)",
+    )
+    serve.add_argument("--host", default="0.0.0.0")  # noqa: S104 (inside the Compose network only)
+    serve.add_argument("--port", type=int, default=8100)
+    serve.add_argument("--index-version", default="idx2-full-g0")
+    serve.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     rexp = sub.add_parser(
         "export-replay",
         help="build the saved-answer file for the UI from a finished evaluation (no model, free)",
@@ -349,6 +394,18 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "export-replay":
         return _export_replay(engine, args)
+
+    if args.command == "serve-search":
+        return _serve_search(engine, args)
+
+    if args.command == "local-variant":
+        return _local_variant(engine, args)
+
+    if args.command == "final-eval":
+        return _final_eval(engine, args)
+
+    if args.command == "relate-diagnose":
+        return _relate_diagnose(engine, args)
 
     if args.command == "ask-auto":
         return _ask_auto(engine, args)
@@ -769,7 +826,7 @@ def _local_graph_eval(engine, args) -> int:
     return 0
 
 
-def _local_deps(engine, driver, args):
+def _local_deps(engine, driver, args, embedder=None, client=None):
     """Local search wired to the real databases and the local embedding model."""
     import tiktoken
     from qdrant_client import QdrantClient
@@ -788,8 +845,8 @@ def _local_deps(engine, driver, args):
     from graphlens_pipeline.ontology import load_ontology
 
     encoder = tiktoken.get_encoding("o200k_base")
-    embedder = FastEmbedder()
-    client = QdrantClient(url=os.environ["QDRANT_URL"])
+    embedder = embedder or FastEmbedder()
+    client = client or QdrantClient(url=os.environ["QDRANT_URL"])
     predicates = load_ontology(args.ontology).predicate_names
     index = EntityIndex.from_neo4j(driver, args.index_version)
     return LocalDeps(
@@ -1179,6 +1236,444 @@ def _relate(engine, args) -> int:
             print(f"  shared community (level {c['level']}, {c['size']} entities): {c['title']}")
         print(answer.suggestion)
     print(f"cost ${answer.cost_usd:.5f}")
+    return 0
+
+
+def _final_eval(engine, args) -> int:
+    """The one clean final evaluation of Phase 7. Every system gets a new name (`final_*`) so no
+    answer from an earlier run is reused: the numbers come from the code as it is now."""
+    import json
+    from datetime import date
+
+    import tiktoken
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.answer import AnswerError, answer_question
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.finaleval import (
+        acceptable_modes,
+        build_report,
+        percentile,
+        render_markdown,
+    )
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localanswer import answer_local
+    from graphlens_pipeline.localcontext import postgres_unit_rows
+    from graphlens_pipeline.localeval import (
+        AnswerRecord,
+        check_support,
+        run_correctness,
+        summarize,
+        support_sample,
+    )
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.phase7eval import refusal_report
+    from graphlens_pipeline.relate import answer_relate
+    from graphlens_pipeline.router import route_question
+
+    def load(path):
+        return json.loads((args.dir / path).read_text(encoding="utf-8"))["questions"]
+
+    hard = load("phase4/local_hard.json")
+    easy = [q for q in load("v0/questions.json") if q.get("kind") == "local"]
+    pairs = load("phase4/relate_pairs.json")
+    dev_unanswerable = load("phase4/unanswerable.json")
+    fresh = load("phase7/fresh_unanswerable.json")
+    router_questions = load("v0/questions.json") + load("v0/global_extra.json") + hard + pairs
+    answerable = len(hard) + len(easy)
+    # prices checked on real calls: a local answer and its judge call $0.0039, a plain-RAG answer
+    # plus its judge call $0.0017, a support check $0.001, a relate explanation $0.0008
+    parts_estimate = {
+        "local answers and judge": answerable * 0.0039,
+        "plain RAG answers and judge": answerable * 0.0017,
+        "citation support sample of 20": 20 * 0.001,
+        "fresh refusal probes": len(fresh) * 0.002,
+        "relate explanations": len(pairs) * 0.0008,
+        "router model step": len(router_questions) * 0.4 * 0.0004,
+    }
+    estimate = sum(parts_estimate.values())
+    if args.dry_run:
+        print(json.dumps({
+            "questions": {"hard": len(hard), "easy": len(easy), "relate": len(pairs),
+                          "unanswerable": len(dev_unanswerable), "fresh": len(fresh),
+                          "router": len(router_questions)},
+            "estimate_by_part_usd": {k: round(v, 4) for k, v in parts_estimate.items()},
+            "cost_usd_estimate": round(estimate, 3),
+            "cost_usd_with_margin": round(estimate * 1.4, 3),
+        }, indent=2))  # fmt: skip
+        print("Nothing was spent.")
+        return 0
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+
+    parts: dict = {"date": date.today().isoformat(), "notes": []}
+    spent = 0.0
+
+    def left() -> float:
+        return max(0.0, args.max_cost_usd - spent)
+
+    def save() -> None:
+        parts["spent_usd"] = round(spent, 4)
+        args.out_json.write_text(json.dumps(parts, indent=1, ensure_ascii=False), encoding="utf-8")
+
+    embedder = FastEmbedder()
+    qdrant = QdrantClient(url=os.environ["QDRANT_URL"])
+    encoder = tiktoken.get_encoding("o200k_base")
+    predicates = load_ontology(args.ontology).predicate_names
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = _local_deps(engine, driver, args, embedder, qdrant)
+
+        def local_fn(question):
+            import time
+
+            started = time.monotonic()
+            answer, context = answer_local(deps, llm, question)
+            cited = [c for c in answer.check.cited if c.startswith("T")]
+            shown = context.by_label() if context else {}
+            return AnswerRecord(
+                "local", answer.text, answer.status, answer.cost_usd,
+                round(time.monotonic() - started, 2), answer.check.status, answer.check.cited,
+                {c: shown[c].text for c in cited if c in shown},
+            )  # fmt: skip
+
+        def baseline_fn(question):
+            import time
+
+            started = time.monotonic()
+            try:
+                result = answer_question(question, qdrant, engine, embedder, llm, k=6)
+            except AnswerError as error:
+                raise LlmError(f"baseline failed: {error}") from error
+            return AnswerRecord(
+                "baseline", result.answer, "refused" if result.refused else "answered",
+                result.cost_usd or 0.0, round(time.monotonic() - started, 2),
+            )  # fmt: skip
+
+        # 1 and 2: correctness. Local answers one at a time, so the times are real.
+        local_rows_by_set = {}
+        for name, questions in (("hard", hard), ("easy", easy)):
+            print(f"== correctness, {name} set ({len(questions)} questions)", flush=True)
+            rows_l, c_l, _ = run_correctness(
+                engine, llm, questions, {"final_local": local_fn}, left(), workers=1,
+                on_progress=lambda d, n, c: d % 10 or print(f"   local {d}/{n}", flush=True),
+            )  # fmt: skip
+            spent += c_l
+            rows_b, c_b, _ = run_correctness(
+                engine, llm, questions, {"final_baseline": baseline_fn}, left(), workers=3
+            )  # fmt: skip
+            spent += c_b
+            summary = summarize(rows_l + rows_b)
+            parts[name] = {"local": summary["final_local"], "baseline": summary["final_baseline"]}
+            local_rows_by_set[name] = rows_l
+            parts[name]["answers"] = [
+                {"id": r.question_id, "system": r.system, "status": r.record.status,
+                 "verdict": r.verdict, "reason": r.reason, "check": r.record.check_status,
+                 "seconds": r.record.seconds, "cost_usd": r.record.cost_usd, "text": r.record.text}
+                for r in rows_l + rows_b
+            ]  # fmt: skip
+            save()
+
+        # latency and cost of a local answer, from the one-at-a-time runs
+        local_rows = [r for rows in local_rows_by_set.values() for r in rows if not r.failed]
+        seconds = [r.record.seconds for r in local_rows]
+        costs = [r.record.cost_usd for r in local_rows]
+        if seconds:
+            parts["latency"] = {
+                "n": len(seconds), "median_seconds": percentile(seconds, 50),
+                "p95_seconds": percentile(seconds, 95), "max_seconds": max(seconds),
+                "mean_cost_usd": sum(costs) / len(costs), "max_cost_usd": max(costs),
+            }  # fmt: skip
+
+        # 3: does a cited passage support the claim? (judge, a repeatable sample of 20 answers)
+        print("== citation support", flush=True)
+        support = {"checked": 0, "supported": 0, "answers": 0}
+        for row in support_sample(local_rows_by_set["hard"], "final_local", 20):
+            if left() <= 0:
+                break
+            try:
+                checked, supported, price = check_support(engine, llm, row)
+            except LlmError:
+                continue
+            spent += price
+            support["checked"] += checked
+            support["supported"] += supported
+            support["answers"] += 1
+        support["precision"] = (
+            round(support["supported"] / support["checked"], 3) if support["checked"] else None
+        )
+        parts["support"] = support
+        save()
+
+        # 4: refusal on questions the papers cannot answer
+        print("== refusal", flush=True)
+        refusal = {}
+        for label, questions in (("development", dev_unanswerable), ("fresh", fresh)):
+            records = []
+            for q in questions:
+                if left() <= 0:
+                    break
+                answer, _ = answer_local(deps, llm, q["question"])
+                spent += answer.cost_usd
+                records.append({"id": q["id"], "status": answer.status})
+            refusal[label] = refusal_report(records)
+        parts["refusal"] = refusal
+        save()
+
+        # 5: relate mode
+        print("== relate", flush=True)
+        relate = {"pairs": 0, "path_found": 0, "right_length": 0, "answered": 0, "verified": 0}
+        for q in pairs:
+            if left() <= 0:
+                break
+            result = answer_relate(
+                driver, llm, deps.index, q["question"], predicates, args.index_version,
+                lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+            )  # fmt: skip
+            spent += result.cost_usd
+            relate["pairs"] += 1
+            relate["path_found"] += bool(result.paths)
+            relate["right_length"] += (
+                bool(result.paths) and result.paths[0].length == q["expected_hops"]
+            )
+            relate["answered"] += result.status == "answered"
+            relate["verified"] += result.check.status == "verified"
+        parts["relate"] = relate
+        save()
+
+        # 6: the router, rules first and the small model when unsure, with the entity index
+        print("== router", flush=True)
+        right = asked = 0
+        misses = []
+        for q in router_questions:
+            if left() <= 0:
+                break
+            route = route_question(q["question"], deps.index, llm)
+            spent += route.cost_usd
+            asked += route.asked_model
+            if route.mode in acceptable_modes(q):
+                right += 1
+            else:
+                misses.append({"id": q["id"], "routed": route.mode, "question": q["question"][:90]})
+        parts["router"] = {
+            "questions": len(router_questions), "acceptable": right, "asked_model": asked,
+            "misses": misses,
+        }  # fmt: skip
+
+    # 7: global search is carried over from the Phase 3 run (the global code did not change)
+    rates = json.loads((args.dir / "v0/results/global-phase3.json").read_text())["dynamic"]["rates"]
+    parts["global"] = {"n": rates["comprehensiveness"]["n"]} | {
+        k: rates[k]["win_rate"]
+        for k in ("comprehensiveness", "diversity", "empowerment", "directness")
+    }
+    parts["notes"] += [
+        "Local answers were produced one at a time so the times are real; plain RAG ran three "
+        "at a time.",
+        "The retrieval part alone does about 2 to 3 questions per second per process "
+        "(LOAD_TEST.md); ten people asking at the same moment would be slower than these times.",
+        "Every system got a new name for this run, so no earlier answer was reused.",
+        "The hard and easy sets were drafted by Claude and their review pages are still "
+        "waiting for the owner; the judge is the same model family as the answerer.",
+        "The refusal guards were designed after looking at the development unanswerable questions, "
+        "so that number is not independent; the fresh probes were not used for tuning.",
+        "The relate paths were found in the same graph the expected paths came from.",
+    ]
+    save()
+    report = build_report(parts)
+    args.out_md.write_text(render_markdown(report), encoding="utf-8")
+    print(json.dumps({"missed": report["missed"], "spent_usd": parts["spent_usd"]}, indent=1))
+    return 0
+
+
+def _local_variant(engine, args) -> int:
+    """One local-search variant (context size, prompt) on a question file, judged or checked for
+    refusals. The variant name is part of the answer cache key, so a new name never reuses old
+    answers."""
+    import dataclasses
+    import json
+    import time
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localanswer import answer_local
+    from graphlens_pipeline.localeval import AnswerRecord, run_correctness, summarize
+    from graphlens_pipeline.phase7eval import compare_with_previous, refusal_report
+
+    questions = json.loads(args.questions.read_text(encoding="utf-8"))["questions"]
+    per_question = (
+        0.0065 if args.context_tokens > 9000 else 0.0045
+    )  # answer + judge, checked prices
+    estimate = len(questions) * per_question
+    if args.dry_run:
+        print(json.dumps({
+            "questions": len(questions), "mode": args.mode, "context_tokens": args.context_tokens,
+            "cost_usd_upper_estimate": round(estimate, 3),
+            "note": "refusals decided before the model cost nothing",
+        }, indent=2))  # fmt: skip
+        return 0
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    report: dict = {"system": args.system, "context_tokens": args.context_tokens, "mode": args.mode}
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = dataclasses.replace(
+            _local_deps(engine, driver, args), context_tokens=args.context_tokens
+        )
+
+        def run(question):
+            started = time.monotonic()
+            answer, context = answer_local(deps, llm, question)
+            cited = [c for c in answer.check.cited if c.startswith("T")]
+            shown = context.by_label() if context else {}
+            return AnswerRecord(
+                "local", answer.text, answer.status, answer.cost_usd,
+                round(time.monotonic() - started, 2), answer.check.status, answer.check.cited,
+                {c: shown[c].text for c in cited if c in shown},
+            )  # fmt: skip
+
+        if args.mode == "correctness":
+            rows, cost, skipped = run_correctness(
+                engine, llm, questions, {args.system: run}, args.max_cost_usd
+            )
+            report["summary"] = summarize(rows)
+            if args.previous:
+                previous = json.loads(args.previous.read_text(encoding="utf-8"))["answers"]
+                report["against_previous"] = compare_with_previous(rows, previous, args.system)
+            report["answers"] = [
+                {"id": r.question_id, "status": r.record.status, "verdict": r.verdict,
+                 "reason": r.reason, "check": r.record.check_status, "text": r.record.text,
+                 "seconds": r.record.seconds}
+                for r in rows
+            ]  # fmt: skip
+            report["cost_usd"], report["skipped_by_cap"] = round(cost, 4), skipped
+        else:
+            records, cost = [], 0.0
+            for q in questions:
+                if cost >= args.max_cost_usd:
+                    break
+                record = run(q["question"])
+                cost += record.cost_usd
+                records.append({"id": q["id"], "status": record.status, "text": record.text,
+                                "cost_usd": record.cost_usd})  # fmt: skip
+            report["refusal"] = refusal_report(records)
+            report["answers"] = records
+            report["cost_usd"] = round(cost, 4)
+    args.out.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
+    shown = {k: v for k, v in report.items() if k != "answers"}
+    print(json.dumps(shown, indent=1, ensure_ascii=False, default=str))
+    return 0
+
+
+def _relate_diagnose(engine, args) -> int:
+    """Run the relate explanations once more and keep what the citation check complained about."""
+    import json
+
+    import tiktoken
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EntityIndex
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localcontext import postgres_unit_rows
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.phase7eval import relate_causes
+    from graphlens_pipeline.relate import answer_relate
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    pairs = json.loads(args.pairs.read_text(encoding="utf-8"))["questions"]
+    predicates = load_ontology(args.ontology).predicate_names
+    encoder = tiktoken.get_encoding("o200k_base")
+    records, cost = [], 0.0
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        for q in pairs:
+            if cost >= args.max_cost_usd:
+                break
+            result = answer_relate(
+                driver, llm, index, q["question"], predicates, args.index_version,
+                lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+            )  # fmt: skip
+            cost += result.cost_usd
+            shown = result.context.by_label() if result.context else {}
+            records.append({
+                "id": q["id"], "status": result.status, "check": result.check.status,
+                "cited": result.check.cited, "unknown_labels": result.check.unknown_labels,
+                "unsupported": result.check.unsupported, "text": result.text,
+                "labels_in_context": sorted(shown), "cost_usd": result.cost_usd,
+            })  # fmt: skip
+    report = {"causes": relate_causes(records), "cost_usd": round(cost, 4), "answers": records}
+    args.out.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
+    print(json.dumps({k: v for k, v in report.items() if k != "answers"}, indent=1))
+    return 0
+
+
+def _serve_search(engine, args) -> int:
+    """The internal search service of CR-0004. It stops at once, with a clear message, when the
+    shared key or the model key is missing, so a half-working service never accepts requests."""
+    import tiktoken
+    import uvicorn
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.searchservice import SearchService, create_app, real_backends
+
+    key = os.environ.get("SEARCH_SERVICE_KEY", "")
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if len(key) < 16:
+        print("SEARCH_SERVICE_KEY must be set (at least 16 characters).", file=sys.stderr)
+        return 2
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None, timeout=30, max_retries=1)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+
+    def factory() -> SearchService:
+        driver = GraphDatabase.driver(uri, auth=(user, password))
+        embedder = FastEmbedder()
+        qdrant = QdrantClient(url=os.environ["QDRANT_URL"])
+        deps = _local_deps(engine, driver, args, embedder, qdrant)
+        predicates = load_ontology(args.ontology).predicate_names
+        encoder = tiktoken.get_encoding("o200k_base")
+        backends = real_backends(
+            deps, llm, driver, engine, qdrant, embedder, predicates, args.index_version, encoder
+        )
+        return SearchService(backends, model=llm.model)
+
+    # only our own request lines are shown at INFO; the libraries stay at their default level
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("%(message)s"))
+    ours = logging.getLogger("graphlens")
+    ours.setLevel(logging.INFO)
+    ours.addHandler(handler)
+    uvicorn.run(create_app(factory, key), host=args.host, port=args.port, access_log=False)
     return 0
 
 
