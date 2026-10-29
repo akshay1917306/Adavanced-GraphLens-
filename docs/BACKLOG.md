@@ -15,3 +15,5 @@ Ideas that are outside the current phase. Nothing here is approved.
 - Compare the quantised bge model with the full-precision one on the evaluation set (D19).
 - `CITES` edges: parse the reference list (it is cut today) and link papers inside the corpus.
 - Add `--replace` to ingest so a changed chunker does not need hand-written SQL (done by hand again for CR-0003).
+- Bigger corpus (100 to 250 papers) and an `add-papers` incremental command; pypdf upgrade with re-extraction (D59, D71, D72). Dropped from v1.5 because the OpenAI limit cannot be raised; needs a new estimate and approval.
+- Email sending for password reset or magic links (costs money); recovery codes are used instead (D70).

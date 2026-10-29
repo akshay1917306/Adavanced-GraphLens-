@@ -4,13 +4,13 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan written (Requirements and Design), waiting for the owner's approval.** Branch `phase-8/v1-5` from
-`main` at eca204a. Nothing built, nothing spent, nothing pushed. Scope chosen by the owner on 2026-10-29:
-faster and better answers (A), sign-in (B), bigger corpus with incremental updates (C). Hosting is out.
+**Plan updated with the owner's answers (2026-10-29), waiting for final approval.** Branch `phase-8/v1-5` from
+`main` at eca204a. Nothing built, nothing spent, nothing pushed. Scope: faster and better answers (A) and sign-in with password reset (B). The bigger corpus is dropped
+(the owner cannot raise the OpenAI limit); hosting is out.
 
 ## Decisions waiting for the owner
 
-D69 to D73 in `BRIEF.md`: order and tags, sign-in method, pypdf upgrade, corpus size, spend caps.
+Final approval of D69 to D73 as updated in `BRIEF.md` (sign-in with reset by recovery codes and owner-issued link; corpus stays 25; no pypdf upgrade; Part A cap $0.60).
 
 ## Open from Phase 7
 
@@ -22,4 +22,4 @@ None.
 
 ## Exact next action
 
-Owner: approve or change D69 to D73. Then start Part A step A1 (free).
+Owner: give the final approval. Then start Part A step A1 (free).
