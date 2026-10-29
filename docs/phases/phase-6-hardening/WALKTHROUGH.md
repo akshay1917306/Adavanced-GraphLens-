@@ -45,7 +45,7 @@ Not built: sign-in, hosting and HTTPS, backups, monitoring dashboards (D55), liv
 | Database stopped and restarted | 503 with `Retry-After`, then 200 |
 | `npm audit`, `pip-audit`, `gitleaks` | web 0, API 0, pipeline 49 accepted advisories (D59), no secret in 87 commits (see [AUDIT.md](AUDIT.md)) |
 | Load test | no errors up to 10 at once; retrieval does not scale with threads (see [LOAD_TEST.md](LOAD_TEST.md)) |
-| CI on GitHub | **not run yet** (two new jobs, `secrets` and `audit`, have never run there) |
+| CI on GitHub (PR #9) | all 6 jobs passed, including the new `secrets` and `audit` jobs |
 
 ## 4. Honest limits
 

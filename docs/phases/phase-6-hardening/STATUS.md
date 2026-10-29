@@ -4,8 +4,7 @@ Last updated: 2026-10-28
 
 ## State
 
-**Plan approved by the owner on 2026-10-27; build in progress (all build steps and docs done; waiting for CI and the owner's review and approval).** Branch
-`phase-6/hardening` from `main` at 0593c11 (Phase 5 tagged `phase-5`). Nothing pushed.
+**Phase 6 is done: approved by the owner on 2026-10-29, PR #9 merged (all 6 CI jobs passed, including the new `secrets` and `audit` jobs), tag `phase-6` on the merge commit 0d234b0.** Branch `phase-6/hardening` is merged.
 
 ## Completed
 
@@ -131,10 +130,8 @@ None.
 
 ## Decisions waiting for the owner
 
-- D51 to D58 in `BRIEF.md` (D55 and D58 change earlier notes: no Prometheus or Grafana, live
-  answers wait for Phase 7).
-- What to do with the Phase 5 test rows of the `local-demo` visitor.
+None. D51 to D58 were approved on 2026-10-27, D59 was confirmed on 2026-10-28, and the Phase 5 test rows were deleted.
 
 ## Exact next action
 
-Owner reviews and approves; then push `phase-6/hardening`, open the PR, watch CI (including the new `secrets` and `audit` jobs, which have never run), merge, tag `phase-6`. Nothing is pushed yet.
+Phase 7 (evaluate and launch) is not started; it needs its own plan and the owner's approval.
