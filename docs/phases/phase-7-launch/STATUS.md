@@ -4,7 +4,7 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 3 done, step 4 next).** Branch `phase-7/launch` from `main` at 667addc
+**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 3 done; step 4 built, waiting for the owner's yes to the paid run).** Branch `phase-7/launch` from `main` at 667addc
 (Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
 
 ## Completed
@@ -57,8 +57,9 @@ Findings:
 - **Router bug, fixed.** The rule treated the word "link" as a relate cue, so any question about
   "link prediction" (a task name) went to relate mode. The cue now needs "link to / with / between"
   and 6 regression tests cover it (430 pipeline tests pass; the rules-only evaluation is unchanged at
-  92%, which also shows that evaluation runs without the entity index and cannot see this class of
-  error: the final evaluation must run the router with the index).
+  92%). Correction made later: `route-eval` does use the entity index, it simply had no labeled
+  question that contains the task name "link prediction", so it could not see this error; the final
+  evaluation labels include such questions (the hard set).
 - **Logging gap, fixed.** The search service printed no request lines; it now logs request id, mode,
   status and time (never the question), and the API's request id travels with the call.
 - **Latency:** 6.6 s for one local question, close to the 8 s p95 target; the real number comes from
@@ -113,6 +114,16 @@ Details and tables: `EXPERIMENTS.md`; raw results in `data/eval/phase7/results/`
 
 Phase 7 spend so far: about **$0.30** of the $3.00 cap.
 
+## Step 4: final evaluation (built, not run)
+
+`final-eval` (command) and `finaleval.py` (report generator, 10 tests) write the final numbers to JSON
+and `docs/EVALUATION.md` by script. Every system gets a new name (`final_*`), so no earlier answer is
+reused. Parts: local and plain RAG on the 30 hard and the 30 easy questions (local one at a time for
+real timings), citation support on a sample of 20 answers, refusal on the 10 development and the 10
+fresh questions, relate on 20 pairs, the router with its model step and the entity index on 100
+labeled questions, and the Phase 3 global result carried over (global code is unchanged). Dry run:
+**$0.41, $0.57 with a 40% margin**, cap $0.60; nothing was spent. Tests: pipeline 471 pass, ruff clean.
+
 ## Blockers
 
 None.
@@ -123,4 +134,4 @@ None. The owner will set the OpenAI monthly limit to $10 and put the key into `.
 
 ## Exact next action
 
-Step 4: the final evaluation script and run (one clean run of everything, written to `docs/EVALUATION.md`), with a dry-run estimate and the owner's yes first. Open before it: the router with its model step and the entity index, the easy set, the global and relate sets, sequential latency.
+Run `final-eval` after the owner's yes (about $0.41, cap $0.60); copy the generated page to `docs/EVALUATION.md`; then step 5 (owner review pages and spot-check).
