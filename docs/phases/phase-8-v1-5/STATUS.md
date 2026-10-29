@@ -69,3 +69,23 @@ Against the earlier answers question by question: 3 better, 26 same, 1 worse. **
 another day and the network time varies, so this is a noisy comparison, not a proof that it is slower).
 Correctness did not drop, cost per answer fell about 10 to 17%, and 2 more citation warnings appeared.
 The code change was reverted (working tree back to 250 words) until the owner decides.
+
+## A3 passage choice, free offline test (2026-10-29, no model, $0, no download)
+
+Question: of the gold passages of the 30 hard questions, how many are really shown inside the 8,000-token
+context? (script: `a3_offline_test.py`, run in the pipeline image; same questions as Phase 7.)
+
+| Variant | Gold passages shown | Questions with all gold shown | Passages shown |
+|---|---|---|---|
+| 0 today (plain top 6, passages 45%, cap 450 tokens) | 57% | 9 of 30 | 11.1 |
+| 1 plain top 10 | 67% | 12 | 11.3 |
+| 2 plain top 8 | 58% | 10 | 11.2 |
+| 3 passage share 60% (community reports 5%) | 67% | 13 | 14.4 |
+| 4 passage cap 300 tokens | 63% | 11 | 14.0 |
+| **5 plain top 10 + cap 300 + passage share 60%** | **72%** | **15** | 18.4 |
+| 6 citation weight 0.0 / 0.3 / 0.7 | 57% / 57% / 55% | 8 / 9 / 8 | about 11 |
+
+Variant 0 reproduces the 57% of D68, so the test measures the same thing. Variant 5 shows 15 points more
+gold passages with the same 8,000 tokens (so about the same cost per answer). What this does **not**
+tell: whether the answers get better. Risks to check in the paid run: fewer community reports (5% instead
+of 20%) and passages cut to 300 tokens may hide the sentence that is needed.
