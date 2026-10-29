@@ -28,16 +28,26 @@ Mark an item only after it was run, and say where it was run. A missed target is
 
 ## Final evaluation (one clean run, written to `docs/EVALUATION.md`)
 
-- [ ] Local correctness on the hard set (target at least 75% and at least 15 points over baseline)
-- [ ] Local correctness on the easy set
-- [ ] Global win rate with the caveats stated (length, same-family judge, set size)
-- [ ] Relate: path correctness and explanation citation check on 20 pairs
-- [ ] Refusal accuracy on the unanswerable set (target at least 90%)
-- [ ] Router accuracy including its model step (target at least 85%)
-- [ ] Citation support on a sample (target at least 90%)
-- [ ] End-to-end p95 and cost per local query over sequential live queries (targets 8 s and $0.03)
+- [x] Local correctness on the hard set (target at least 75% and at least 15 points over baseline)
+      **Result: MISSED.** 70% (21 of 30), +13.3 points over plain RAG (57%). See EVALUATION_NOTES.md.
+- [x] Local correctness on the easy set
+      **Result:** 29 of 30 (plain RAG 28 of 30).
+- [x] Global win rate with the caveats stated (length, same-family judge, set size)
+      **Result:** carried over from Phase 3, not re-run: 100%, 100%, 100%, directness 45%.
+- [x] Relate: path correctness and explanation citation check on 20 pairs
+      **Result:** paths 20 of 20 (consistency check); explanations verified 14 of 20.
+- [x] Refusal accuracy on the unanswerable set (target at least 90%)
+      **Result:** 10 of 10 development (tuned there), 9 of 10 fresh probes.
+- [x] Router accuracy including its model step (target at least 85%)
+      **Result:** 97 of 100; the model was asked 9 times; 3 misses listed in EVALUATION_NOTES.md.
+- [x] Citation support on a sample (target at least 90%)
+      **Result:** 99.1% (114 of 115 claims, 20 answers).
+- [x] End-to-end p95 and cost per local query over sequential live queries (targets 8 s and $0.03)
+      **Result: p95 MISSED** at 10.3 s (median 5.4 s); cost met at $0.0031. Measured one at a time over 60 questions.
 - [ ] Total Phase 7 spend within the $3.00 cap
+      So far about $0.62 of $3.00; final figure at the end of the phase.
 - [ ] Every target that is missed is listed with its reason in the README
+      Listed with reasons in EVALUATION.md and EVALUATION_NOTES.md; the README is rewritten in the release step.
 
 ## Owner review
 

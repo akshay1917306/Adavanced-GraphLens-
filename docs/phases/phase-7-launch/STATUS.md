@@ -4,7 +4,7 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 3 done; step 4 built, waiting for the owner's yes to the paid run).** Branch `phase-7/launch` from `main` at 667addc
+**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 4 done; step 5 next).** Branch `phase-7/launch` from `main` at 667addc
 (Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
 
 ## Completed
@@ -124,6 +124,24 @@ fresh questions, relate on 20 pairs, the router with its model step and the enti
 labeled questions, and the Phase 3 global result carried over (global code is unchanged). Dry run:
 **$0.41, $0.57 with a 40% margin**, cap $0.60; nothing was spent. Tests: pipeline 471 pass, ruff clean.
 
+## Step 4 result: the final evaluation (owner's yes, cost $0.3206 of the $0.60 cap)
+
+Page: `docs/EVALUATION.md` (generated); reading and reasons: `EVALUATION_NOTES.md`; raw numbers:
+`data/eval/final/final-eval.json`. 6 targets measured **met**, **3 missed**:
+
+| Measure | Result | Target | |
+|---|---|---|---|
+| Local correctness, hard set | 70% (21 of 30; interval 52 to 83%) | 75% | **missed** |
+| Gap over plain RAG | +13.3 points (plain RAG 57%) | +15 | **missed** |
+| p95 time per local answer | 10.3 s (median 5.4 s, slowest 26.6 s) | 8 s | **missed** |
+| Citation support | 99.1% | 90% | met |
+| Refusal, development / fresh | 100% (tuned) / 90% | 90% | met |
+| Router with model step and index | 97% (97 of 100) | 85% | met |
+| Cost per local answer | $0.0031 | $0.03 | met |
+
+Also: easy set 29 of 30 (plain RAG 28), relate 14 of 20 explanations verified (20 of 20 paths), global
+carried over from Phase 3 (not re-run). Phase 7 spend so far: about **$0.62** of the $3.00 cap.
+
 ## Blockers
 
 None.
@@ -134,4 +152,4 @@ None. The owner will set the OpenAI monthly limit to $10 and put the key into `.
 
 ## Exact next action
 
-Run `final-eval` after the owner's yes (about $0.41, cap $0.60); copy the generated page to `docs/EVALUATION.md`; then step 5 (owner review pages and spot-check).
+Step 5: the owner's review pages (Phase 3 communities and verdicts, Phase 4 questions) and the spot-check of 10 citations and 10 judge verdicts; then step 6 (backups, restore test, runbook).
