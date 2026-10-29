@@ -19,9 +19,12 @@ Mark an item only after it was run, and say where it was run. A missed target is
 
 ## Fixes
 
-- [ ] Refusal: generic words and model names no longer link to an unrelated entity (checked on the unanswerable set)
-- [ ] The 9 relate explanations that failed the citation check are diagnosed (cause written down)
-- [ ] Context size 8,000 vs 12,000 tokens measured on the hard set (cost and correctness)
+- [x] Refusal: generic words and model names no longer link to an unrelated entity (checked on the unanswerable set)
+      **Result:** 10 of 10 on the development set (tuned there) and 9 of 10 on 10 fresh probes; F03 still invents an answer. See EXPERIMENTS.md.
+- [x] The 9 relate explanations that failed the citation check are diagnosed (cause written down)
+      **Result:** all 9 from the entity heuristic on weak and junk names, none from missing labels; 17 of 20 verified after the fix (re-checked, not regenerated).
+- [x] Context size 8,000 vs 12,000 tokens measured on the hard set (cost and correctness)
+      **Result:** 22 vs 20 of 30 (new prompt), within noise, +38% cost; 8,000 kept (D68).
 
 ## Final evaluation (one clean run, written to `docs/EVALUATION.md`)
 

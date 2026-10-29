@@ -1,0 +1,74 @@
+{
+ "system": "p7_final",
+ "context_tokens": 8000,
+ "mode": "refusal",
+ "refusal": {
+  "questions": 10,
+  "refused": 10,
+  "accuracy": 1.0,
+  "answered_anyway": []
+ },
+ "answers": [
+  {
+   "id": "U01",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U02",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U03",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U04",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U05",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U06",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U07",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U08",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U09",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U10",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  }
+ ],
+ "cost_usd": 0.0
+}

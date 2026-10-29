@@ -1,0 +1,76 @@
+{
+ "system": "p7_prompt_8k",
+ "context_tokens": 8000,
+ "mode": "refusal",
+ "refusal": {
+  "questions": 10,
+  "refused": 9,
+  "accuracy": 0.9,
+  "answered_anyway": [
+   "U10"
+  ]
+ },
+ "answers": [
+  {
+   "id": "U01",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U02",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U03",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U04",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U05",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U06",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U07",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U08",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U09",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "U10",
+   "status": "answered",
+   "text": "The authors of the Claude 2 technical report, as referenced in the context of the QADECONTEXT framework paper, concluded that in long-context question answering, significant errors arise primarily in the question generation and question answering modules rather than in the rewriting module. Oracle experiments showed that providing gold (human-annotated) questions, answers, and evidence paragraphs to the rewriting module improved performance substantially, indicating that rewriting is not the main bottleneck. Instead, the question generation and answering stages introduce most errors, limiting overall performance [T3][E1][E5][E32].\n\nAdditionally, the QADECONTEXT strategy, which uses Claude (a closed-source commercial LLM) for question generation, answering, and rewriting, outperforms end-to-end prompting strategies for snippet decontextualization, suggesting that modular approaches leveraging Claude can improve handling of long-context inputs [T3][E1][E9].\n\nIn the broader evaluation of long-form question answering (LFQA), the authors emphasize that existing automatic metrics (e.g., ROUGE, BERTScore) poorly correlate with human judgments, especially for overall answer quality. They advocate for multi-faceted evaluation focusing on aspects like factuality and completeness, as experts value these more than surface-level features. This highlights the complexity of evaluating long-context QA systems like Claude 2 [T2][T4][T7][E6][E11].\n\nIn summary, the Claude 2 technical report and related work conclude that while Claude-based modular frameworks improve long-context QA, challenges remain in question generation and answering accuracy, and evaluation requires nuanced, multi-dimensional metrics beyond simple string matching [T3][T2][T4].",
+   "cost_usd": 0.0031464000000000006
+  }
+ ],
+ "cost_usd": 0.0031
+}

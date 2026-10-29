@@ -245,3 +245,16 @@ def test_a_version_that_is_part_of_a_known_name_is_not_a_mismatch():
 def test_a_number_that_is_not_right_after_the_name_does_not_qualify_it():
     index = EntityIndex([entity("c", "claude", sources=["u_c_0001"])])
     assert not seeds_of("Why does Claude need 2 passes?", index)[0].qualified
+
+
+def test_a_versioned_name_is_kept_in_the_result_even_when_it_is_not_a_seed():
+    names = [entity(f"s{i}", f"SpecificTool{i}", sources=[f"u_{i:012d}_0001"]) for i in range(6)]
+    index = EntityIndex([*names, entity("c", "claude", sources=["u_c_0001"])])
+    tools = " ".join(f"SpecificTool{i}" for i in range(5))
+    question = f"Do {tools} and Claude 2 agree?"
+    groups = name_matches(question, index)
+    seeds = [g[0] for g in groups]
+    assert any(s.qualified and s.qualifier == "2" for s in seeds)
+    result = LinkResult("q", [], 0.0)
+    result.qualified = [s for s in seeds if s.qualified]
+    assert [s.matched for s in result.qualified] == ["Claude"]

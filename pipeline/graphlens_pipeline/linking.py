@@ -100,6 +100,7 @@ class Linked:
     ambiguous: bool = False  # the same words also name another entity
     weight: float = 1.0  # how much to trust it as a starting point (0 to 1)
     qualified: bool = False  # a version number follows the name in the question ("Claude 2")
+    qualifier: str = ""  # that version number
 
 
 @dataclass
@@ -108,6 +109,7 @@ class LinkResult:
     seeds: list[Linked] = field(default_factory=list)
     best_vector_score: float = 0.0
     ambiguous_groups: list[list[Linked]] = field(default_factory=list)
+    qualified: list[Linked] = field(default_factory=list)  # names followed by a version number
 
     @property
     def has_name_match(self) -> bool:
@@ -238,6 +240,7 @@ def name_matches(question: str, index: EntityIndex) -> list[list[Linked]]:
                 Linked(
                     e["id"], e["name"], e["type"], 1.0, "name", gram, many,
                     round(_name_weight(gram, index.papers(e)) * factor, 3), qualified,
+                    following if qualified else "",
                 )
                 for e in ordered
             ]  # fmt: skip
@@ -291,6 +294,7 @@ def link_question(
     result = LinkResult(clean.text)
     groups = name_matches(clean.text, index)
     result.ambiguous_groups = [g for g in groups if len(g) > 1]
+    result.qualified = [g[0] for g in groups if g[0].qualified]  # kept even if not a seed
     candidates = [entity for group in groups for entity in group[:MAX_PER_AMBIGUOUS_GROUP]]
     hits = vector_matches(driver, embed_query, clean.text, index_version)
     result.best_vector_score = max((h.score for h in hits), default=0.0)

@@ -1,0 +1,76 @@
+{
+ "system": "p7_final",
+ "context_tokens": 8000,
+ "mode": "refusal",
+ "refusal": {
+  "questions": 10,
+  "refused": 9,
+  "accuracy": 0.9,
+  "answered_anyway": [
+   "F03"
+  ]
+ },
+ "answers": [
+  {
+   "id": "F01",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0028464000000000002
+  },
+  {
+   "id": "F02",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0026884
+  },
+  {
+   "id": "F03",
+   "status": "answered",
+   "text": "The authors of the GPT-4 technical report concluded that reasoning remains a significant challenge for large language models (LLMs). They acknowledge that while models like GPT-3 and ChatGPT can achieve high answer accuracy and generate reasoning steps when prompted appropriately (e.g., via Chain-of-Thought prompting), there are still notable reasoning gaps and deficiencies in transparency and hallucination issues [T2][T5]. Specifically, reasoning in multi-hop question answering (QA) tasks can suffer from \"disconnected reasoning,\" where models rely on shortcuts rather than true multi-step inference. To address this, recent work proposes counterfactual reasoning methods based on causal inference to reduce disconnected reasoning and improve robustness without sacrificing accuracy [T8][C3].\n\nMoreover, the GPT-4 evaluation method (GPT4-eval) has been introduced as an automated evaluation mechanism that leverages GPT-4's capabilities to better assess answer correctness and reduce failure cases compared to traditional metrics [E2][T9][C2]. This suggests that while GPT-4 advances reasoning evaluation, the underlying reasoning abilities still require careful prompting and external verification to ensure reliability.\n\nIn summary, the GPT-4 technical report highlights that although large LLMs demonstrate emergent reasoning abilities, challenges such as hallucinations, lack of transparency, and disconnected reasoning persist. Effective evaluation methods like GPT4-eval and causal inference-based approaches are crucial for advancing reasoning quality and trustworthiness in QA systems [T2][T5][T8][E2].",
+   "cost_usd": 0.0030692000000000002
+  },
+  {
+   "id": "F04",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0026896000000000003
+  },
+  {
+   "id": "F05",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0026815999999999997
+  },
+  {
+   "id": "F06",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "F07",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "F08",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  },
+  {
+   "id": "F09",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0028715999999999998
+  },
+  {
+   "id": "F10",
+   "status": "refused",
+   "text": "",
+   "cost_usd": 0.0
+  }
+ ],
+ "cost_usd": 0.0168
+}

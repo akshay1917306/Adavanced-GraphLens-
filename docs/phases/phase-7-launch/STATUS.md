@@ -4,7 +4,7 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (steps 1 and 2 done, step 3 next).** Branch `phase-7/launch` from `main` at 667addc
+**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 3 done, step 4 next).** Branch `phase-7/launch` from `main` at 667addc
 (Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
 
 ## Completed
@@ -92,6 +92,27 @@ accident. To run live: set `ANSWER_MODE=live` in `.env` and `docker compose --pr
 
 Phase 7 spend so far: about **$0.0114** of the $3.00 cap.
 
+## Step 3: fixes and measurements (owner's yes, cap $0.50, spent $0.2906)
+
+Details and tables: `EXPERIMENTS.md`; raw results in `data/eval/phase7/results/`.
+
+- **Refusal:** development unanswerable questions 8 of 10 (Phase 4) to **10 of 10** (tuned on that
+  set); 10 fresh, untuned probes **9 of 10**. Three guards: a plain-word name alone is not enough,
+  a version number the papers do not know ("Claude 2") is refused before the model, and a refusal
+  in plain words becomes a refusal. 0 of the 60 answerable development questions are blocked.
+  Still failing: F03 (an invented "technical report" conclusion). A stricter prompt was tried and reverted.
+- **Relate explanations:** all 9 warnings came from the "entity not in context" heuristic firing on
+  weak names and junk entities (0 cited a missing label); after the fix the same saved texts give
+  17 of 20 verified. They were re-checked, not regenerated, and not read by anyone for faithfulness.
+- **Context size:** 8,000 tokens 20 of 30 (new prompt) vs 12,000 tokens 22 of 30 vs Phase 4's 21 of 30:
+  no clear gain, +38% cost, three times the warnings: **keep 8,000** (D67, D68). The 75% target stays missed.
+- Tests: pipeline 461 pass, API 150 pass; ruff clean on both.
+- Found while doing this: the Phase 4 refusal measurement counted only the exact marker, so plain-words
+  refusals looked like answers; the cache key of the correctness runner ignores the prompt and the
+  context size, so a variant must get its own system name (done).
+
+Phase 7 spend so far: about **$0.30** of the $3.00 cap.
+
 ## Blockers
 
 None.
@@ -102,4 +123,4 @@ None. The owner will set the OpenAI monthly limit to $10 and put the key into `.
 
 ## Exact next action
 
-Step 3: the fixes of D64 (refusal weakness for generic words and model names, diagnose the relate explanations that failed the citation check, the 8,000 vs 12,000 token context experiment) and a latency look, each paid run with a shown estimate first.
+Step 4: the final evaluation script and run (one clean run of everything, written to `docs/EVALUATION.md`), with a dry-run estimate and the owner's yes first. Open before it: the router with its model step and the entity index, the easy set, the global and relate sets, sequential latency.
