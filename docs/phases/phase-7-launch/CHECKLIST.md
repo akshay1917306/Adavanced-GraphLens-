@@ -6,12 +6,14 @@ Mark an item only after it was run, and say where it was run. A missed target is
 
 - [x] Change request for D61 written and approved; D43 marked as amended
       **Result:** `docs/adr/CR-0004-separate-search-service.md`, approved with the plan on 2026-10-29.
-- [ ] Internal search service runs from the pipeline image; the API calls it; no dependency conflict
-      Partly: code and 49 tests with fakes pass in Docker; the container has not been started and no live call made.
+- [x] Internal search service runs from the pipeline image; the API calls it; no dependency conflict
+      **Result:** started healthy from the pipeline image; 4 live questions through the API worked (see STATUS); 430 pipeline and 148 API tests pass.
 - [ ] Live answer on the screen: sources, graph, citation badge, refusal and clarify
+      Partly: the API returns sources, graph, badge and a refusal for live questions; the browser screen was not yet used in live mode and clarify was not seen.
 - [ ] Per-request time limit; retry with back-off for Neo4j and Qdrant; model-call circuit breaker (tested with fakes)
 - [ ] Daily cost cap and rate limits exercised with real calls
 - [ ] The OpenAI key never appears in logs, responses, the web bundle or git (searched)
+      Partly: no key pattern in the API and search logs after the live test; web bundle and git were not searched again in this phase.
 
 ## Fixes
 

@@ -142,3 +142,38 @@ def test_a_question_with_a_secret_is_routed_without_it_reaching_the_classifier()
 
     route_question("Hello friend sk-abcdefghijklmnopqrstuvwx and a@b.com", INDEX, Spy())
     assert seen and "sk-abcdefghijklmnop" not in seen[0] and "a@b.com" not in seen[0]
+
+
+LINKING = EntityIndex(
+    [
+        ent("k", "KGT5"),
+        ent("l", "link prediction", "Task"),
+        ent("w", "Wikidata5M", "Dataset"),
+    ]
+)
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "What size of model does KGT5 use in its main experiments, and which two large knowledge "
+        "graphs does it use to test link prediction?",
+        "Does KGT5 beat other models on link prediction?",
+    ],
+)
+def test_the_task_name_link_prediction_does_not_make_a_question_a_relate_question(question):
+    assert route_by_rules(question, LINKING).mode != "relate"
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "How is KGT5 linked to Wikidata5M?",
+        "What links KGT5 and Wikidata5M?",
+        "Is there a link between KGT5 and Wikidata5M?",
+        "How is KGT5 connected to Wikidata5M?",
+    ],
+)
+def test_real_relation_wording_still_routes_to_relate(question):
+    route = route_by_rules(question, LINKING)
+    assert route.mode == "relate" and route.confidence >= 0.9

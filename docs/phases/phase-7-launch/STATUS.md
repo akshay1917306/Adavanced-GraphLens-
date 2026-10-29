@@ -4,8 +4,8 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (step 1).** Branch `phase-7/launch` from `main` at 667addc
-(Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed, no OpenAI call yet.
+**Plan approved by the owner on 2026-10-29; build in progress (step 1 done, step 2 next).** Branch `phase-7/launch` from `main` at 667addc
+(Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
 
 ## Completed
 
@@ -38,9 +38,40 @@ Last updated: 2026-10-29
   search service, exercising the cost cap and rate limits with real calls, `uvicorn` declared
   explicitly in the pipeline lock file (it comes in through Prefect today).
 
+## First live smoke test (2026-10-29, owner's yes, cap $0.05)
+
+The search container started healthy, the API ran with `ANSWER_MODE=live`, and three real questions
+went through the whole path (API, search service, router, databases, model, citation check, saving).
+
+| Question | Route | Result | Cost |
+|---|---|---|---|
+| KGT5 model size and the two graphs (compare on) | rules said **relate** (wrong) | answered, citation check `warning`; the plain-RAG answer beside it was `verified` and complete | $0.0018 |
+| How is KGT5 connected to Wikidata5M? | relate | answered, `verified`, graph with 2 nodes and 1 link | $0.0005 |
+| Capital of France | the router model chose plain RAG | refused: "not enough evidence" | $0.0001 |
+| The first question again, after the fix below | rules said **local** | answered, `verified`, 6 sources, graph with 6 nodes and 8 links, 6.6 s | $0.0031 |
+
+Total spent: **$0.0054** (estimate was $0.01). The key never appeared in the API or search logs
+(searched). The daily cost counter in Redis was created, so the cap sees real spend.
+
+Findings:
+- **Router bug, fixed.** The rule treated the word "link" as a relate cue, so any question about
+  "link prediction" (a task name) went to relate mode. The cue now needs "link to / with / between"
+  and 6 regression tests cover it (430 pipeline tests pass; the rules-only evaluation is unchanged at
+  92%, which also shows that evaluation runs without the entity index and cannot see this class of
+  error: the final evaluation must run the router with the index).
+- **Logging gap, fixed.** The search service printed no request lines; it now logs request id, mode,
+  status and time (never the question), and the API's request id travels with the call.
+- **Latency:** 6.6 s for one local question, close to the 8 s p95 target; the real number comes from
+  the final evaluation.
+- The router model (used when the rules are unsure) was exercised for the first time: it sent an
+  out-of-corpus question to plain RAG, which refused correctly.
+
+After the test the stack was put back to replay mode (`search` stopped), so nothing spends money by
+accident. To run live: set `ANSWER_MODE=live` in `.env` and `docker compose --profile live up -d --build`.
+
 ## Blockers
 
-The first live smoke test needs the owner's yes (a shown estimate) and confirmation that the OpenAI monthly limit is set to $10.
+None.
 
 ## Decisions waiting for the owner
 
@@ -48,4 +79,4 @@ None. The owner will set the OpenAI monthly limit to $10 and put the key into `.
 
 ## Exact next action
 
-First live smoke test (estimate about $0.01, cap $0.05) after the owner's yes; then step 2.
+Step 2: per-request time limit and retries for Neo4j and Qdrant inside the search service, exercise the cost cap and rate limits with real calls (a few cents, with a shown estimate first).

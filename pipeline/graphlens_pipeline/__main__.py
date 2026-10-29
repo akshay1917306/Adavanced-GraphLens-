@@ -4,6 +4,7 @@ docker compose run --rm pipeline ingest
 """
 
 import argparse
+import logging
 import os
 import sys
 from pathlib import Path
@@ -1232,6 +1233,12 @@ def _serve_search(engine, args) -> int:
         )
         return SearchService(backends, model=llm.model)
 
+    # only our own request lines are shown at INFO; the libraries stay at their default level
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter("%(message)s"))
+    ours = logging.getLogger("graphlens")
+    ours.setLevel(logging.INFO)
+    ours.addHandler(handler)
     uvicorn.run(create_app(factory, key), host=args.host, port=args.port, access_log=False)
     return 0
 
