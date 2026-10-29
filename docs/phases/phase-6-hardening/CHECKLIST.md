@@ -33,12 +33,12 @@ Mark an item only after it was run, and say where it was run.
       **Result:** gitleaks passes locally on 87 commits (negative check catches a real-looking key); the CI job is committed but has not run on GitHub yet.
 - [x] Load test: 1, 3 and 10 at once on replay and on the free retrieval path; median, p95, errors reported
       **Result:** `LOAD_TEST.md`. Replay: 0 errors, p95 at most 226 ms. Retrieval: 0 failures, p95 1.3 s at 3 and 5.9 s at 10 at once; scaling limit noted.
-- [ ] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green
-      Partly: all pass in Docker (123 API tests, 400 pipeline tests); **CI has not run on GitHub for this branch**, including the new `secrets` and `audit` jobs.
+- [x] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green
+      **Result:** passed in Docker (123 API tests, 400 pipeline tests) and all 6 CI jobs (api, pipeline, web, compose, secrets, audit) passed on PR #9.
 - [x] Real screens checked in the built-in browser, including two separate profiles
       **Result:** two identities (`localhost` and `127.0.0.1`): no access in either direction (404), settings and delete-all stay separate. Keyboard-only walk-through not done.
 
 ## Docs and review
 
 - [x] WALKTHROUGH.md, README, STATUS.md, DECISIONS.md updated
-- [ ] Owner tried two browser profiles and approved Phase 6
+- [x] Owner tried two browser profiles and approved Phase 6 (2026-10-29)
