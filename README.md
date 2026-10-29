@@ -4,8 +4,8 @@ GraphLens turns a collection of research papers into a knowledge graph and answe
 following the graph, showing the evidence for every answer. It is built from the *Advanced GraphLens
 Pipeline Blueprint v1.0* and runs on one computer with Docker.
 
-> **Status (Phase 7, waiting for owner approval):** Phases 0 to 6 are merged and tagged. Phase 7 adds
-> live answers, a final evaluation, backups and this documentation. **Three of the ten evaluation
+> **Status: Phase 7 is approved, merged and tagged `phase-7` and `v1.0` (2026-10-29).** Phases 0 to 7
+> are done. Phase 7 adds live answers, a final evaluation, backups and this documentation. **Three of the ten evaluation
 > targets are missed** (listed below). It is a working, measured prototype on 25 papers, not a
 > production system and not security-reviewed; do not expose it to the internet.
 
@@ -133,7 +133,7 @@ pipeline, compose (including the search service profile), secret scan, dependenc
 | 4 Local search, router, relate, citation check | merged, tag `phase-4` |
 | 5 API and Ask screen | merged, tag `phase-5` |
 | 6 User data and hardening | merged, tag `phase-6` |
-| 7 Evaluate and launch | built, waiting for owner review and approval; tags `phase-7` and `v1.0` come only after approval |
+| 7 Evaluate and launch | approved, merged, tags `phase-7` and `v1.0`; owner review of the Phase 3/4 pages and the 10+10 spot-check are still open |
 
 ## Important limits (short)
 

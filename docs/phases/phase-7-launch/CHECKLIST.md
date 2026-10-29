@@ -71,4 +71,5 @@ Mark an item only after it was run, and say where it was run. A missed target is
       **Result:** `README.md`, `docs/ARCHITECTURE.md`, `DEMO.md`, `INTERVIEW.md`, `LIMITS.md`. The demo script was not rehearsed in a browser by anyone yet.
 - [x] WALKTHROUGH.md, STATUS.md, DECISIONS.md updated
       **Result:** done (DECISIONS had D60 to D68 already).
-- [ ] Owner approved; tags `phase-7` and `v1.0`
+- [x] Owner approved; tags `phase-7` and `v1.0`
+      **Result:** approved 2026-10-29; PR #12 squash-merged (acc2cca, all 6 CI jobs green); tags `phase-7` and `v1.0` on acc2cca, verified on the remote. The three owner-review items above stay open.
