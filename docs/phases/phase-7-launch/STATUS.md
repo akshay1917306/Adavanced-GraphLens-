@@ -4,7 +4,7 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 4 done; step 5 next).** Branch `phase-7/launch` from `main` at 667addc
+**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 4 and 6 done; step 5 is the owner's review; step 7 release next).** Branch `phase-7/launch` from `main` at 667addc
 (Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
 
 ## Completed
@@ -141,6 +141,20 @@ Page: `docs/EVALUATION.md` (generated); reading and reasons: `EVALUATION_NOTES.m
 
 Also: easy set 29 of 30 (plain RAG 28), relate 14 of 20 explanations verified (20 of 20 paths), global
 carried over from Phase 3 (not re-run). Phase 7 spend so far: about **$0.62** of the $3.00 cap.
+
+## Step 6: backup, restore, runbook (free, no model calls)
+
+- `scripts/backup.sh`, `scripts/restore.sh`, `scripts/check.sh`, `scripts/lib.sh`; `docs/RUNBOOK.md`;
+  `backups/` is git-ignored. Neo4j Community can only be dumped while stopped, so a backup takes the
+  site down for about a minute (documented). Qdrant is archived as a whole storage folder so the alias
+  survives. Redis is not saved on purpose (counters only). `.env` is not in the backup.
+- **Tested for real:** backup of the live stack (22 MB Neo4j, 1.8 MB Postgres, 21 MB Qdrant), restored
+  into an empty second stack with new volumes; counts equal to the original, API health ok, a saved
+  question answered, web answered; the test stack was deleted. The live stack was not touched by the restore.
+- Not tested: restore over a stack that already has newer data, another operating system, a backup
+  while a live answer runs. Scripts are not in CI. The "one command from a fresh clone" check is in step 7.
+- Side finding: the Qdrant volume also holds 8 demo collections that are not ours (for example
+  `midjourney`); the backup carries them along, harmless.
 
 ## Blockers
 

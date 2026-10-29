@@ -57,9 +57,12 @@ Mark an item only after it was run, and say where it was run. A missed target is
 
 ## Operations and release
 
-- [ ] Backup scripts for Postgres, Neo4j and Qdrant
-- [ ] A restore was actually performed on a clean stack and the app answered afterwards
-- [ ] Runbook: start, stop, health, backup, restore, common errors
+- [x] Backup scripts for Postgres, Neo4j and Qdrant
+      **Result:** `scripts/backup.sh` (Postgres dump, Neo4j dump with a short stop, Qdrant storage archive, checksums); ran on the real stack, about 44 MB.
+- [x] A restore was actually performed on a clean stack and the app answered afterwards
+      **Result:** restored into a second empty stack (project `gltest`, new volumes, other ports): counts identical (751 units, 35 documents, 3,542 extraction rows, 1,545 entities, 193 communities, 751 vectors, alias), health ok, saved question HTTP 200, web 200; test stack deleted.
+- [x] Runbook: start, stop, health, backup, restore, common errors
+      **Result:** `docs/RUNBOOK.md`.
 - [ ] One-command start works from a fresh clone (README steps only)
 - [ ] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green (including the new service)
 - [ ] README final; architecture page; 3-minute demo script; interview page; known limits
