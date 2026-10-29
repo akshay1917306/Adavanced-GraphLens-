@@ -30,6 +30,17 @@ INDEX_NAME = "entity_embedding"
 # in-corpus and 8 out-of-corpus questions, 2026-10-26; the margin is small).
 MIN_VECTOR_SCORE = 0.79
 PAPERS_IN_CORPUS = 25
+# A name match weighs at most 0.5 when it is a plain word ("accuracy", "claude") and up to 1.0
+# when it looks like a real name. A plain-word match alone is not enough to answer: the question
+# must also be close to something in the graph. Measured on the 60 answerable development
+# questions, the closest graph entity always scored at least 0.81, while a question about things
+# the papers do not contain scored 0.75 ("accuracy of Gemini Ultra on SuperGLUE").
+STRONG_NAME_WEIGHT = 0.6
+# "Claude 2": the corpus knows "claude", the question asks about a version it does not know. Such a
+# match is demoted, and the question then needs a much closer graph match before it is answered.
+QUALIFIED_MIN_VECTOR = 0.90
+QUALIFIED_FACTOR = 0.3
+VERSION_WORD = re.compile(r"^v?\d+(?:\.\d+)*$", re.IGNORECASE)
 
 SECRET_PATTERNS = {
     "key": [
@@ -88,6 +99,7 @@ class Linked:
     matched: str = ""  # the words of the question that matched
     ambiguous: bool = False  # the same words also name another entity
     weight: float = 1.0  # how much to trust it as a starting point (0 to 1)
+    qualified: bool = False  # a version number follows the name in the question ("Claude 2")
 
 
 @dataclass
@@ -103,8 +115,17 @@ class LinkResult:
 
     @property
     def confident(self) -> bool:
-        """Enough to go on: a name was found, or the question is close to something in the graph."""
-        return self.has_name_match or self.best_vector_score >= MIN_VECTOR_SCORE
+        """Enough to go on.
+
+        A real name (strong weight) is enough. A plain-word name needs the question to be close to
+        something in the graph as well. If the only names found are followed by a version number the
+        corpus does not know ("Claude 2"), the question must be very close to the graph."""
+        names = [s for s in self.seeds if s.source == "name"]
+        if any(not s.qualified and s.weight >= STRONG_NAME_WEIGHT for s in names):
+            return True
+        if names and all(s.qualified for s in names):
+            return self.best_vector_score >= QUALIFIED_MIN_VECTOR
+        return self.best_vector_score >= MIN_VECTOR_SCORE
 
 
 def sanitise(question: str) -> Sanitised:
@@ -208,10 +229,15 @@ def name_matches(question: str, index: EntityIndex) -> list[list[Linked]]:
                 used[i] = True
             many = len(entities) > 1
             ordered = sorted(entities, key=lambda e: (-(e.get("mentions") or 0), e["id"]))
+            # a longer match was tried first, so a version number right after the name belongs to a
+            # thing the corpus does not know ("Claude 2" when only "claude" exists)
+            following = words[start + size] if start + size < len(words) else ""
+            qualified = bool(VERSION_WORD.match(following))
+            factor = QUALIFIED_FACTOR if qualified else 1.0
             members = [
                 Linked(
                     e["id"], e["name"], e["type"], 1.0, "name", gram, many,
-                    _name_weight(gram, index.papers(e)),
+                    round(_name_weight(gram, index.papers(e)) * factor, 3), qualified,
                 )
                 for e in ordered
             ]  # fmt: skip

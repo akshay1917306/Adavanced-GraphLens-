@@ -190,3 +190,58 @@ def test_vector_hits_are_filtered_by_version_and_added_after_name_matches(driver
         min_vector_score=0.9999,
     )  # fmt: skip
     assert high.seeds == [] and high.best_vector_score > 0
+
+
+# --- weak names and version numbers (Phase 7: refusal on questions the papers cannot answer) ----
+
+
+def seeds_of(question, index):
+    return [group[0] for group in name_matches(question, index)]
+
+
+def test_a_plain_word_name_alone_is_not_enough_but_it_is_with_a_close_question():
+    index = EntityIndex([entity("a", "accuracy", "Dataset", sources=["u_a_0001", "u_a_0002"])])
+    seeds = seeds_of("What accuracy does Gemini Ultra reach on SuperGLUE?", index)
+    assert seeds and seeds[0].weight <= 0.5 and not seeds[0].qualified
+    assert not LinkResult("q", seeds, 0.745).confident  # far from everything in the graph
+    assert LinkResult("q", seeds, 0.83).confident  # close to something: go on
+
+
+def test_a_real_name_is_enough_without_a_close_vector():
+    index = EntityIndex([entity("k", "KGT5", sources=["u_k_0001"])])
+    seeds = seeds_of("What does KGT5 use?", index)
+    assert seeds[0].weight >= 0.6 and LinkResult("q", seeds, 0.0).confident
+
+
+def test_a_version_number_after_a_known_name_marks_the_match_and_demotes_it():
+    index = EntityIndex([entity("c", "claude", sources=["u_c_0001"])])
+    plain = seeds_of("What did the authors of Claude conclude?", index)[0]
+    versioned = seeds_of("What did the authors of the Claude 2 technical report conclude?", index)[
+        0
+    ]
+    assert not plain.qualified and versioned.qualified
+    assert versioned.weight == pytest.approx(plain.weight * 0.3, abs=0.01)
+    seeds = [versioned]
+    assert not LinkResult("q", seeds, 0.865).confident  # only a version of a known name: be strict
+    assert LinkResult("q", seeds, 0.92).confident  # unless the question is very close to the graph
+
+
+@pytest.mark.parametrize(
+    "question", ["What about Claude v3?", "What about Claude 3.5?", "What about claude 4"]
+)
+def test_the_usual_ways_to_write_a_version_are_recognised(question):
+    index = EntityIndex([entity("c", "claude", sources=["u_c_0001"])])
+    assert seeds_of(question, index)[0].qualified
+
+
+def test_a_version_that_is_part_of_a_known_name_is_not_a_mismatch():
+    index = EntityIndex(
+        [entity("s2", "SQuAD 2", "Dataset", sources=["u_s_0001"]), entity("s", "SQuAD", "Dataset")]
+    )
+    seeds = seeds_of("How is SQuAD 2 built?", index)
+    assert [s.name for s in seeds] == ["SQuAD 2"] and not seeds[0].qualified
+
+
+def test_a_number_that_is_not_right_after_the_name_does_not_qualify_it():
+    index = EntityIndex([entity("c", "claude", sources=["u_c_0001"])])
+    assert not seeds_of("Why does Claude need 2 passes?", index)[0].qualified

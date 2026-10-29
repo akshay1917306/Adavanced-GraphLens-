@@ -184,6 +184,31 @@ def main(argv: list[str] | None = None) -> int:
     rel.add_argument("--index-version", default="idx2-full-g0")
     rel.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     rel.add_argument("--paths-only", action="store_true", help="find paths, call no model")
+    lvar = sub.add_parser(
+        "local-variant",
+        help="one local-search variant on a question file (paid, small; use --dry-run first)",
+    )
+    lvar.add_argument("--questions", type=Path, required=True)
+    lvar.add_argument("--mode", choices=["correctness", "refusal"], required=True)
+    lvar.add_argument(
+        "--system", required=True, help="a name for this variant (part of the cache key)"
+    )
+    lvar.add_argument("--context-tokens", type=int, default=8000)
+    lvar.add_argument("--previous", type=Path, help="an earlier evaluation file to compare with")
+    lvar.add_argument("--out", type=Path, required=True)
+    lvar.add_argument("--max-cost-usd", type=float, default=0.25)
+    lvar.add_argument("--dry-run", action="store_true")
+    lvar.add_argument("--index-version", default="idx2-full-g0")
+    lvar.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
+    rdiag = sub.add_parser(
+        "relate-diagnose",
+        help="why do relate explanations fail the citation check? (paid, about 1 cent)",
+    )
+    rdiag.add_argument("--pairs", type=Path, required=True)
+    rdiag.add_argument("--out", type=Path, required=True)
+    rdiag.add_argument("--max-cost-usd", type=float, default=0.03)
+    rdiag.add_argument("--index-version", default="idx2-full-g0")
+    rdiag.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     serve = sub.add_parser(
         "serve-search",
         help="run the internal search service for the API (needs the OpenAI key; not public)",
@@ -361,6 +386,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "serve-search":
         return _serve_search(engine, args)
+
+    if args.command == "local-variant":
+        return _local_variant(engine, args)
+
+    if args.command == "relate-diagnose":
+        return _relate_diagnose(engine, args)
 
     if args.command == "ask-auto":
         return _ask_auto(engine, args)
@@ -1191,6 +1222,142 @@ def _relate(engine, args) -> int:
             print(f"  shared community (level {c['level']}, {c['size']} entities): {c['title']}")
         print(answer.suggestion)
     print(f"cost ${answer.cost_usd:.5f}")
+    return 0
+
+
+def _local_variant(engine, args) -> int:
+    """One local-search variant (context size, prompt) on a question file, judged or checked for
+    refusals. The variant name is part of the answer cache key, so a new name never reuses old
+    answers."""
+    import dataclasses
+    import json
+    import time
+
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localanswer import answer_local
+    from graphlens_pipeline.localeval import AnswerRecord, run_correctness, summarize
+    from graphlens_pipeline.phase7eval import compare_with_previous, refusal_report
+
+    questions = json.loads(args.questions.read_text(encoding="utf-8"))["questions"]
+    per_question = (
+        0.0065 if args.context_tokens > 9000 else 0.0045
+    )  # answer + judge, checked prices
+    estimate = len(questions) * per_question
+    if args.dry_run:
+        print(json.dumps({
+            "questions": len(questions), "mode": args.mode, "context_tokens": args.context_tokens,
+            "cost_usd_upper_estimate": round(estimate, 3),
+            "note": "refusals decided before the model cost nothing",
+        }, indent=2))  # fmt: skip
+        return 0
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    report: dict = {"system": args.system, "context_tokens": args.context_tokens, "mode": args.mode}
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        deps = dataclasses.replace(
+            _local_deps(engine, driver, args), context_tokens=args.context_tokens
+        )
+
+        def run(question):
+            started = time.monotonic()
+            answer, context = answer_local(deps, llm, question)
+            cited = [c for c in answer.check.cited if c.startswith("T")]
+            shown = context.by_label() if context else {}
+            return AnswerRecord(
+                "local", answer.text, answer.status, answer.cost_usd,
+                round(time.monotonic() - started, 2), answer.check.status, answer.check.cited,
+                {c: shown[c].text for c in cited if c in shown},
+            )  # fmt: skip
+
+        if args.mode == "correctness":
+            rows, cost, skipped = run_correctness(
+                engine, llm, questions, {args.system: run}, args.max_cost_usd
+            )
+            report["summary"] = summarize(rows)
+            if args.previous:
+                previous = json.loads(args.previous.read_text(encoding="utf-8"))["answers"]
+                report["against_previous"] = compare_with_previous(rows, previous, args.system)
+            report["answers"] = [
+                {"id": r.question_id, "status": r.record.status, "verdict": r.verdict,
+                 "reason": r.reason, "check": r.record.check_status, "text": r.record.text,
+                 "seconds": r.record.seconds}
+                for r in rows
+            ]  # fmt: skip
+            report["cost_usd"], report["skipped_by_cap"] = round(cost, 4), skipped
+        else:
+            records, cost = [], 0.0
+            for q in questions:
+                if cost >= args.max_cost_usd:
+                    break
+                record = run(q["question"])
+                cost += record.cost_usd
+                records.append({"id": q["id"], "status": record.status, "text": record.text,
+                                "cost_usd": record.cost_usd})  # fmt: skip
+            report["refusal"] = refusal_report(records)
+            report["answers"] = records
+            report["cost_usd"] = round(cost, 4)
+    args.out.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
+    shown = {k: v for k, v in report.items() if k != "answers"}
+    print(json.dumps(shown, indent=1, ensure_ascii=False, default=str))
+    return 0
+
+
+def _relate_diagnose(engine, args) -> int:
+    """Run the relate explanations once more and keep what the citation check complained about."""
+    import json
+
+    import tiktoken
+    from neo4j import GraphDatabase
+
+    from graphlens_pipeline.linking import EntityIndex
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.localcontext import postgres_unit_rows
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.phase7eval import relate_causes
+    from graphlens_pipeline.relate import answer_relate
+
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if not (uri and user and password):
+        print("NEO4J_URI, NEO4J_USER and NEO4J_PASSWORD must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+    pairs = json.loads(args.pairs.read_text(encoding="utf-8"))["questions"]
+    predicates = load_ontology(args.ontology).predicate_names
+    encoder = tiktoken.get_encoding("o200k_base")
+    records, cost = [], 0.0
+    with GraphDatabase.driver(uri, auth=(user, password)) as driver:
+        index = EntityIndex.from_neo4j(driver, args.index_version)
+        for q in pairs:
+            if cost >= args.max_cost_usd:
+                break
+            result = answer_relate(
+                driver, llm, index, q["question"], predicates, args.index_version,
+                lambda ids: postgres_unit_rows(engine, ids), lambda s: len(encoder.encode(s)),
+            )  # fmt: skip
+            cost += result.cost_usd
+            shown = result.context.by_label() if result.context else {}
+            records.append({
+                "id": q["id"], "status": result.status, "check": result.check.status,
+                "cited": result.check.cited, "unknown_labels": result.check.unknown_labels,
+                "unsupported": result.check.unsupported, "text": result.text,
+                "labels_in_context": sorted(shown), "cost_usd": result.cost_usd,
+            })  # fmt: skip
+    report = {"causes": relate_causes(records), "cost_usd": round(cost, 4), "answers": records}
+    args.out.write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
+    print(json.dumps({k: v for k, v in report.items() if k != "answers"}, indent=1))
     return 0
 
 

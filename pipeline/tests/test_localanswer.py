@@ -60,8 +60,10 @@ def test_a_specific_ambiguous_name_asks_which_one_but_a_generic_one_does_not():
         linked(1, "QA", ambiguous=True, weight=0.2),
         linked(2, "QA", ambiguous=True, weight=0.2),
     ]
+    # a generic name in a question that is close to the graph (0.85, as real questions are)
     assert (
-        decide_before_answering(LinkResult("How is QA done?", [generic[0]], 0.0, [generic])) is None
+        decide_before_answering(LinkResult("How is QA done?", [generic[0]], 0.85, [generic]))
+        is None
     )
     two_names = [linked(3, "FiD")]
     assert (

@@ -31,7 +31,11 @@ entities with their relations labelled [E1], [E2], ... and community summaries l
 
 Answer in at most 250 words. Put a citation right after each claim, such as [T1] or [E2][T3]. \
 Cite only labels that appear in the context, and prefer passages ([T]) for specific facts. \
-If the context does not contain the answer, reply with exactly {REFUSAL}."""
+If the context does not contain the answer, reply with exactly {REFUSAL}. The question may ask \
+about a specific model, version, benchmark or number that the context never mentions (for \
+example "Claude 2" when the context only mentions "Claude"). If the context does not state \
+the specific thing that is asked, reply with exactly {REFUSAL}: do not answer about a related \
+thing instead and do not use outside knowledge."""
 
 
 def _flat(value: str) -> str:
@@ -171,6 +175,7 @@ class LocalDeps:
     count_tokens: object  # (text) -> int
     index: EntityIndex | None = None
     plain_hits: object = None  # (question) -> unit ids of a plain hybrid search, shown first
+    context_tokens: int = 8000  # the size of the context sent to the model
 
 
 def prepare_local(deps: LocalDeps, question: str):
@@ -190,7 +195,7 @@ def prepare_local(deps: LocalDeps, question: str):
     context = assemble(
         link.question, graph, deps.unit_rows(list(dict.fromkeys(cited + plain))),
         deps.unit_similarity(link, cited), deps.reports(link), deps.count_tokens,
-        priority_units=tuple(plain),
+        priority_units=tuple(plain), total_tokens=deps.context_tokens,
     )  # fmt: skip
     context.graph = graph
     thin = thin_evidence(context, link.question)
