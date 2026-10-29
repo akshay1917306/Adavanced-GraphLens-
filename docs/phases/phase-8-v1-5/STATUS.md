@@ -4,7 +4,7 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29. Part A step A1 (streaming) is built and tested with fakes; the live measurement waits for the owner's yes.** Branch `phase-8/v1-5` from
+**Plan approved by the owner on 2026-10-29. Part A step A1 (streaming) is built and tested with fakes; measured live (see below).** Branch `phase-8/v1-5` from
 `main` at eca204a. Nothing built, nothing spent, nothing pushed. Scope: faster and better answers (A) and sign-in with password reset (B). The bigger corpus is dropped
 (the owner cannot raise the OpenAI limit); hosting is out.
 
@@ -22,7 +22,11 @@ Last updated: 2026-10-29
 - Web: `/api/ask/stream` passes the stream on; the screen shows a dashed "Draft" card while the text
   arrives (shown as plain text), then replaces it with the checked answer, which may differ or refuse.
 - Tests: pipeline 481 pass (10 new), API 167 pass (17 new), ruff, eslint, tsc and the Next build pass.
-- **Not measured yet:** first-word time and total time with a real model.
+- **Measured live (2026-10-29, owner's yes, 3 local questions, cost $0.0091 in total):** first draft
+  word after 7.3 s, 4.4 s, 4.8 s; checked final answer after 9.4 s, 7.0 s, 7.8 s; all `answered` and
+  `verified`; answers of 143, 245 and 222 words. The draft starts about 2 to 3 s before the end, because
+  routing and retrieval run before the model writes. The gain is real but modest; the answer length (A2)
+  and retrieval time matter more. Not seen: the draft card with a real stream in the browser.
 
 ## Incident while testing (my mistake, repaired)
 
