@@ -22,7 +22,7 @@ from graphlens_pipeline.linking import (
     name_matches,
     sanitise,
 )
-from graphlens_pipeline.llm import Llm, LlmError, cost_usd
+from graphlens_pipeline.llm import Llm, LlmError, cost_usd, delta_kwargs
 from graphlens_pipeline.localanswer import MAX_OUTPUT_TOKENS, REFUSAL, Check, check_citations
 from graphlens_pipeline.localcontext import ContextItem, LocalContext, _safe
 from graphlens_pipeline.reports import _clean
@@ -271,7 +271,7 @@ def answer_relate(
     context = assemble_relate(result.question, ends, paths, unit_rows(unit_ids), count)
     result.context = context
     try:
-        reply = llm.complete(RELATE_SYSTEM, context.prompt, MAX_OUTPUT_TOKENS)
+        reply = llm.complete(RELATE_SYSTEM, context.prompt, MAX_OUTPUT_TOKENS, **delta_kwargs())
     except LlmError as error:
         result.status = "refused"
         result.reason = f"The path was found, but the explanation could not be written ({error})."

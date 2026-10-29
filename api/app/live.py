@@ -6,8 +6,10 @@ never after the request was sent, so a paid answer is never repeated by accident
 failures a circuit breaker makes calls fail at once for a short while.
 """
 
+import json
 import logging
 import time
+from collections.abc import Iterator
 from uuid import uuid4
 
 import httpx
@@ -75,6 +77,93 @@ class LiveService:
             time.sleep(CONNECT_RETRY_PAUSE)  # nothing was sent, so one more try cannot double-spend
             return self._client.post("/search", json=body, headers=headers)
 
+    def _response(self, reply: SearchReply) -> AskResponse:
+        return AskResponse(
+            answer_id=uuid4().hex,
+            answer=Answer(**reply.answer.model_dump()),
+            baseline=Answer(**reply.baseline.model_dump()) if reply.baseline else None,
+            fixture=False,
+        )
+
+    def open_stream(self, question: str, compare: bool, timeout_seconds: float = 45.0):
+        """Open the streaming call. Problems before the first byte raise like `ask` does, so the
+        route can still answer with a proper HTTP status. Returns an iterator of
+        ("delta", text), then ("final", AskResponse); a failure in the middle raises."""
+        if not self._breaker.allow():
+            raise EngineUnavailable("the search service is paused after repeated failures")
+        headers = {"X-Search-Key": self._key, "X-Request-Id": request_id_var.get()}
+        request = self._client.build_request(
+            "POST",
+            "/search/stream",
+            json={"question": question, "compare": compare},
+            headers=headers,
+        )
+        try:
+            try:
+                response = self._client.send(request, stream=True)
+            except (httpx.ConnectError, httpx.ConnectTimeout):
+                time.sleep(CONNECT_RETRY_PAUSE)  # nothing was sent yet
+                response = self._client.send(request, stream=True)
+        except httpx.TimeoutException as error:
+            self._breaker.record_failure()
+            raise EngineTimeout from error
+        except httpx.HTTPError as error:
+            self._breaker.record_failure()
+            log.error("search service unreachable %s", type(error).__name__)
+            raise EngineUnavailable("the search service cannot be reached") from error
+        if response.status_code != 200:
+            response.close()
+            self._breaker.record_failure()
+            if response.status_code == 504:
+                raise EngineTimeout
+            log.error("search service answered %s", response.status_code)
+            raise EngineUnavailable(f"the search service answered {response.status_code}")
+        return self._events(response, timeout_seconds)
+
+    def _events(self, response: httpx.Response, timeout_seconds: float) -> Iterator[tuple]:
+        ends = time.monotonic() + timeout_seconds
+        finished = False
+        try:
+            for line in response.iter_lines():
+                if time.monotonic() > ends:
+                    raise EngineTimeout
+                if not line:
+                    continue
+                code = ""
+                try:
+                    event = json.loads(line)
+                    kind = event["type"]
+                    if kind == "delta":
+                        yield "delta", str(event["text"])
+                        continue
+                    if kind == "final":
+                        reply = SearchReply.model_validate(event["reply"])
+                        finished = True
+                        self._breaker.record_success()
+                        yield "final", self._response(reply)
+                        return
+                    if kind == "error":
+                        code = str(event.get("code", ""))
+                except (ValueError, KeyError, TypeError, ValidationError) as error:
+                    log.error("search service stream not understood (%s)", type(error).__name__)
+                    raise EngineUnavailable("the search service reply is not understood") from error
+                if code == "search_timeout":
+                    raise EngineTimeout
+                raise EngineUnavailable("the search service failed")
+            raise EngineUnavailable("the search service stream ended early")
+        except (EngineTimeout, EngineUnavailable):
+            if not finished:
+                self._breaker.record_failure()
+            raise
+        except httpx.TimeoutException as error:
+            self._breaker.record_failure()
+            raise EngineTimeout from error
+        except httpx.HTTPError as error:
+            self._breaker.record_failure()
+            raise EngineUnavailable("the search service stream broke") from error
+        finally:
+            response.close()
+
     def ask(self, question: str, compare: bool) -> AskResponse:
         if not self._breaker.allow():
             raise EngineUnavailable("the search service is paused after repeated failures")
@@ -106,9 +195,4 @@ class LiveService:
             )
             raise EngineUnavailable("the search service reply is not understood") from error
         self._breaker.record_success()
-        return AskResponse(
-            answer_id=uuid4().hex,
-            answer=Answer(**reply.answer.model_dump()),
-            baseline=Answer(**reply.baseline.model_dump()) if reply.baseline else None,
-            fixture=False,
-        )
+        return self._response(reply)

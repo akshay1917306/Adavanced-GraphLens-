@@ -235,6 +235,10 @@ textarea {
   margin-top: 12px;
 }
 
+.card.draft {
+  border-style: dashed;
+}
+
 .card-head {
   display: flex;
   justify-content: space-between;

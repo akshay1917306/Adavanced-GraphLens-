@@ -4,9 +4,33 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan updated with the owner's answers (2026-10-29), waiting for final approval.** Branch `phase-8/v1-5` from
+**Plan approved by the owner on 2026-10-29. Part A step A1 (streaming) is built and tested with fakes; the live measurement waits for the owner's yes.** Branch `phase-8/v1-5` from
 `main` at eca204a. Nothing built, nothing spent, nothing pushed. Scope: faster and better answers (A) and sign-in with password reset (B). The bigger corpus is dropped
 (the owner cannot raise the OpenAI limit); hosting is out.
+
+## A1 streaming (built)
+
+- Model client: `OpenAiLlm.complete(..., on_delta=...)` streams the text and returns the same result
+  (tokens, cost, finish reason) as before; a JSON-schema call is never streamed. A small hook
+  (`set_delta_sink`, `delta_kwargs`) lets the search service stream only the main answer of local,
+  relate and plain-RAG modes; the comparison answer and global search are not streamed.
+- Search service: `POST /search/stream` (lines of JSON: `delta`, then `final` or `error`), same key, slots
+  and 40 s deadline as `/search`.
+- API: `POST /api/v1/ask/stream` with the same limits, cost counting and saving as `/ask`; problems before
+  the first byte are normal HTTP errors; a failure in the middle is one `error` line and nothing is
+  charged or saved; replay mode answers with one `final` line.
+- Web: `/api/ask/stream` passes the stream on; the screen shows a dashed "Draft" card while the text
+  arrives (shown as plain text), then replaces it with the checked answer, which may differ or refuse.
+- Tests: pipeline 481 pass (10 new), API 167 pass (17 new), ruff, eslint, tsc and the Next build pass.
+- **Not measured yet:** first-word time and total time with a real model.
+
+## Incident while testing (my mistake, repaired)
+
+I ran the API test suite once against the **live** database. Its `test_store` fixture deletes all
+conversations, visitors and audit rows, so those tables were emptied. I restored them from today's
+backup (`backups/20261029-143225`): 7 visitors, 9 conversations, 18 messages, 9 answer rows are back.
+Rows made after that backup (a few check-script questions) are gone. The suite has since run only
+against a throwaway database `graphlens_test`, which was dropped afterwards.
 
 ## Decisions waiting for the owner
 
@@ -22,4 +46,4 @@ None.
 
 ## Exact next action
 
-Owner: give the final approval. Then start Part A step A1 (free).
+Owner: yes or no to a live check of streaming (about $0.01). Then A2 (shorter answer limit, about $0.13).

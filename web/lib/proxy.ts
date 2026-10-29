@@ -47,12 +47,17 @@ function callApi(path: string, method: Method, ip: string, body?: string, token?
 }
 
 // What the browser gets back: the API's status and JSON, and its Retry-After when it sent one.
-async function pass(res: Response, issued: Issued | null): Promise<Response> {
-  const headers = new Headers({ "Content-Type": "application/json" });
+// A streamed answer (lines of JSON) is passed on as it arrives; anything else is read whole.
+async function pass(res: Response, issued: Issued | null, stream = false): Promise<Response> {
+  const streaming = stream && res.ok && res.body !== null;
+  const headers = new Headers({
+    "Content-Type": streaming ? "application/x-ndjson" : "application/json",
+  });
   const retry = res.headers.get("retry-after");
   if (retry) headers.set("Retry-After", retry);
+  if (streaming) headers.set("Cache-Control", "no-store");
   if (issued) headers.append("Set-Cookie", cookieHeader(issued));
-  return new Response(await res.text(), { status: res.status, headers });
+  return new Response(streaming ? res.body : await res.text(), { status: res.status, headers });
 }
 
 // Asks the API for a signed token: a renewed one for a known visitor, else a new visitor.
@@ -81,6 +86,7 @@ interface Options {
   method?: Method;
   body?: string;
   needsVisitor?: boolean;
+  stream?: boolean; // pass a streamed reply on as it arrives
 }
 
 export async function forward(request: Request, path: string, options: Options = {}) {
@@ -112,9 +118,10 @@ export async function forward(request: Request, path: string, options: Options =
       const renewed = await issueToken(token, ip);
       if (renewed instanceof Response) return renewed;
       issued = renewed;
+      await res.body?.cancel();
       res = await callApi(path, method, ip, options.body, issued.token);
     }
-    return pass(res, issued);
+    return pass(res, issued, options.stream === true);
   } catch {
     return jsonError("api_unreachable", "The API is not reachable right now.", 502);
   }

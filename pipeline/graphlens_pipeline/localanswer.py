@@ -22,7 +22,7 @@ from graphlens_pipeline.linking import (
     LinkResult,
     name_matches,
 )
-from graphlens_pipeline.llm import Llm, LlmError, cost_usd
+from graphlens_pipeline.llm import Llm, LlmError, cost_usd, delta_kwargs
 from graphlens_pipeline.localcontext import LocalContext
 
 MAX_OUTPUT_TOKENS = 800
@@ -173,7 +173,7 @@ def check_citations(answer: str, context: LocalContext, index: EntityIndex | Non
 def generate(llm: Llm, context: LocalContext, link: LinkResult) -> LocalAnswer:
     """One model call, from the context only."""
     started = time.monotonic()
-    reply = llm.complete(LOCAL_SYSTEM, context.prompt, MAX_OUTPUT_TOKENS)
+    reply = llm.complete(LOCAL_SYSTEM, context.prompt, MAX_OUTPUT_TOKENS, **delta_kwargs())
     text = reply.text.strip()
     result = LocalAnswer(
         link.question, "answered", text=text, context_tokens=context.total_tokens,
