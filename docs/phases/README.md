@@ -13,7 +13,7 @@ approval, a merged pull request, and a `phase-N` tag.
 | 5. Product UI | [phase-5-ui](phase-5-ui/) | Approved, merged, tag `phase-5` |
 | 6. User data and hardening | [phase-6-hardening](phase-6-hardening/) | Approved, merged, tag `phase-6` |
 | 7. Evaluate and launch | [phase-7-launch](phase-7-launch/) | Approved, merged, tags `phase-7` and `v1.0` (owner review pages still open) |
-| 8. v1.5 | phase-8-v1-5 | Later |
+| 8. v1.5 (faster answers, sign-in, bigger corpus) | [phase-8-v1-5](phase-8-v1-5/) | Plan written, waiting for owner approval |
 
 Each phase folder holds: `BRIEF.md` (goal and scope), `PREREQUISITES.md` (what the
 owner prepares), `CHECKLIST.md` (acceptance checks), `PROMPT.md` (how to resume the
