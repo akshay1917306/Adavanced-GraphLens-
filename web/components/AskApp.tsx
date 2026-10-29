@@ -115,7 +115,11 @@ export default function AskApp() {
               onChange={(e) => setQuestion(e.target.value)}
               maxLength={MAX_CHARS}
               rows={3}
-              placeholder="For example: What size of model does KGT5 use in its main experiments?"
+              placeholder={
+                examples.length > 0
+                  ? "Choose one of the saved examples below (only these have full answers for now)"
+                  : "Ask a question about the papers"
+              }
             />
             <div className="ask-row">
               <label className="check">
