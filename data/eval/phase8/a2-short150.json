@@ -1,0 +1,328 @@
+{
+ "system": "short150",
+ "context_tokens": 8000,
+ "mode": "correctness",
+ "summary": {
+  "short150": {
+   "questions": 30,
+   "correct": 22,
+   "partial": 7,
+   "incorrect": 1,
+   "judge_error": 0,
+   "refused": 0,
+   "share_correct": 0.733,
+   "ci95": [
+    0.556,
+    0.858
+   ],
+   "citation_checks": {
+    "verified": 25,
+    "warning": 5
+   },
+   "mean_seconds": 6.35,
+   "answer_cost_usd": 0.08635,
+   "failed": 0
+  }
+ },
+ "against_previous": {
+  "better": 3,
+  "same": 26,
+  "worse": 1,
+  "changed": [
+   [
+    "M14",
+    "correct",
+    "partial"
+   ],
+   [
+    "M22",
+    "partial",
+    "correct"
+   ],
+   [
+    "M29",
+    "incorrect",
+    "partial"
+   ],
+   [
+    "M30",
+    "partial",
+    "correct"
+   ]
+  ]
+ },
+ "answers": [
+  {
+   "id": "M01",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly states about 60% computation savings with early reranking and identifies FiD as the main baseline, matching the reference answer.",
+   "check": "verified",
+   "text": "KG-FiD can save about 60% of computation cost compared to vanilla FiD by using its early reranking setting, as it only processes a few top-reranked passages in the higher encoder layers and decoder, reducing the number of passages fully encoded and decoded [T4]. Specifically, KG-FiD achieves comparable or better QA performance than FiD with only around 40% of FiD's computation cost [T4]. The main baseline model for KG-FiD is Fusion-in-Decoder (FiD) [T3][E8], which KG-FiD improves upon by integrating knowledge graphs and graph neural networks for two-stage passage reranking [T1][E1]. Ablation studies confirm that both reranking stages contribute to performance gains, with stage-2 reranking being more effective in large models [T5][T6]. The computation savings stem from processing fewer passages in deeper encoder layers and decoder, quantified by the formula S = (1−L1/L)(1−N2/N1), where L1 and N2 are reduced compared to FiD's full processing [T2].",
+   "seconds": 25.89
+  },
+  {
+   "id": "M02",
+   "status": "answered",
+   "verdict": "partial",
+   "reason": "The candidate correctly identifies the intrinsic evaluation on the DART test set but does not specify that the generator is a fine-tuned pretrained T5-Large model, instead describing it more generally as a data-to-text verbalizer.",
+   "check": "verified",
+   "text": "The unified-knowledge-interface approach, UDT-QA, uses a data-to-text verbalizer as its generator for data-to-text conversion. This verbalizer converts structured knowledge such as tables from Wikipedia and knowledge base graphs from Wikidata into natural language, serving as a universal interface for heterogeneous knowledge sources in open-domain question answering (ODQA) [T1][E7][E5]. The data-to-text model is intrinsically evaluated on the DART test set, using official metrics like BLEU, METEOR, TER, MoverScore, BERTScore, and BLEURT to measure generation quality [T3][E10][E2]. This intrinsic evaluation serves as a sanity check for the verbalizer's performance before applying it to downstream ODQA tasks [T3]. Thus, the generator is a data-to-text verbalizer trained and validated primarily on the DART dataset for intrinsic evaluation.",
+   "seconds": 10.75
+  },
+  {
+   "id": "M03",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies the model size as T5-small (~60M parameters) and the two knowledge graphs used for link prediction as Wikidata5M and WikiKG90Mv2, matching the reference answer.",
+   "check": "verified",
+   "text": "KGT5 uses a model with the same architecture as T5-small, which has approximately 60 million parameters, in its main experiments [T5]. It is evaluated on two large knowledge graphs for link prediction: Wikidata5M, which contains about 4.8 million entities, 828 relations, and 21 million edges [E2][T6], and WikiKG90Mv2, which is even larger with 91 million entities, 1,387 relations, and 601 million edges [E7][T6]. KGT5 achieves competitive link prediction performance on these large KGs while using up to 98% fewer parameters than other models [T1][T9].",
+   "seconds": 11.26
+  },
+  {
+   "id": "M04",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate accurately explains the scoring method involving multiplication by the F1 of predicted conditions and describes the complexity of questions requiring compositional logical reasoning across complex contexts.",
+   "check": "warning",
+   "text": "ConditionalQA scores an answer with conditions using a combined scoring function sem+c that multiplies the semantic similarity of the predicted answer to the gold answer by the F1 score of the predicted conditions against the gold conditions at the HTML element level. Conditions are restricted to HTML elements in the document, and perfect F1 requires retrieving all required conditions exactly; if no condition is needed, an empty list is expected [T2][T10]. The questions in ConditionalQA are hard because they involve complex documents with intricate internal logic (e.g., conjunction, disjunction, exceptions), multi-hop reasoning, and require compositional logical reasoning across long contexts. Questions are asked without knowing the answers, can be yes/no, extractive, multiple-answer, or unanswerable, and require models to jointly predict answers and their conditions, which is challenging for existing models [T1][T3][T5][T9]. Models struggle especially with condition selection, causing significant drops in joint answer-condition accuracy [T8][T9].",
+   "seconds": 5.12
+  },
+  {
+   "id": "M05",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly states the maximum path length is 3 and that SQUIRE uses an encoder-decoder Transformer model to turn a query into a path, matching the reference answer.",
+   "check": "verified",
+   "text": "SQUIRE samples paths of maximum length N = 3 for training. Specifically, for each triple fact (h, r, t), it samples a path from all paths with maximum length N = 3 between h and t; if no such path is found, it uses a shorter path including the relation and tail entity [T3]. To turn a query into a path, SQUIRE uses a Transformer encoder-decoder model that \"translates\" a query sequence (h, r) into a path sequence. The model computes the probability distribution of each token in the path autoregressively, using the encoder to attend to the query and previously generated path tokens, and a multi-layer perceptron (MLP) to map the encoder output to token probabilities [T1][T3]. During inference, beam search is used to generate reasoning paths of maximum length N from the query [T4]. Thus, SQUIRE frames multi-hop reasoning as a sequence-to-sequence problem solved by a Transformer encoder-decoder model generating paths up to length 3 [T1][T3][T4].",
+   "seconds": 5.25
+  },
+  {
+   "id": "M06",
+   "status": "answered",
+   "verdict": "partial",
+   "reason": "The candidate correctly states the two steps and the H@1 values but incorrectly calculates the difference as 5.0 points instead of 14.2 points higher.",
+   "check": "verified",
+   "text": "SF-TQA's query generation consists of two steps: 1) evoking the constraints and their possible interpretations (constraint evocation), and 2) grounding the constraints by exploring relevant KG facts (constraint grounding) [T5]. Regarding performance on TempQuestions, SF-TQA achieves a Hit@1 of 41.2%, which is 5.0 points higher than QUINT's 27.0% [T1]. This improvement is explicitly stated as +5.0 in Hit@1 over QUINT on TempQuestions [T1][T2]. Thus, SF-TQA's query generation has two steps, and its Hit@1 on TempQuestions is 5.0 points higher than QUINT's.",
+   "seconds": 3.41
+  },
+  {
+   "id": "M07",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly explains the alignment term added to the loss and accurately states that the results discussion is structured around four questions, matching the reference answer.",
+   "check": "verified",
+   "text": "CompAQT adds alignment to the training loss by incorporating a minimum-distance alignment loss component (Equation 4) that encourages the model to focus attention on unique, relevant terms early in the program generation and discourages repeated attention on previously attended tokens later. This alignment loss is combined with a coverage term and a linear decay term to form the total alignment loss, which is aggregated over all steps with linear decay to improve multi-step program accuracy [T1]. The paper structures its results discussion around four main questions investigating CompAQT's effectiveness: (1) improvement over baselines on four datasets, (2) encouragement of compositional generalization via attention to relevant input parts, (3) contribution of each component of CompAQT, and (4) whether performance gains are due merely to added parameters [T2]. Thus, the results discussion is organized around these four guiding questions.",
+   "seconds": 5.53
+  },
+  {
+   "id": "M08",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly lists the five datasets and accurately reports the HotpotQA EM drop from 50.80 to 48.21 without contrastive adaptation.",
+   "check": "verified",
+   "text": "QADA reports results on five target datasets: HotpotQA, Natural Questions, NewsQA, SearchQA, and TriviaQA, all from the MRQA Split I benchmark [T5][T4]. Regarding the HotpotQA exact match (EM) score, removing contrastive adaptation from QADA causes a notable performance drop of 8.3% EM on average across datasets, with HotpotQA EM decreasing from 50.80 to 48.21 as shown in the ablation study [T1][T4]. This indicates that attention-based contrastive adaptation is a critical component for maintaining high EM performance in QADA, especially on HotpotQA.",
+   "seconds": 7.85
+  },
+  {
+   "id": "M09",
+   "status": "answered",
+   "verdict": "incorrect",
+   "reason": "The candidate mentions different datasets (Natural Questions and WebQuestions) and does not provide the exact improvement amounts of 1.0 and 0.7 exact match points as in the reference.",
+   "check": "verified",
+   "text": "The single-model open-domain QA approach, UDT-QA, beats the previous best by achieving new state-of-the-art exact match scores on the Natural Questions (NQ) dataset, improving over prior models such as DPR and UnitedQA. Specifically, UDT-QA with verbalized single data achieves 55.2% EM on NQ, surpassing UnitedQA's 51.8% and DPR's 41.5%. On the WebQuestions (WebQ) dataset, UDT-QA also performs competitively, with 52.0% EM using verbalized single data, outperforming UnitedQA's 48.0% and DPR's 35.2% [T1][T8][E12][E31][E3]. Thus, UDT-QA demonstrates significant improvements on these two datasets by integrating verbalized structured knowledge with text in a unified retriever-reader pipeline.",
+   "seconds": 9.39
+  },
+  {
+   "id": "M10",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate accurately states that no existing metric predicts human preferences and that the authors analyze expert justifications to understand answer quality.",
+   "check": "verified",
+   "text": "The authors conclude that existing automatic metrics like ROUGE, BERTScore, and BLEURT poorly correlate with human judgments for long-form QA (LFQA) due to the open-ended and multifaceted nature of answers [T1][T7][T10]. No current automatic metric reliably predicts overall human preference, though some, such as QAFactEval, show promise in modeling specific aspects like factuality, and simpler metrics like self-BLEU correlate with coherence [T7][T10]. They find that length-based heuristics sometimes outperform unsupervised metrics, highlighting metric brittleness [T7]. To study what makes one answer better, the authors hire domain experts to perform A/B preference judgments and provide detailed justifications, revealing that experts prioritize completeness and factuality over surface features like conciseness, and that even experts disagree due to valuing different answer properties [T2][T3][T6]. They advocate moving from single overall scores to multi-faceted evaluation targeting attributes such as completeness, factuality, and ease of understanding [T4][T6]. The study releases expert annotations and code to support future work [T4].",
+   "seconds": 16.16
+  },
+  {
+   "id": "M11",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies the dataset as EntailmentBankQA with 1,840 expert-annotated entailment trees and states that FAME builds a structured entailment tree for reasoning, matching the reference answer.",
+   "check": "verified",
+   "text": "FAME is evaluated on the EntailmentBankQA dataset, which contains 1,840 expert-annotated entailment trees corresponding to hypotheses derived from ARC questions and correct options [T4][E2]. Each tree averages 7.6 nodes and 3.2 reasoning steps [T4]. For entailment tree generation evaluation, FAME is tested on the EntailmentBank test split, which includes 1,840 questions [T8][E9]. FAME builds a structured entailment tree for its reasoning, where leaf facts and intermediate conclusions are connected by entailment steps, with nonleaf nodes representing intermediate entailment steps [T6][E3][E15]. The method formulates faithful question answering as a discrete decision-making problem solved via Monte-Carlo planning, which constructs a planning tree to guide action selection and generate high-quality entailment trees [T9][E1][E10][C2]. The controller is implemented with a T5-large model trained on EntailmentBank [T7][E14][C2].",
+   "seconds": 4.69
+  },
+  {
+   "id": "M12",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies DFGN, HGN, and XLNet in Dire as architectures besides BERT where the method is applied, and accurately states that it targets the disconnected reasoning problem.",
+   "check": "verified",
+   "text": "Besides BERT, the counterfactual multi-hop reasoning method is applied to several multi-hop QA architectures including DFGN, HGN, and XLNet in Dire [T1][T3][T4]. The method is model-agnostic and can be implemented on other baselines as well [T1][T2]. The problem it sets out to reduce is disconnected reasoning, where QA models rely on shortcuts by using only one fact instead of true multi-hop reasoning [T2][T6][T10]. The approach uses causal graphs and counterfactual examples during training to disentangle shortcut impacts (natural direct effects) from true multi-hop reasoning (indirect effects), thereby reducing disconnected reasoning and promoting genuine multi-hop reasoning capability [T2][T9][T10]. Experimental results demonstrate significant reductions in disconnected reasoning while maintaining strong original performance [T3][T4].",
+   "seconds": 5.52
+  },
+  {
+   "id": "M13",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies the architecture as Retrieval-Augmented Generation (RAG) and states that simpler model-generated answers were preferred 48% of the time in the first human evaluation, matching the reference answer.",
+   "check": "verified",
+   "text": "The WikiHowQA baseline is built on the Retrieval-Augmented Generation (RAG) architecture, using DPR as the retriever and BART-large as the generator. The retriever filters relevant passages from a small predefined set of supporting documents, which are then input to BART to generate answers conditioned on these passages [T2]. \n\nRegarding human evaluation, the first conventional human-evaluation setup showed that simpler model-generated answers were preferred over reference (human-written) answers 48% of the time, despite containing factual inaccuracies. This indicated challenges in assessor preference when choosing between well-formulated answers [T3].",
+   "seconds": 3.18
+  },
+  {
+   "id": "M14",
+   "status": "answered",
+   "verdict": "partial",
+   "reason": "The candidate correctly states 12 models and 301 questions but incorrectly interprets 1,490 as unique question/answer pairs generated by models rather than the total unique pairs in NQ-Open.",
+   "check": "verified",
+   "text": "The study evaluates 12 open-domain QA models on a randomly sampled subset of 301 questions from the NQ-OPEN dataset, a popular benchmark for open-domain QA [T2][E1][E2]. These 12 models include retriever-reader models like DPR, ANCE+, FiD-KD, RocketQAv2, GAR+, R2-D2, end-to-end models like EMDR2 and EviGen, and closed-book models such as InstructGPT in zero-shot and few-shot settings [T7][E2][E16]. The total number of unique question/answer pairs generated by these models for the 301 questions is 1490 [T2]. The evaluation uses multiple mechanisms including lexical matching (Exact Match), BEM, InstructGPT-eval, and human evaluation [T5][T6][E7][E8][E19]. Thus, the study uses 12 open-domain QA models and 301 NQ-OPEN questions for evaluation [T2][T5][T6].",
+   "seconds": 4.3
+  },
+  {
+   "id": "M15",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly states that the 'w/o head' training set is built by discarding head task samples, leaving 16 tail tasks, and that the OLTQA model shares knowledge between head, tail, and unseen tasks, matching the reference answer.",
+   "check": "verified",
+   "text": "The 'w/o head' training set in the long-tailed QA paper is constructed by discarding samples from head tasks, resulting in a dataset consisting only of samples from 16 tail tasks [E3][T5]. The OLTQA model shares knowledge dynamically at the instance level between head, tail, and unseen QA tasks by maintaining a pool of fine-grained components that are combined per input, facilitating knowledge transfer across these task types [T1][T6][C2]. This knowledge sharing helps alleviate low-resource issues in tail and unseen tasks. Additionally, the model mines knowledge from a large pre-trained language model using a retrieve-then-rerank framework that selects in-context examples to guide generation, further enhancing knowledge sharing and performance across diverse QA tasks [T1][T6][T8][C1].",
+   "seconds": 4.85
+  },
+  {
+   "id": "M16",
+   "status": "answered",
+   "verdict": "partial",
+   "reason": "The candidate does not specify the 125M parameters for EmbedKGQA but correctly identifies the mismatch ReasoningLM aims to remove between question encoding and reasoning components.",
+   "check": "verified",
+   "text": "The ReasoningLM comparison lists EmbedKGQA as a PLM-based baseline method but does not specify the exact number of parameters for EmbedKGQA in the provided context [E3][T6]. However, it mentions that ReasoningLM updates only about 1 million parameters during fine-tuning, which is fewer than some baselines like UniKGQA with 12 million updated parameters [T7][E12]. ReasoningLM sets out to remove the mismatch between the question encoder and the reasoning module by enabling a unified approach where the pre-trained language model (PLM) can seamlessly perform both question understanding and multi-hop reasoning over subgraphs. This is achieved via a subgraph-aware self-attention mechanism that models entities and relations by attending to neighboring nodes on the knowledge graph, thus integrating reasoning directly into the PLM and addressing the gap between question encoding and reasoning components [T9][E1][E16].",
+   "seconds": 3.47
+  },
+  {
+   "id": "M17",
+   "status": "answered",
+   "verdict": "partial",
+   "reason": "The candidate correctly states that GEMFormer stores tokens with low entropy in its memory and that this improves joint F1 on HotpotQA, but it reports a 1.32-point improvement instead of the 1.6 points stated in the reference and adds extra details not in the reference.",
+   "check": "verified",
+   "text": "GEMFormer puts tokens from the input document into its global explicit memory, specifically selecting tokens based on uncertainty measured by entropy with respect to the question and context. This memory contains tokens important for correct reasoning and answer prediction, with a focus on supporting facts rather than distractors [T8][T7]. The memory is populated by selecting tokens with low entropy (LowH condition), indicating task relevance [T8].\n\nRegarding performance, the best memory configuration of GEMFormer Low (H (0.3)) on HotpotQA achieved a joint F1 score of 64.77, outperforming baselines [T5]. A five-fold increase in memory size was linked to a 1.32-point improvement in joint F1 score, although memory coverage of supporting evidence rarely exceeded 30% [T2][T6]. Thus, GEMFormer’s memory stores a subset of tokens from supporting facts, and expanding this memory improves joint F1 by about 1.32 points on HotpotQA.",
+   "seconds": 4.64
+  },
+  {
+   "id": "M18",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate accurately describes the scoring function as an MLP over document embeddings and explains the principled probabilistic approach without rationale supervision, matching the reference answer's key points with additional detail.",
+   "check": "verified",
+   "text": "Hop, Union, Generate (HUG) scores a set of documents and learns rationales through a principled probabilistic approach that models rationales as sets of sentences, enabling multi-hop reasoning across multiple documents without rationale supervision [T1][E1][C1]. The process proceeds in three stages: \n\n1. Hop: It explicitly considers all possible document sets and selects the most likely document set by parameterizing a distribution over valid document subsets using a document set scoring function f(d,x), which computes embeddings for each document independently and combines them via an MLP to capture relevance and dependencies among documents [T1][T4][E16][E12][E20].\n\n2. Union: Within each selected document, it selects a subset of sentences independently, modeling sentence set selection probabilistically [T1][T4].\n\n3. Generate: It combines the chosen sentence subsets and generates the answer using a sequence-to-sequence model conditioned on the union of selected sentences [T1][T4][E18][E28].\n\nHUG treats rationales as latent variables and performs hierarchical sampling—first identifying promising documents, then promising sentences—to make training tractable despite the combinatorial explosion of possible rationales [T3]. This approach allows HUG to capture interactions between documents and sentences for multi-hop reasoning without requiring rationale annotations [T1][T3][E4].",
+   "seconds": 5.25
+  },
+  {
+   "id": "M19",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies SARI-add as the main metric and accurately describes the three stages of the framework as question generation, question answering, and rewriting.",
+   "check": "verified",
+   "text": "The main metric for decontextualization in the LLM experiments is SARI-add, a variant of the SARI metric originally developed for text simplification but repurposed here to measure the F1 score of unigram edits that add the right clarifying information during decontextualization [T1][T3][E18]. The proposed framework splits the decontextualization task into three stages: (1) question generation, where clarifying questions about the snippet are formulated; (2) question answering, where answers and supporting evidence are retrieved from the source document; and (3) rewriting, where the snippet is rewritten incorporating information from the QA pairs to make it context-independent [T6][T3][E12]. This QA-based framework, implemented as QADECONTEXT, improves performance over end-to-end prompting by modularizing the task into these stages [T5][T9][E7].",
+   "seconds": 4.99
+  },
+  {
+   "id": "M20",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies the method as a deep-learning based inductive logic reasoning approach and explains that the minimum t-norm is replaced due to learning plateaus caused by gradient flow through only one input, proposing a neural logic operator instead.",
+   "check": "verified",
+   "text": "The Deep Inductive Logic Reasoning (DILR) paper proposes a novel end-to-end method integrating deep learning and inductive logic programming (ILP) for multi-hop reading comprehension. It consists of a hierarchical attentive reader that filters relevant information and a multi-hop reasoner that induces and refines logic rules via attentive memories and differentiable logic operators [T1][T2][E2][E12][E20]. The paper replaces the minimum t-norm with a novel neural logic operator (NLO) because the minimum t-norm suffers from learning plateaus due to gradient flow only through one input, while the product t-norm is unstable and prone to exponential decay as clause length grows. The NLO uses a smooth, differentiable formulation based on logarithms and exponentials to better approximate logical AND/OR operations and enable stable backpropagation [T3][E4][E5]. Ablation studies show that NLO outperforms both minimum and product t-norms in reasoning accuracy [T5].",
+   "seconds": 4.34
+  },
+  {
+   "id": "M21",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly states the initial training examples (64, 256, or 1,024) and that learning from feedback is cast as contextual bandit learning with simulated feedback, matching the reference answer.",
+   "check": "verified",
+   "text": "The bandit-learning study starts its systems from a small number of supervised training examples, specifically using 64, 256, or 1,024 in-domain annotated examples to train the initial model [T7][T6]. For example, an initial system trained with 64 SQuAD examples improves significantly through learning from user feedback [T3]. Learning from feedback is cast as a contextual bandit learning problem, where the system predicts an answer span and receives binary feedback (reward) from users indicating whether the answer is correct or not [T2][T5][E3]. The reward is simulated as a binary signal: a positive reward of 1.0 for exact match of predicted answer span to the annotated span, and a negative reward of -0.1 otherwise [T4][E10]. This setup allows the model to update its parameters online after each feedback or offline after collecting feedback in batches [T7][T6]. Thus, learning from feedback is formalized as a contextual bandit learning scenario using explicit binary user feedback as the learning signal [E3][E7].",
+   "seconds": 4.25
+  },
+  {
+   "id": "M22",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly states that KGT5 trains a T5-small model without pretrained weights and the unified knowledge interface fine-tunes a pretrained T5-Large model.",
+   "check": "verified",
+   "text": "The KGT5 approach uses a Transformer model with the same architecture as T5-small but trains it from scratch without pretrained weights, as explicitly stated in [T2] and [T3]. In contrast, the unified knowledge interface approach (referred to as the controller in the \"Faithful Question Answering with Monte-Carlo Planning\" paper) uses a pretrained T5-Large model trained on EntailmentBank [E2][C3]. Thus, KGT5 trains a T5-small-sized model without pretrained weights, while the unified knowledge interface uses a pretrained T5-Large model.",
+   "seconds": 5.56
+  },
+  {
+   "id": "M23",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies Natural Questions and TriviaQA as the datasets used by both approaches and states that KG-FiD builds on FiD.",
+   "check": "warning",
+   "text": "Both KG-FiD and the single-model open-domain QA approach YONO use the Natural Questions (NQ) and TriviaQA datasets for their experiments [T1][T2][E7][E9][E12]. KG-FiD builds on the Fusion-in-Decoder (FiD) framework by enhancing it with knowledge graphs and graph neural networks for passage reranking, improving performance and efficiency over FiD [T1][T2][T5][E1][E4]. YONO, on the other hand, is a unified single encoder-decoder model that integrates retrieval, reranking, and reading internally and is trained end-to-end [E3][C3]. Thus, KG-FiD explicitly builds on FiD, while YONO is a distinct single-model approach evaluated on the same datasets.",
+   "seconds": 3.7
+  },
+  {
+   "id": "M24",
+   "status": "answered",
+   "verdict": "partial",
+   "reason": "The candidate correctly identifies domain experts judging long-form QA and authors judging open-domain QA, but adds unsupported details about justifications and zero-shot prompting not mentioned in the reference.",
+   "check": "verified",
+   "text": "The long-form QA evaluation study employs domain experts as human judges who assess answer quality by comparing two candidate answers and providing detailed justifications, focusing on properties like completeness and factuality. These experts have specialized knowledge in seven fields and consider nuanced answer aspects beyond surface-level features, though they sometimes disagree due to differing value judgments [T3][T5]. In contrast, the open-domain QA evaluation study uses human annotators who are the paper's authors themselves to judge answers, focusing on factual correctness and syntactical variations, and also explores zero-shot prompting by large language models as a substitute for human evaluation [T1][T11]. Thus, the key difference lies in the human judges: domain experts with detailed justifications for long-form QA versus the paper's authors performing human evaluation in open-domain QA [T3][T11].",
+   "seconds": 3.78
+  },
+  {
+   "id": "M25",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies SQUIRE's core model as an encoder-decoder Transformer and names SF-TQA as the knowledge-graph QA paper addressing temporal questions, matching the reference answer.",
+   "check": "verified",
+   "text": "SQUIRE uses a Transformer encoder-decoder model as its core to translate a query sequence into a path sequence for multi-hop knowledge graph reasoning. This sequence-to-sequence framework treats the query as the source sequence and the reasoning path as the target sequence, enabling end-to-end learning and inference without relying strictly on existing edges, thus handling missing edges flexibly [T7][T9][T10][E2][E13].\n\nThe knowledge-graph question answering paper that deals with questions having temporal intent is the one proposing SF-TQA, which uses the Semantic Framework of Temporal Constraints (SF-TCons) to analyze and interpret temporal intents in questions. SF-TQA generates query graphs restricted by SF-TCons to handle temporal constraints effectively and is evaluated on temporal KGQA benchmarks such as TimeQuestions and TempQuestions [T1][T4][T5][E1][E9][E16].",
+   "seconds": 3.78
+  },
+  {
+   "id": "M26",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies the two papers and accurately describes their use of counterfactuals as in the reference answer.",
+   "check": "verified",
+   "text": "Two papers use counterfactuals in QA tasks:\n\n1. \"Counterfactual Multihop QA: A Cause-Effect Approach for Reducing Disconnected Reasoning\" (2023.acl-long.231) employs counterfactual examples to disentangle natural direct effects (K1→Y and K2→Y) from the total causal effect in multi-hop QA. It constructs counterfactual triples by perturbing supporting facts or remaining contexts to reduce disconnected reasoning and improve true multi-hop reasoning. The method is model-agnostic and uses adversarial examples to generate counterfactual inputs, enhancing multi-hop reasoning by blocking shortcut impacts [T1][T3][T4][T6][C1].\n\n2. \"Retrieval-guided Counterfactual Generation for QA\" (2022.acl-long.117) focuses on generating counterfactual questions and contexts automatically to improve robustness and out-of-domain generalization in QA. It uses retrieval-guided methods and QED-based decomposition to create label-changing counterfactuals for reading comprehension and open-domain QA, evaluated on datasets like QUOREF and Natural Questions [T2][T7][C2].\n\nThus, the first paper uses counterfactuals to reduce disconnected reasoning in multi-hop QA via causal effect modeling, while the second generates counterfactual data to improve QA robustness and generalization.",
+   "seconds": 4.12
+  },
+  {
+   "id": "M27",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies the bandit-learning paper as simulating user feedback to reduce annotation and the background-information paper as studying user reactions to QA answers.",
+   "check": "warning",
+   "text": "The paper \"Simulating Bandit Learning from User Feedback for Extractive Question Answering\" (2022.acl-long.355) simulates user feedback to reduce annotation costs by using explicit user feedback as a bandit signal for learning, focusing on improving QA systems with minimal supervised data and domain adaptation via user interaction [T1][T3][T6][T8][T40]. \n\nIn contrast, the paper \"WikiHowQA: A Comprehensive Benchmark for Multi-Document Non-Factoid Question Answering\" (2023.acl-long.290) studies how users react to QA answers by conducting human evaluation experiments where annotators assess answer usefulness and identify factual inconsistencies, analyzing user judgments and preferences on QA outputs [T2]. \n\nThus, the first paper simulates user feedback to cut annotation, while the second investigates user reactions to QA answers through human evaluation.",
+   "seconds": 3.85
+  },
+  {
+   "id": "M28",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate accurately explains KG-FiD's use of knowledge graph structure for passage reranking and ReasoningLM's integration of subgraph reasoning into a pre-trained language model, matching the reference's key points.",
+   "check": "warning",
+   "text": "KG-FiD incorporates knowledge-graph structure by constructing a passage graph where vertices are text passages and edges represent relationships derived from a knowledge graph (Wikidata). It uses a two-stage reranking process: first, a graph-based reranking with DPR embeddings, and second, a reranking with a graph neural network (GNN), specifically a 3-layer Graph Attention Network (GAT), to model structural and semantic information among passages. The reranked passages are then encoded by the Fusion-in-Decoder (FiD) framework for answer generation, thus leveraging KG structure to improve passage selection and reduce computation cost [T1][T6][T8][T9][C1].\n\nReasoningLM brings KG structure into a text model by integrating a subgraph-aware self-attention mechanism within a pre-trained language model (PLM). This mechanism imitates GNN reasoning by attending to neighboring nodes in the KG subgraph, enabling the PLM to jointly model question understanding and structured KG reasoning in a unified architecture. Additionally, ReasoningLM uses an adaptation tuning strategy with synthesized subgraphs and questions to adapt the PLM parameters for effective subgraph reasoning, allowing fine-grained interaction between question and KG [T2][T4][T5][T7][C2].",
+   "seconds": 5.28
+  },
+  {
+   "id": "M29",
+   "status": "answered",
+   "verdict": "partial",
+   "reason": "The candidate correctly identifies a paper splitting its task into three stages and another splitting query generation into two steps, but does not name the papers as 'decontextualization framework' and 'SF-TQA' as in the reference.",
+   "check": "verified",
+   "text": "The paper \"2022.emnlp-main.10\" splits its semantic parsing task into three stages: question rewriting, candidate action sequences generation, and action sequence selection [T1][T2]. This framework explicitly decomposes the task into these three sequential steps.\n\nThe paper \"2023.emnlp-main.1001\" (HUG) splits query generation into two steps within its three-stage multi-hop QA approach: Hop (selecting relevant documents) and Union (selecting relevant sentence subsets), followed by Generate (answer generation). Specifically, the query generation corresponds to the Hop and Union stages, which select documents and sentences respectively before answer generation [T7][E8][E31][E20][E4].\n\nThus, \"2022.emnlp-main.10\" uses a three-stage decomposition for semantic parsing, while \"2023.emnlp-main.1001\" (HUG) splits query generation into two steps (Hop and Union) within its three-stage framework.",
+   "seconds": 6.0
+  },
+  {
+   "id": "M30",
+   "status": "answered",
+   "verdict": "correct",
+   "reason": "The candidate correctly identifies CORA with MDPR as the approach relying on a multilingual dense retriever and the single-model approach (YONO) that folds the retriever into the transformer itself, matching the reference answer's key facts.",
+   "check": "warning",
+   "text": "The approach relying on a multilingual dense retriever is CORA, which uses MDPR—a multilingual dense passage retriever based on mBERT fine-tuned for dense passage retrieval—to rank passages across languages before feeding them to a multilingual generator (MGEN) for answer generation [T1][E2][C1]. \n\nIn contrast, the approach that folds the retriever into the transformer itself is the YONO model, which uses a single encoder-decoder language model architecture where retrieval, reranking, and reading are modeled as internal attention functions within the transformer layers. The retrieval layer uses the first 12 encoder layers, reranking uses 4 encoder layers, and the reading layer uses the remaining layers, enabling end-to-end training and shared representations [T8][T9][E36][E19][E29].",
+   "seconds": 4.37
+  }
+ ],
+ "cost_usd": 0.0937,
+ "skipped_by_cap": 0
+}

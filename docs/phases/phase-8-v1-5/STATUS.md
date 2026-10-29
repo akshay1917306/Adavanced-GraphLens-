@@ -51,3 +51,21 @@ None.
 ## Exact next action
 
 Owner: yes or no to a live check of streaming (about $0.01). Then A2 (shorter answer limit, about $0.13).
+
+## A2 shorter answers (tried, 2026-10-29, owner's yes, cap $0.20)
+
+Same 30 hard questions as Phase 7; prompt "at most 150 words" (was 250), output limit 500 tokens (was 800).
+Result file: `data/eval/phase8/a2-short150.json`. Cost $0.0937 of the $0.60 Part A cap (total Part A so far about $0.10).
+
+| | Phase 4/7 (250 words) | A2 (150 words) |
+|---|---|---|
+| Correct | 21 of 30 (70%) | 22 of 30 (73.3%, 56 to 86%) |
+| Citation check | 27 verified, 3 warnings | 25 verified, 5 warnings |
+| Answer cost per question | about $0.0031 to $0.0035 | $0.0029 |
+| Mean time | 5.2 to 5.8 s | **6.35 s** |
+
+Against the earlier answers question by question: 3 better, 26 same, 1 worse. **The agreed keep rule
+(time about 0.7 s faster) is NOT met: the mean time was not lower** (the earlier numbers were taken on
+another day and the network time varies, so this is a noisy comparison, not a proof that it is slower).
+Correctness did not drop, cost per answer fell about 10 to 17%, and 2 more citation warnings appeared.
+The code change was reverted (working tree back to 250 words) until the owner decides.
