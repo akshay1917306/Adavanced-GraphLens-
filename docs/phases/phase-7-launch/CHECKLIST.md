@@ -46,7 +46,8 @@ Mark an item only after it was run, and say where it was run. A missed target is
       **Result: p95 MISSED** at 10.3 s (median 5.4 s); cost met at $0.0031. Measured one at a time over 60 questions.
 - [ ] Total Phase 7 spend within the $3.00 cap
       So far about $0.62 of $3.00; final figure at the end of the phase.
-- [ ] Every target that is missed is listed with its reason in the README
+- [x] Every target that is missed is listed with its reason in the README
+      **Result:** README table and the paragraph under it.
       Listed with reasons in EVALUATION.md and EVALUATION_NOTES.md; the README is rewritten in the release step.
 
 ## Owner review
@@ -63,8 +64,11 @@ Mark an item only after it was run, and say where it was run. A missed target is
       **Result:** restored into a second empty stack (project `gltest`, new volumes, other ports): counts identical (751 units, 35 documents, 3,542 extraction rows, 1,545 entities, 193 communities, 751 vectors, alias), health ok, saved question HTTP 200, web 200; test stack deleted.
 - [x] Runbook: start, stop, health, backup, restore, common errors
       **Result:** `docs/RUNBOOK.md`.
-- [ ] One-command start works from a fresh clone (README steps only)
+- [x] One-command start works from a fresh clone (README steps only)
+      **Result:** fresh `git clone` of the branch, `cp .env.example .env`, `docker compose up -d --build --wait` (about 26 s with cached images): all 6 services healthy, replay answer HTTP 200, web 200 on an empty database; then `restore.sh` into it gave the full counts and `CHECK OK`. Cold image download on a new computer was not timed.
 - [ ] `ruff`, `pytest`, `tsc`, `eslint`, `next build` pass; CI green (including the new service)
-- [ ] README final; architecture page; 3-minute demo script; interview page; known limits
-- [ ] WALKTHROUGH.md, STATUS.md, DECISIONS.md updated
+- [x] README final; architecture page; 3-minute demo script; interview page; known limits
+      **Result:** `README.md`, `docs/ARCHITECTURE.md`, `DEMO.md`, `INTERVIEW.md`, `LIMITS.md`. The demo script was not rehearsed in a browser by anyone yet.
+- [x] WALKTHROUGH.md, STATUS.md, DECISIONS.md updated
+      **Result:** done (DECISIONS had D60 to D68 already).
 - [ ] Owner approved; tags `phase-7` and `v1.0`

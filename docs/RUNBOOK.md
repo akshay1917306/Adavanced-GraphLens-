@@ -34,7 +34,7 @@ Takes about one to two minutes. What it does and why:
   the web and the search service, dumps, and starts everything again. **The site is down for that
   time.**
 - **Qdrant**: the whole storage folder as a tar archive while Qdrant is stopped (a few seconds). This
-  keeps the collection and the alias `live` together.
+  keeps the collection and the alias `units_live` together.
 - **Redis is not saved**: it only holds rate-limit counters and the daily cost counter, which start
   again from zero.
 - The folder `backups/` is git-ignored. The backup holds the user data (history, saved answers) and

@@ -4,7 +4,7 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 4 and 6 done; step 5 is the owner's review; step 7 release next).** Branch `phase-7/launch` from `main` at 667addc
+**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 4, 6 and 7 built; step 5 is the owner's review; step 8 report and approval next).** Branch `phase-7/launch` from `main` at 667addc
 (Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
 
 ## Completed
@@ -156,6 +156,14 @@ carried over from Phase 3 (not re-run). Phase 7 spend so far: about **$0.62** of
 - Side finding: the Qdrant volume also holds 8 demo collections that are not ours (for example
   `midjourney`); the backup carries them along, harmless.
 
+## Step 7: release pages and checks
+
+- README rewritten (honest table, three misses with reasons, run/restore/live steps), `docs/ARCHITECTURE.md`,
+  `DEMO.md`, `INTERVIEW.md`, `LIMITS.md`, `WALKTHROUGH.md`; `.env.example` model names set to `gpt-4.1-mini`.
+- CI `compose` job now also resolves the `live` profile and checks that the search service refuses to
+  start without its keys (that check was run by hand here; the workflow itself runs only on GitHub).
+- Fresh-clone test passed (see CHECKLIST). Not yet run: CI on GitHub for this branch (nothing is pushed).
+
 ## Blockers
 
 None.
@@ -166,4 +174,4 @@ None. The owner will set the OpenAI monthly limit to $10 and put the key into `.
 
 ## Exact next action
 
-Step 5: the owner's review pages (Phase 3 communities and verdicts, Phase 4 questions) and the spot-check of 10 citations and 10 judge verdicts; then step 6 (backups, restore test, runbook).
+Run the final checks, write the A to J report, and wait for the owner's decision on the review pages (step 5) and approval. Push, PR, CI, merge and the tags `phase-7` and `v1.0` only after approval.
