@@ -192,6 +192,7 @@ def prepare_local(deps: LocalDeps, question: str):
         deps.unit_similarity(link, cited), deps.reports(link), deps.count_tokens,
         priority_units=tuple(plain),
     )  # fmt: skip
+    context.graph = graph
     thin = thin_evidence(context, link.question)
     if thin:
         thin.seeds = [s.name for s in link.seeds]

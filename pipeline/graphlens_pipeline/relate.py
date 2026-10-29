@@ -79,6 +79,7 @@ class RelateAnswer:
     cost_usd: float = 0.0
     tokens_in: int = 0
     tokens_out: int = 0
+    context: object = None  # the labelled context the explanation was written from
 
 
 def build_path_query(predicates: list[str], max_hops: int = MAX_HOPS) -> str:
@@ -268,6 +269,7 @@ def answer_relate(
     result.paths = paths
     unit_ids = sorted({u for p in paths for h in p.hops for u in h.evidence[:UNITS_PER_HOP]})
     context = assemble_relate(result.question, ends, paths, unit_rows(unit_ids), count)
+    result.context = context
     try:
         reply = llm.complete(RELATE_SYSTEM, context.prompt, MAX_OUTPUT_TOKENS)
     except LlmError as error:

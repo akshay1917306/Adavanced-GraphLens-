@@ -54,6 +54,7 @@ class LocalContext:
     prompt: str = ""
     tokens: dict[str, int] = field(default_factory=dict)
     left_out: dict[str, int] = field(default_factory=dict)  # candidates that did not fit
+    graph: object = None  # the Subgraph it was built from (for the evidence graph on screen)
 
     def by_label(self) -> dict[str, ContextItem]:
         return {item.label: item for item in self.items}

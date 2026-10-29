@@ -183,6 +183,14 @@ def main(argv: list[str] | None = None) -> int:
     rel.add_argument("--index-version", default="idx2-full-g0")
     rel.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     rel.add_argument("--paths-only", action="store_true", help="find paths, call no model")
+    serve = sub.add_parser(
+        "serve-search",
+        help="run the internal search service for the API (needs the OpenAI key; not public)",
+    )
+    serve.add_argument("--host", default="0.0.0.0")  # noqa: S104 (inside the Compose network only)
+    serve.add_argument("--port", type=int, default=8100)
+    serve.add_argument("--index-version", default="idx2-full-g0")
+    serve.add_argument("--ontology", type=Path, default=DEFAULT_ONTOLOGY)
     rexp = sub.add_parser(
         "export-replay",
         help="build the saved-answer file for the UI from a finished evaluation (no model, free)",
@@ -349,6 +357,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "export-replay":
         return _export_replay(engine, args)
+
+    if args.command == "serve-search":
+        return _serve_search(engine, args)
 
     if args.command == "ask-auto":
         return _ask_auto(engine, args)
@@ -769,7 +780,7 @@ def _local_graph_eval(engine, args) -> int:
     return 0
 
 
-def _local_deps(engine, driver, args):
+def _local_deps(engine, driver, args, embedder=None, client=None):
     """Local search wired to the real databases and the local embedding model."""
     import tiktoken
     from qdrant_client import QdrantClient
@@ -788,8 +799,8 @@ def _local_deps(engine, driver, args):
     from graphlens_pipeline.ontology import load_ontology
 
     encoder = tiktoken.get_encoding("o200k_base")
-    embedder = FastEmbedder()
-    client = QdrantClient(url=os.environ["QDRANT_URL"])
+    embedder = embedder or FastEmbedder()
+    client = client or QdrantClient(url=os.environ["QDRANT_URL"])
     predicates = load_ontology(args.ontology).predicate_names
     index = EntityIndex.from_neo4j(driver, args.index_version)
     return LocalDeps(
@@ -1179,6 +1190,49 @@ def _relate(engine, args) -> int:
             print(f"  shared community (level {c['level']}, {c['size']} entities): {c['title']}")
         print(answer.suggestion)
     print(f"cost ${answer.cost_usd:.5f}")
+    return 0
+
+
+def _serve_search(engine, args) -> int:
+    """The internal search service of CR-0004. It stops at once, with a clear message, when the
+    shared key or the model key is missing, so a half-working service never accepts requests."""
+    import tiktoken
+    import uvicorn
+    from neo4j import GraphDatabase
+    from qdrant_client import QdrantClient
+
+    from graphlens_pipeline.embed import FastEmbedder
+    from graphlens_pipeline.llm import LlmError, OpenAiLlm
+    from graphlens_pipeline.ontology import load_ontology
+    from graphlens_pipeline.searchservice import SearchService, create_app, real_backends
+
+    key = os.environ.get("SEARCH_SERVICE_KEY", "")
+    uri, user, password = (os.environ.get(k) for k in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"))
+    if len(key) < 16:
+        print("SEARCH_SERVICE_KEY must be set (at least 16 characters).", file=sys.stderr)
+        return 2
+    if not (uri and user and password and os.environ.get("QDRANT_URL")):
+        print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
+        return 2
+    try:
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+    except LlmError as error:
+        print(f"Cannot start: {error}", file=sys.stderr)
+        return 2
+
+    def factory() -> SearchService:
+        driver = GraphDatabase.driver(uri, auth=(user, password))
+        embedder = FastEmbedder()
+        qdrant = QdrantClient(url=os.environ["QDRANT_URL"])
+        deps = _local_deps(engine, driver, args, embedder, qdrant)
+        predicates = load_ontology(args.ontology).predicate_names
+        encoder = tiktoken.get_encoding("o200k_base")
+        backends = real_backends(
+            deps, llm, driver, engine, qdrant, embedder, predicates, args.index_version, encoder
+        )
+        return SearchService(backends, model=llm.model)
+
+    uvicorn.run(create_app(factory, key), host=args.host, port=args.port, access_log=False)
     return 0
 
 
