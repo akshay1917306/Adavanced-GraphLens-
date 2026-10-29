@@ -4,7 +4,7 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (step 1 done, step 2 next).** Branch `phase-7/launch` from `main` at 667addc
+**Plan approved by the owner on 2026-10-29; build in progress (steps 1 and 2 done, step 3 next).** Branch `phase-7/launch` from `main` at 667addc
 (Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
 
 ## Completed
@@ -69,6 +69,29 @@ Findings:
 After the test the stack was put back to replay mode (`search` stopped), so nothing spends money by
 accident. To run live: set `ANSWER_MODE=live` in `.env` and `docker compose --profile live up -d --build`.
 
+## Step 2: reliability
+
+- Search service: at most 4 questions run at once; a request waits up to 5 s for a slot and is then
+  told "busy" (503); a question running longer than 40 s gets 504 and **keeps its slot until it really
+  ends**, so a stuck question cannot pile up. Free reads (local-search retrieval, global selection,
+  text lookups) are retried twice with back-off (0.2 s, 0.6 s); relate path search and plain-RAG
+  retrieval are not wrapped yet. The model client is behind a circuit breaker (5 failures, 30 s pause)
+  and its timeout is tighter in the service (30 s, one client retry). A model call is never repeated.
+- API: a 504 from the service becomes the same "took too long" 504 (`engine_timeout`).
+- Tests with fakes: pipeline 441 pass (11 new: retry, breaker, guarded model, slots and deadline),
+  API 150 pass (2 new). Ruff clean on both.
+- **Live test of the cost cap and the rate limit** (owner's yes, estimate $0.006, cap $0.02; run
+  with a cap of $0.0100 per day and 3 asks per minute): ask 1 and 2 answered with real model calls
+  ($0.0031 and $0.0029); ask 3 was refused `daily_limit` and ask 4 `rate_limited`, and **neither
+  reached the search service** (checked in its log), so no money was spent on them. The Redis daily
+  counter ended at $0.011456, which equals the three real spends of the day. The key never appeared
+  in the API or search logs (searched). Real spend of this test: $0.0060. Afterwards the stack went
+  back to replay mode with the normal limits (10 asks per minute, cap $1.00).
+- **Latency observation:** the two local questions took 6.2 s and 9.2 s inside the service, so the
+  p95 target of 8 s is at risk; it is measured properly in the final evaluation.
+
+Phase 7 spend so far: about **$0.0114** of the $3.00 cap.
+
 ## Blockers
 
 None.
@@ -79,4 +102,4 @@ None. The owner will set the OpenAI monthly limit to $10 and put the key into `.
 
 ## Exact next action
 
-Step 2: per-request time limit and retries for Neo4j and Qdrant inside the search service, exercise the cost cap and rate limits with real calls (a few cents, with a shown estimate first).
+Step 3: the fixes of D64 (refusal weakness for generic words and model names, diagnose the relate explanations that failed the citation check, the 8,000 vs 12,000 token context experiment) and a latency look, each paid run with a shown estimate first.

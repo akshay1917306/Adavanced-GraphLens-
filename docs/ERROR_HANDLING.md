@@ -95,7 +95,9 @@ never echoed back.
 | 200 with `saved: false` | | Saving the answer failed | The answer is still shown, rating and saving are switched off | Done |
 | 503 | `storage_unavailable` | Postgres down, connection lost, or no free connection | `Retry-After: 5`, plain message, log has only the exception type and request id; connect timeout is 3 seconds. Other database errors (a broken query) stay a generic 500 because they are our bugs | Done (5 tests; live: database stopped, then started again) |
 | 503 | health | `GET /api/v1/health` when any of the four services is down | Reports which one | Done |
-| Time | | A request that runs too long | No per-request time limit yet | **Gap**: needed when live answers arrive (Phase 7) |
+| 504 | `engine_timeout` | The answer took longer than 45 s at the API, or the search service gave up at its own 40 s deadline | Plain message "took too long"; a timed-out call is **never retried** because it may already be paid for; counts toward the circuit breaker | Done (fakes; live path exercised, a real timeout was not provoked) |
+| 503 | `engine_unavailable` | Search service down, not ready, busy (all 4 slots taken for 5 s), wrong shared key, or a reply the API does not understand | Fail fast; after 5 failures in a row the API stops calling for 30 s and then lets one trial call through | Done (fakes; live: service stopped is the unavailable case) |
+| 429 | `daily_limit`, `rate_limited` | Daily cost cap or the per-minute ask limit | Refused before the search service is called, so no money is spent | Done (exercised live with real calls, see Phase 7 STATUS) |
 
 ## 7. The web server and the screen
 
@@ -121,15 +123,15 @@ never echoed back.
 | Slow or dropped network (PyPI, npm, GitHub, OpenAI) | Retry loops and caches in the image builds; push retried in scripts | Partly |
 | Redis down | Asks and data routes are refused with 503 | Done |
 | Postgres down | API answers 503 `storage_unavailable` and recovers when Postgres is back | Done |
-| Neo4j or Qdrant down | Health reports it; the command-line search fails (see section 5) | Partly |
+| Neo4j or Qdrant down | Health reports it. Inside the search service, reads of local search, global selection and text lookups are retried (0.2 s, then 0.6 s) and then fail; relate path search and the plain-RAG retrieval are not wrapped yet | Partly |
 | Secrets missing (`PROXY_SECRET`, `ADMIN_API_KEY`) | Address falls back to the socket address; status page stays off | Done |
 | Disk full, corrupted volume, lost database | Not handled | **Gap**: no backup or restore yet (Phase 7) |
 | Nobody notices a failure | Only JSON logs; no alerts or dashboards (D55) | **Gap** by decision |
 
 ## 9. What is still open
 
-1. **Per-request time limit and a short retry with back-off** for Neo4j and Qdrant calls when live
-   answers are wired in (Phase 7).
+1. **Retry for the relate path search and the plain-RAG retrieval** inside the search service (the
+   other reads already have it).
 2. **Decision for you:** Redis down currently **blocks** answers (fail closed). The alternative is
    to allow answers without limits (fail open), which is friendlier but removes the cost and abuse
    protection. I recommend keeping fail closed.

@@ -10,8 +10,10 @@ Mark an item only after it was run, and say where it was run. A missed target is
       **Result:** started healthy from the pipeline image; 4 live questions through the API worked (see STATUS); 430 pipeline and 148 API tests pass.
 - [ ] Live answer on the screen: sources, graph, citation badge, refusal and clarify
       Partly: the API returns sources, graph, badge and a refusal for live questions; the browser screen was not yet used in live mode and clarify was not seen.
-- [ ] Per-request time limit; retry with back-off for Neo4j and Qdrant; model-call circuit breaker (tested with fakes)
-- [ ] Daily cost cap and rate limits exercised with real calls
+- [x] Per-request time limit; retry with back-off for Neo4j and Qdrant; model-call circuit breaker (tested with fakes)
+      **Result:** done with fakes (see STATUS step 2). A real timeout and a real database outage were not provoked live; relate and plain-RAG retrieval are not covered by the retry yet.
+- [x] Daily cost cap and rate limits exercised with real calls
+      **Result:** 2 real answers, then `daily_limit` and `rate_limited` with no call reaching the search service; Redis counter matched the spend ($0.0060 for the test).
 - [ ] The OpenAI key never appears in logs, responses, the web bundle or git (searched)
       Partly: no key pattern in the API and search logs after the live test; web bundle and git were not searched again in this phase.
 
