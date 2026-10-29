@@ -50,3 +50,4 @@ go through an ADR (see `docs/adr/`).
 | D71 | pypdf upgrade | Not now: it forces about $2.40 of re-extraction and the owner cannot raise the OpenAI limit; D59 stays in force | Owner (limit) and Claude | 2026-10-29 |
 | D72 | Corpus size | Stays at 25 papers; bigger corpus and `add-papers` dropped from v1.5 and moved to the backlog | Owner (limit) and Claude | 2026-10-29 |
 | D73 | Phase 8 spend cap | Part A $0.60, Part B $0; a shown estimate and the owner's yes before every paid batch | Proposed by Claude, pending final owner approval | 2026-10-29 |
+| D74 | A2 (150-word answer limit) dropped | Trial on the 30 hard questions: 22 of 30 correct (was 21), cost per answer 0.0029 USD, but mean time 6.35 s, not faster, and 2 more citation warnings; the agreed speed rule was not met. Result kept in `data/eval/phase8/a2-short150.json`; 250 words stays | Owner, on Claude's numbers | 2026-10-29 |

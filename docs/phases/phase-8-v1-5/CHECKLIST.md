@@ -6,7 +6,7 @@ Mark an item only after it was run, and say where. A missed target is reported, 
 
 - [ ] A1 streaming: first words visible in under 2 s on a local question (measured); the final answer equals the non-streamed one; errors mid-stream shown cleanly
       **Built and tested with fakes** (pipeline 481 tests, API 167, lint, types, build, replay path in the browser). **Not yet measured with a real model:** needs a live check (about $0.01) after the owner's yes.
-- [ ] A2 shorter limit: correctness, citation support, refusal and p95 measured against Phase 7 on the same questions
+- [x] A2 shorter limit (tried, DROPPED by the owner, D74; speed rule missed): correctness, citation support, refusal and p95 measured against Phase 7 on the same questions
 - [ ] A3 passage choice: same comparison; any download approved first
 - [ ] A4 retry on relate and plain-RAG reads; `uvicorn` declared; tests with fakes
 - [ ] Each variant kept or dropped with numbers written down; easy set and refusal set not worse
