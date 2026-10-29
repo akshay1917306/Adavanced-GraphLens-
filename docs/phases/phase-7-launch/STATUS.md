@@ -4,8 +4,8 @@ Last updated: 2026-10-29
 
 ## State
 
-**Plan approved by the owner on 2026-10-29; build in progress (steps 1 to 4, 6 and 7 built; step 5 is the owner's review; step 8 report and approval next).** Branch `phase-7/launch` from `main` at 667addc
-(Phase 6 tagged `phase-6`, placeholder fix merged). Nothing pushed.
+**Phase 7 approved by the owner and merged on 2026-10-29** (PR #12, commit acc2cca, all 6 CI jobs green; tags
+`phase-7` and `v1.0`). Step 5 (owner review pages and spot-check) is still open.
 
 ## Completed
 
@@ -174,4 +174,4 @@ None. The owner will set the OpenAI monthly limit to $10 and put the key into `.
 
 ## Exact next action
 
-Run the final checks, write the A to J report, and wait for the owner's decision on the review pages (step 5) and approval. Push, PR, CI, merge and the tags `phase-7` and `v1.0` only after approval.
+Owner: review the Phase 3 and Phase 4 pages and do the 10+10 spot-check. Then decide: Phase 8, or the faster-answers experiment (about $0.12 to $0.14, needs a yes first).

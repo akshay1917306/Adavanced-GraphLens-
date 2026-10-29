@@ -12,7 +12,7 @@ approval, a merged pull request, and a `phase-N` tag.
 | 4. Local search, router, relate, citation check | [phase-4-local-search](phase-4-local-search/) | Approved, merged, tag `phase-4` |
 | 5. Product UI | [phase-5-ui](phase-5-ui/) | Approved, merged, tag `phase-5` |
 | 6. User data and hardening | [phase-6-hardening](phase-6-hardening/) | Approved, merged, tag `phase-6` |
-| 7. Evaluate and launch | [phase-7-launch](phase-7-launch/) | Plan approved, building |
+| 7. Evaluate and launch | [phase-7-launch](phase-7-launch/) | Approved, merged, tags `phase-7` and `v1.0` (owner review pages still open) |
 | 8. v1.5 | phase-8-v1-5 | Later |
 
 Each phase folder holds: `BRIEF.md` (goal and scope), `PREREQUISITES.md` (what the
