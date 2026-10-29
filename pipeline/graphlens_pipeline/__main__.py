@@ -1282,8 +1282,8 @@ def _final_eval(engine, args) -> int:
     fresh = load("phase7/fresh_unanswerable.json")
     router_questions = load("v0/questions.json") + load("v0/global_extra.json") + hard + pairs
     answerable = len(hard) + len(easy)
-    # prices checked on real calls: a local answer and its judge call $0.0039, a plain-RAG answer and
-    # its judge call $0.0017, a support check $0.001, a relate explanation $0.0008
+    # prices checked on real calls: a local answer and its judge call $0.0039, a plain-RAG answer
+    # plus its judge call $0.0017, a support check $0.001, a relate explanation $0.0008
     parts_estimate = {
         "local answers and judge": answerable * 0.0039,
         "plain RAG answers and judge": answerable * 0.0017,
