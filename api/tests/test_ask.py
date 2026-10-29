@@ -1,10 +1,13 @@
 """The ask endpoint with a fake engine: validation, refusal as 200, error shapes."""
 
+from uuid import UUID
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app import ask as ask_module
 from app import main
+from app import visitor as visitor_module
 from app.schemas import Answer, AskResponse, Citation
 
 URL = "/api/v1/ask"
@@ -30,7 +33,7 @@ class FakeStore:
         self.saved: list[tuple[str, str]] = []
         self.fail = fail
 
-    def save_answer(self, question, answer, index_version):
+    def save_answer(self, visitor_id, question, answer, index_version):
         if self.fail:
             raise RuntimeError("db down: password=hunter2")
         self.saved.append((question, index_version))
@@ -42,6 +45,9 @@ def client():
     def make(service, store=None):
         main.app.dependency_overrides[ask_module.get_ask_service] = lambda: service
         main.app.dependency_overrides[main.get_store] = lambda: store or FakeStore()
+        main.app.dependency_overrides[visitor_module.get_visitor] = lambda: UUID(
+            "00000000-0000-0000-0000-0000000000aa"
+        )
         return TestClient(main.app, raise_server_exceptions=False)
 
     yield make

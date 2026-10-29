@@ -39,6 +39,22 @@ class Settings(BaseSettings):
     # Key for the read-only status page. Empty means the status endpoint is switched off.
     admin_api_key: SecretStr = SecretStr("")
 
+    # Signs the anonymous visitor token. Empty means no token can be issued (deny by default).
+    visitor_token_secret: SecretStr = SecretStr("")
+    visitor_token_ttl_days: int = 365
+
+    # Rate limits (D53): fixed windows kept in Redis. Numbers are settings, not code.
+    rate_ask_per_min: int = 10
+    rate_ask_per_day: int = 100
+    rate_ask_ip_per_min: int = 30
+    rate_general_per_min: int = 120
+    rate_visitor_ip_per_min: int = 10
+    rate_admin_ip_per_min: int = 10
+    # Most money model calls may cost per UTC day; reaching it stops further answers.
+    daily_cost_cap_usd: float = 1.0
+    # Shared with the web server; it lets the web server tell the API the client address.
+    proxy_secret: SecretStr = SecretStr("")
+
     # The only browser origin allowed to call the API (CORS).
     web_origin: str = "http://localhost:3000"
 

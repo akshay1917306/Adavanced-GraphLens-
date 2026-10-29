@@ -1,9 +1,12 @@
 """Feedback and status endpoints with a fake store."""
 
+from uuid import UUID
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app import main
+from app import visitor as visitor_module
 from app.config import Settings
 
 ANSWER_ID = "22222222-2222-2222-2222-222222222222"
@@ -14,9 +17,12 @@ class FakeStore:
         self.known = known
         self.calls = []
 
-    def save_feedback(self, answer_id, rating, reason, comment):
+    def save_feedback(self, visitor_id, answer_id, rating, reason, comment):
         self.calls.append((str(answer_id), rating, reason, comment))
         return self.known
+
+    def audit(self, action, target=None):
+        self.calls.append(("audit", action))
 
     def status(self):
         return {"runs": [], "quality_checks": [], "answers_saved": 0, "feedback_saved": 0}
@@ -26,6 +32,9 @@ class FakeStore:
 def make(monkeypatch):
     def build(store, key=""):
         main.app.dependency_overrides[main.get_store] = lambda: store
+        main.app.dependency_overrides[visitor_module.get_visitor] = lambda: UUID(
+            "00000000-0000-0000-0000-0000000000aa"
+        )
         monkeypatch.setattr(main, "get_settings", lambda: Settings(admin_api_key=key))
         return TestClient(main.app, raise_server_exceptions=False)
 

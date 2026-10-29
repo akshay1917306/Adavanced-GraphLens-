@@ -15,3 +15,25 @@ def migrated_db() -> str:
         pytest.skip("DATABASE_URL not set")
     subprocess.run(["alembic", "upgrade", "head"], cwd=API_DIR, check=True)  # noqa: S603, S607
     return url
+
+
+class AllowAll:
+    """A limiter that never limits, so ordinary tests do not need Redis."""
+
+    def hit(self, scope, key, limit, window_seconds):
+        return None
+
+    def ensure_room(self, cap_usd):
+        return None
+
+    def record_cost(self, usd):
+        return None
+
+
+@pytest.fixture(autouse=True)
+def no_limits():
+    from app import main, ratelimit
+
+    main.app.dependency_overrides[ratelimit.get_limiter] = lambda: AllowAll()
+    yield
+    main.app.dependency_overrides.pop(ratelimit.get_limiter, None)

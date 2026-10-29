@@ -1,10 +1,13 @@
 """Replay service on the real saved file, plus the examples endpoint."""
 
+from uuid import uuid4
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app import ask as ask_module
 from app import main
+from app import visitor as visitor_module
 from app.replay import ReplayService
 from app.schemas import AskResponse
 
@@ -47,6 +50,7 @@ def test_unknown_question_gets_a_plain_refusal_not_an_invented_answer(service):
 def test_the_api_serves_replay_answers_and_the_example_list(service, monkeypatch):
     main.app.dependency_overrides[ask_module.get_ask_service] = lambda: service
     main.app.dependency_overrides[main.get_store] = lambda: _NoStore()
+    main.app.dependency_overrides[visitor_module.get_visitor] = lambda: uuid4()
     try:
         client = TestClient(main.app)
         questions = client.get("/api/v1/examples").json()["questions"]
@@ -59,5 +63,5 @@ def test_the_api_serves_replay_answers_and_the_example_list(service, monkeypatch
 
 
 class _NoStore:
-    def save_answer(self, question, answer, index_version):
+    def save_answer(self, visitor_id, question, answer, index_version):
         return "33333333-3333-3333-3333-333333333333"

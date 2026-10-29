@@ -1,5 +1,6 @@
 """Request and response shapes of the query API. See docs/phases/phase-5-ui/BRIEF.md."""
 
+from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
@@ -94,3 +95,72 @@ class FeedbackRequest(BaseModel):
 
 class FeedbackResponse(BaseModel):
     saved: bool
+
+
+ModeChoice = Literal["auto", "local", "global", "relate", "baseline"]
+ThemeChoice = Literal["system", "light", "dark"]
+
+
+class HistoryItem(BaseModel):
+    conversation_id: UUID
+    title: str | None
+    created_at: datetime
+    answer_id: UUID | None = None
+    mode: Mode | None = None
+    check_status: CheckStatus | None = None
+    refused: bool = False
+
+
+class HistoryList(BaseModel):
+    items: list[HistoryItem]
+
+
+class StoredMessage(BaseModel):
+    id: UUID
+    role: Literal["user", "assistant"]
+    content: str
+    created_at: datetime
+    mode: Mode | None = None
+    check_status: CheckStatus | None = None
+    refused: bool = False
+    rating: Literal["up", "down"] | None = None
+
+
+class ConversationDetail(BaseModel):
+    conversation_id: UUID
+    title: str | None
+    created_at: datetime
+    messages: list[StoredMessage]
+
+
+class SaveRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    answer_id: UUID
+    note: str | None = Field(default=None, max_length=500)
+
+
+class SavedItem(BaseModel):
+    answer_id: UUID
+    note: str | None
+    title: str | None
+    answer_text: str
+    saved_at: datetime
+
+
+class SavedList(BaseModel):
+    items: list[SavedItem]
+
+
+class Preferences(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    theme: ThemeChoice = "system"
+    default_mode: ModeChoice = "auto"
+    evidence_panel_open: bool = True
+
+
+class DeletedCounts(BaseModel):
+    conversations: int
+    saved_answers: int
+    ratings: int

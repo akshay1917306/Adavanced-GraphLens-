@@ -75,6 +75,14 @@ services:
       REDIS_URL: redis://redis:6379/0
       ADMIN_API_KEY: ${ADMIN_API_KEY:-}
       ANSWER_MODE: ${ANSWER_MODE:-replay}
+      VISITOR_TOKEN_SECRET: ${VISITOR_TOKEN_SECRET:-}
+      PROXY_SECRET: ${PROXY_SECRET:-}
+      RATE_ASK_PER_MIN: ${RATE_ASK_PER_MIN:-10}
+      RATE_ASK_PER_DAY: ${RATE_ASK_PER_DAY:-100}
+      RATE_ASK_IP_PER_MIN: ${RATE_ASK_IP_PER_MIN:-30}
+      RATE_GENERAL_PER_MIN: ${RATE_GENERAL_PER_MIN:-120}
+      RATE_VISITOR_IP_PER_MIN: ${RATE_VISITOR_IP_PER_MIN:-10}
+      DAILY_COST_CAP_USD: ${LLM_DAILY_COST_CAP_USD:-1.0}
       INDEX_VERSION: ${INDEX_VERSION:-idx2-full-g0}
     ports:
       - "127.0.0.1:${API_PORT:-8000}:8000"
@@ -92,6 +100,8 @@ services:
     build: ./web
     environment:
       API_URL: http://api:8000
+      COOKIE_SECURE: ${COOKIE_SECURE:-}
+      PROXY_SECRET: ${PROXY_SECRET:-}
     ports:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
     depends_on:

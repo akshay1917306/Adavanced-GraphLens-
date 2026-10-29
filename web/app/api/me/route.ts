@@ -1,0 +1,7 @@
+import { forward } from "@/lib/proxy";
+
+export const dynamic = "force-dynamic";
+
+export async function DELETE(request: Request) {
+  return forward(request, "/api/v1/me", { method: "DELETE" });
+}
