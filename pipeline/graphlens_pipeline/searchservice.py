@@ -9,11 +9,15 @@ shape (tested without any database), `SearchService` that routes a question and 
 (tested with fake backends), and `create_app` that wraps the service in HTTP.
 """
 
+import dataclasses
 import hmac
 import logging
 import re
+import threading
 import time
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import Annotated
@@ -25,10 +29,14 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from graphlens_pipeline.replayexport import KIND_OF_LABEL, _title, pick_graph
+from graphlens_pipeline.resilience import GuardedLlm, retry_reads
 
 log = logging.getLogger("graphlens.search")
 
 MAX_QUESTION_CHARS = 4000
+MAX_CONCURRENT = 4  # retrieval does about 2 to 3 questions a second, so more at once only queue
+QUEUE_WAIT_SECONDS = 5.0  # how long a request may wait for a free slot before it is told "busy"
+DEADLINE_SECONDS = 40.0  # the API gives up at 45 s
 NUMBERED = re.compile(r"\[(\d+(?:\s*,\s*\d+)*)\]")
 
 
@@ -279,13 +287,27 @@ def _error(code: str, message: str, status: int) -> JSONResponse:
     return JSONResponse(status_code=status, content={"error": {"code": code, "message": message}})
 
 
-def create_app(service_factory: Callable[[], SearchService], key: str) -> FastAPI:
-    """`service_factory` runs once at start-up (it loads the models and opens the databases)."""
+def create_app(
+    service_factory: Callable[[], SearchService],
+    key: str,
+    max_concurrent: int = MAX_CONCURRENT,
+    queue_wait: float = QUEUE_WAIT_SECONDS,
+    deadline: float = DEADLINE_SECONDS,
+) -> FastAPI:
+    """`service_factory` runs once at start-up (it loads the models and opens the databases).
+
+    At most `max_concurrent` questions run at once. A request waits up to `queue_wait` seconds for a
+    free slot and is then told "busy" (503). A question that runs longer than `deadline` seconds
+    gets 504; its slot stays taken until it really finishes, so a stuck question cannot pile up.
+    """
+    slots = threading.BoundedSemaphore(max_concurrent)
+    pool = ThreadPoolExecutor(max_workers=max_concurrent, thread_name_prefix="search")
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         app.state.service = service_factory()
         yield
+        pool.shutdown(wait=False, cancel_futures=True)
 
     app = FastAPI(
         title="GraphLens search service",
@@ -327,7 +349,20 @@ def create_app(service_factory: Callable[[], SearchService], key: str) -> FastAP
             return _error("unauthorized", "Missing or wrong key.", 401)
         if app.state.service is None:
             return _error("not_ready", "The search service is still starting.", 503)
-        reply = app.state.service.ask(body.question.strip(), body.compare)
+        if not slots.acquire(timeout=queue_wait):
+            return _error("busy", "The search service is busy. Please try again shortly.", 503)
+
+        def run():
+            try:
+                return app.state.service.ask(body.question.strip(), body.compare)
+            finally:
+                slots.release()
+
+        future = pool.submit(run)
+        try:
+            reply = future.result(timeout=deadline)
+        except FutureTimeout:
+            return _error("search_timeout", "The search took too long.", 504)
         log.info(
             "search request_id=%s mode=%s status=%s ms=%s",
             request.state.request_id,
@@ -353,6 +388,20 @@ def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index
     from graphlens_pipeline.relate import answer_relate
     from graphlens_pipeline.router import route_question
 
+    # reads are free and change nothing, so they get a short retry; the model is guarded and
+    # never retried
+    llm = GuardedLlm(llm)
+    deps = dataclasses.replace(
+        deps,
+        link=retry_reads(deps.link),
+        subgraph=retry_reads(deps.subgraph),
+        reports=retry_reads(deps.reports),
+        unit_rows=retry_reads(deps.unit_rows),
+        unit_similarity=retry_reads(deps.unit_similarity),
+        plain_hits=retry_reads(deps.plain_hits) if deps.plain_hits else None,
+    )
+
+    @retry_reads
     def unit_rows(ids):
         return postgres_unit_rows(engine, ids)
 
@@ -373,7 +422,9 @@ def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index
         return build_relate(answer, unit_rows)
 
     def global_(question):
-        selected = select_communities(driver, embedder.dense_query, question, index_version)
+        selected = retry_reads(select_communities)(
+            driver, embedder.dense_query, question, index_version
+        )
         if not selected:
             return _answer("global", "refused", message="No community report matched the question.")
         return build_global(answer_from_selection(llm, question, selected, count))

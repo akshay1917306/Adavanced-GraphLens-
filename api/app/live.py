@@ -88,6 +88,10 @@ class LiveService:
             self._breaker.record_failure()
             log.error("search service unreachable %s", type(error).__name__)
             raise EngineUnavailable("the search service cannot be reached") from error
+        if response.status_code == 504:
+            # the search service gave up on its own deadline: same message as our own time limit
+            self._breaker.record_failure()
+            raise EngineTimeout
         if response.status_code != 200:
             # 401 is a wrong shared key, 5xx a broken or still starting service: all are failures
             self._breaker.record_failure()

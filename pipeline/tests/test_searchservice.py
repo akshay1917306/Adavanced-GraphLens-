@@ -5,6 +5,7 @@ No database and no model are used.
 
 import json
 import logging
+import time
 from types import SimpleNamespace
 
 import pytest
@@ -303,3 +304,69 @@ def test_the_reply_is_valid_json_with_exactly_the_documented_answer_fields():
     with client(FakeService()) as c:
         body = json.loads(post(c, {"question": "Hi"}).text)
     assert set(body) == {"answer", "baseline", "route"} and set(body["answer"]) == ANSWER_FIELDS
+
+
+# ---------------------------------------------------------------- slots and the deadline
+
+
+class SlowService:
+    """A service whose question runs until the test lets it go."""
+
+    def __init__(self):
+        import threading
+
+        self.release = threading.Event()
+        self.started = threading.Event()
+
+    def ask(self, question, compare):
+        self.started.set()
+        self.release.wait(5)
+        return {"answer": reply("local"), "baseline": None, "route": {}}
+
+
+def test_a_question_that_runs_too_long_gets_504_and_keeps_its_slot_until_it_really_ends():
+    slow = SlowService()
+    app = create_app(lambda: slow, KEY, max_concurrent=1, queue_wait=0.1, deadline=0.2)
+    with TestClient(app, raise_server_exceptions=False) as c:
+        first = post(c, {"question": "slow one"})
+        assert first.status_code == 504 and first.json()["error"]["code"] == "search_timeout"
+        # the stuck question still holds the only slot, so the next one is told "busy" at once
+        second = post(c, {"question": "next"})
+        assert second.status_code == 503 and second.json()["error"]["code"] == "busy"
+        slow.release.set()  # the stuck question finishes; the slot is free again
+        for _ in range(50):
+            if post(c, {"question": "after"}).status_code == 200:
+                break
+            time.sleep(0.05)
+        else:
+            raise AssertionError("the slot was never released")
+
+
+def test_the_gate_lets_as_many_questions_run_at_once_as_there_are_slots():
+    import threading
+
+    active, peak, lock = 0, 0, threading.Lock()
+
+    class Counting:
+        def ask(self, question, compare):
+            nonlocal active, peak
+            with lock:
+                active += 1
+                peak = max(peak, active)
+            time.sleep(0.15)
+            with lock:
+                active -= 1
+            return {"answer": reply("local"), "baseline": None, "route": {}}
+
+    app = create_app(lambda: Counting(), KEY, max_concurrent=2, queue_wait=5, deadline=5)
+    with TestClient(app) as c:
+        results = []
+        threads = [
+            threading.Thread(target=lambda: results.append(post(c, {"question": "q"}).status_code))
+            for _ in range(6)
+        ]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+    assert results == [200] * 6 and peak <= 2

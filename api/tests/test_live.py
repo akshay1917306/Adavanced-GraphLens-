@@ -204,3 +204,20 @@ def test_the_cost_of_a_live_answer_is_in_the_response_and_the_examples_say_live(
     assert body["answer"]["cost_usd"] == 0.0035 and body["fixture"] is False
     listing = c.get("/api/v1/examples").json()
     assert listing["live"] is True and len(listing["questions"]) >= 5
+
+
+def test_a_504_from_the_search_service_is_the_same_timeout_as_our_own():
+    breaker = CircuitBreaker(failures=1)
+    live = service(
+        lambda request: httpx.Response(504, json={"error": {"code": "search_timeout"}}),
+        breaker=breaker,
+    )
+    with pytest.raises(EngineTimeout):
+        live.ask("Hi?", False)
+    assert breaker.is_open
+
+
+def test_a_busy_search_service_is_unavailable_not_a_timeout():
+    live = service(lambda request: httpx.Response(503, json={"error": {"code": "busy"}}))
+    with pytest.raises(EngineUnavailable):
+        live.ask("Hi?", False)

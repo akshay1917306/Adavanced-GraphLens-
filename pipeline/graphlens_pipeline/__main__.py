@@ -1216,7 +1216,7 @@ def _serve_search(engine, args) -> int:
         print("NEO4J_* and QDRANT_URL must be set.", file=sys.stderr)
         return 2
     try:
-        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None)
+        llm = OpenAiLlm(model=os.environ.get("LLM_MODEL_SMALL") or None, timeout=30, max_retries=1)
     except LlmError as error:
         print(f"Cannot start: {error}", file=sys.stderr)
         return 2

@@ -56,7 +56,9 @@ def cost_usd(model: str, tokens_in: int, tokens_out: int) -> float | None:
 
 
 class OpenAiLlm:
-    def __init__(self, model: str | None = None) -> None:
+    def __init__(
+        self, model: str | None = None, timeout: float | None = None, max_retries: int | None = None
+    ) -> None:
         from openai import OpenAI
 
         api_key = os.environ.get("OPENAI_API_KEY", "")
@@ -71,8 +73,8 @@ class OpenAiLlm:
         self._client = OpenAI(
             api_key=api_key,
             base_url=base_url,
-            timeout=TIMEOUT_SECONDS * (4 if base_url else 1),
-            max_retries=MAX_RETRIES,
+            timeout=timeout or TIMEOUT_SECONDS * (4 if base_url else 1),
+            max_retries=MAX_RETRIES if max_retries is None else max_retries,
         )
 
     def complete(
