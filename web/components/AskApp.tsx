@@ -29,6 +29,7 @@ export default function AskApp() {
   const [question, setQuestion] = useState("");
   const [compare, setCompare] = useState(false);
   const [examples, setExamples] = useState<string[]>([]);
+  const [live, setLive] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<AskResponse | null>(null);
@@ -38,8 +39,9 @@ export default function AskApp() {
 
   useEffect(() => {
     void (async () => {
-      const list = await call<{ questions: string[] }>("/api/examples");
+      const list = await call<{ questions: string[]; live?: boolean }>("/api/examples");
       setExamples(list.data?.questions ?? []);
+      setLive(list.data?.live === true);
       const saved = await call<Preferences>("/api/preferences");
       if (saved.ok && saved.data) {
         setPrefs(saved.data);
@@ -116,7 +118,7 @@ export default function AskApp() {
               maxLength={MAX_CHARS}
               rows={3}
               placeholder={
-                examples.length > 0
+                examples.length > 0 && !live
                   ? "Choose one of the saved examples below (only these have full answers for now)"
                   : "Ask a question about the papers"
               }
@@ -132,7 +134,7 @@ export default function AskApp() {
             </div>
             {examples.length > 0 && (
               <div className="examples">
-                <span className="muted">Saved examples:</span>
+                <span className="muted">{live ? "Try an example:" : "Saved examples:"}</span>
                 <ul>
                   {examples.map((q) => (
                     <li key={q}>

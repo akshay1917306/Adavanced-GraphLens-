@@ -75,6 +75,8 @@ services:
       REDIS_URL: redis://redis:6379/0
       ADMIN_API_KEY: ${ADMIN_API_KEY:-}
       ANSWER_MODE: ${ANSWER_MODE:-replay}
+      SEARCH_SERVICE_URL: ${SEARCH_SERVICE_URL:-http://search:8100}
+      SEARCH_SERVICE_KEY: ${SEARCH_SERVICE_KEY:-}
       VISITOR_TOKEN_SECRET: ${VISITOR_TOKEN_SECRET:-}
       PROXY_SECRET: ${PROXY_SECRET:-}
       RATE_ASK_PER_MIN: ${RATE_ASK_PER_MIN:-10}
@@ -106,6 +108,42 @@ services:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
     depends_on:
       - api
+
+  # The internal search service (CR-0004): live answers. Not published on any host port; only the
+  # API reaches it. Start the whole live stack with:
+  #   docker compose --profile live up -d --build
+  # and set ANSWER_MODE=live in .env. Needs OPENAI_API_KEY, the model names and SEARCH_SERVICE_KEY.
+  search:
+    build: ./pipeline
+    profiles: ["live"]
+    command: ["serve-search"]
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      QDRANT_URL: http://qdrant:6333
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LLM_MODEL_MAIN: ${LLM_MODEL_MAIN:-}
+      LLM_MODEL_SMALL: ${LLM_MODEL_SMALL:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      SEARCH_SERVICE_KEY: ${SEARCH_SERVICE_KEY:-}
+    volumes:
+      - ./ontology:/ontology:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8100/healthz', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
 
   # Optional local model server (no OpenAI key, no cost). Start with:
   #   docker compose --profile local-llm up -d ollama

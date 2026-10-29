@@ -1,8 +1,8 @@
 """The answer engine behind POST /api/v1/ask.
 
 The API only depends on the `AskService` protocol. Implementations: the replay service
-(saved answers, no model, no key) and, later, a live service that calls the Phase 4 search
-code. With no service configured the endpoint reports "unavailable".
+(saved answers, no model, no key) and the live service (app/live.py) that asks the internal
+search service. With no service configured the endpoint reports "unavailable".
 """
 
 from typing import Protocol
