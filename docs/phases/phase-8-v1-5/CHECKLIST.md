@@ -8,7 +8,7 @@ Mark an item only after it was run, and say where. A missed target is reported, 
       **Built and tested with fakes** (pipeline 481 tests, API 167, lint, types, build, replay path in the browser). **Not yet measured with a real model:** needs a live check (about $0.01) after the owner's yes.
 - [x] A2 shorter limit (tried, DROPPED by the owner, D74; speed rule missed): correctness, citation support, refusal and p95 measured against Phase 7 on the same questions
 - [x] A3 passage choice (variant 5 built and measured; owner keep decision pending, D75): same comparison; any download approved first
-- [ ] A4 retry on relate and plain-RAG reads; `uvicorn` declared; tests with fakes
+- [x] A4 retry on relate and plain-RAG reads; `uvicorn` declared; tests with fakes
 - [ ] Each variant kept or dropped with numbers written down; easy set and refusal set not worse
 - [ ] Hard-set correctness, gap and p95 reported against 75%, +15 and 8 s (met or still missed)
 - [ ] Part A spend within $0.60

@@ -189,6 +189,7 @@ def answer_question(
     llm: Llm,
     k: int = TOP_K,
     collection: str = LIVE_ALIAS,
+    search=None,
 ) -> AnswerResult:
     question = question.strip()
     if not question:
@@ -197,7 +198,8 @@ def answer_question(
         raise AnswerError(f"the question is longer than {MAX_QUESTION_CHARS} characters")
 
     started = time.perf_counter()
-    found = search_passages(client, engine, embedder, question, k, collection)
+    # `search` is the retrieval function; the search service passes a version that retries
+    found = (search or search_passages)(client, engine, embedder, question, k, collection)
     context, passages = build_context(found, get_encoding())
     if not passages:  # nothing retrieved: refuse without spending money on the model
         return AnswerResult(question, REFUSAL_TEXT, True, [], latency_ms=_ms(started))

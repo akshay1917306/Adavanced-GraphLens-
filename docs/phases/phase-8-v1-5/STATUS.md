@@ -111,3 +111,24 @@ review of those labels is still open). Spend: the first run's output was hidden 
 The paid answers cost $0.106 in total; with judging the A3 run is about $0.14 (estimated, not exact).
 Part A spend so far, estimated: A1 $0.009 + A2 $0.094 + A3 about $0.14 = about $0.24 of $0.60.
 Pipeline tests 481 pass (two budget tests updated to the new 60% share), ruff clean.
+
+## A4 reliability (built 2026-10-30, free)
+
+- Relate: the two graph reads (`find_paths`, `shared_communities`) now go through `retry_reads` in the
+  search service (`answer_relate(..., find=, shared=)`); plain-RAG retrieval does too
+  (`answer_question(..., search=)`). Reads only, three tries, 0.2 s then 0.6 s; the model is still never retried.
+- `uvicorn==0.54.0` is declared in `pipeline/pyproject.toml` and `uv.lock` (same version that was already
+  installed through Prefect; the lock diff is 2 lines).
+- Tests with fakes: 2 new (a dropped read is retried once and then works), pipeline 483 pass, ruff clean.
+- Not tested: a real dropped Neo4j or Qdrant connection (I did not stop the databases).
+
+## Part A summary (for the keep-or-drop gate)
+
+| Step | Result | Decision |
+|---|---|---|
+| A1 streaming | draft text after 4.4 to 7.3 s, final after 7.0 to 9.4 s (3 questions) | built, kept |
+| A2 150 words | 22 of 30, time not faster | dropped (D74) |
+| A3 passage choice | gold shown 57% to 72% (offline); hard set 23 of 30 (was 21), within noise | built; owner keeps (D75) |
+| A4 retries + uvicorn | tests with fakes | built |
+
+Part A spend, estimated: about $0.24 of the $0.60 cap.

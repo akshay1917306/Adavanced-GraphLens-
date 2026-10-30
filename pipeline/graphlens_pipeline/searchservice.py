@@ -453,11 +453,11 @@ def create_app(
 def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index_version, encoder):
     """The four modes wired to the real databases, the local embedding model and the model client.
     Everything heavy is imported here so the builders above stay light to test."""
-    from graphlens_pipeline.answer import AnswerError, answer_question
+    from graphlens_pipeline.answer import AnswerError, answer_question, search_passages
     from graphlens_pipeline.globalsearch import answer_from_selection, select_communities
     from graphlens_pipeline.localanswer import answer_local
     from graphlens_pipeline.localcontext import postgres_unit_rows
-    from graphlens_pipeline.relate import answer_relate
+    from graphlens_pipeline.relate import answer_relate, find_paths, shared_communities
     from graphlens_pipeline.router import route_question
 
     # reads are free and change nothing, so they get a short retry; the model is guarded and
@@ -489,8 +489,9 @@ def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index
 
     def relate(question):
         answer = answer_relate(
-            driver, llm, deps.index, question, predicates, index_version, unit_rows, count
-        )
+            driver, llm, deps.index, question, predicates, index_version, unit_rows, count,
+            find=retry_reads(find_paths), shared=retry_reads(shared_communities),
+        )  # fmt: skip
         return build_relate(answer, unit_rows)
 
     def global_(question):
@@ -503,7 +504,10 @@ def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index
 
     def baseline(question):
         try:
-            return build_baseline(answer_question(question, qdrant, engine, embedder, llm, k=6))
+            result = answer_question(
+                question, qdrant, engine, embedder, llm, k=6, search=retry_reads(search_passages)
+            )
+            return build_baseline(result)
         except AnswerError as error:
             return _answer(
                 "baseline", "refused", message=f"The answer could not be written ({error})."

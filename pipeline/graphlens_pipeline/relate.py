@@ -253,18 +253,21 @@ def answer_relate(
     index_version: str,
     unit_rows,
     count,
+    find=find_paths,
+    shared=shared_communities,
 ) -> RelateAnswer:
-    """The whole relate path. `unit_rows(ids) -> {id: row}` reads the passages (Postgres)."""
+    """The whole relate path. `unit_rows(ids) -> {id: row}` reads the passages (Postgres).
+    `find` and `shared` are the two graph reads; the search service passes versions that retry."""
     ends, early = link_pair(index, question)
     if early:
         return early
     a, b = ends
     result = RelateAnswer(sanitise(question).text, "answered", ends=[a.name, b.name])
-    paths = find_paths(driver, a.id, b.id, predicates, index_version)
+    paths = find(driver, a.id, b.id, predicates, index_version)
     if not paths:
         result.status = "no_path"
         result.reason = f"No path of at most {MAX_HOPS} hops joins {a.name} and {b.name}."
-        result.shared_communities = shared_communities(driver, a.id, b.id, index_version)
+        result.shared_communities = shared(driver, a.id, b.id, index_version)
         return result
     result.paths = paths
     unit_ids = sorted({u for p in paths for h in p.hops for u in h.evidence[:UNITS_PER_HOP]})
