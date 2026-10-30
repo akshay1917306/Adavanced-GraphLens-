@@ -861,7 +861,9 @@ def _local_deps(engine, driver, args, embedder=None, client=None):
         ),
         count_tokens=lambda s: len(encoder.encode(s)),
         index=index,
-        plain_hits=lambda q: [p.unit_id for p in search_passages(client, engine, embedder, q, k=6)],
+        plain_hits=lambda q: [
+            p.unit_id for p in search_passages(client, engine, embedder, q, k=10)
+        ],
     )
 
 

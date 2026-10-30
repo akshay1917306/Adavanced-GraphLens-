@@ -89,3 +89,25 @@ Variant 0 reproduces the 57% of D68, so the test measures the same thing. Varian
 gold passages with the same 8,000 tokens (so about the same cost per answer). What this does **not**
 tell: whether the answers get better. Risks to check in the paid run: fewer community reports (5% instead
 of 20%) and passages cut to 300 tokens may hide the sentence that is needed.
+
+## A3 passage choice, paid hard-set check (2026-10-29/30, owner's yes, cap $0.20)
+
+Variant 5 built into the code: plain top 10 first, passages cut at 300 tokens, passage share 60%,
+community reports 5% (`localcontext.py`, `_local_deps`). Result file: `data/eval/phase8/a3-ctx-v5.json`.
+
+| | Phase 4/7 (today) | A3 variant 5 |
+|---|---|---|
+| Correct (30 hard questions) | 21 (70%) | **23 (76.7%, interval 59 to 88%)** |
+| Question by question | | 4 better, 23 same, 3 worse |
+| Citation check | 27 verified, 3 warnings | 26 verified, 4 warnings |
+| Mean time | 5.2 to 5.8 s | 5.77 s |
+| Answer cost per question | about $0.0031 to $0.0035 | $0.0035 |
+
+The keep rule (correct at least 70%, at most 5 warnings, time not worse) is met. 76.7% is above the 75%
+target of Phase 7, but one question is 3.3 points and the intervals overlap with 70%, so this is
+**not proof** of a better system, and the hard set is the same 30 questions used to tune it (the owner's
+review of those labels is still open). Spend: the first run's output was hidden by my own output filter
+(exit code 4, a mistake of mine), so I ran the same command again; most answers came from the cache.
+The paid answers cost $0.106 in total; with judging the A3 run is about $0.14 (estimated, not exact).
+Part A spend so far, estimated: A1 $0.009 + A2 $0.094 + A3 about $0.14 = about $0.24 of $0.60.
+Pipeline tests 481 pass (two budget tests updated to the new 60% share), ruff clean.

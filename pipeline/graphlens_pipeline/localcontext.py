@@ -25,8 +25,8 @@ from graphlens_pipeline.localgraph import Subgraph, cosine
 from graphlens_pipeline.reports import _clean
 
 TOTAL_TOKENS = 8000
-SHARES = {"units": 0.45, "entities": 0.25, "reports": 0.20}  # the other 10% is reserved
-MAX_UNIT_TOKENS = 450
+SHARES = {"units": 0.60, "entities": 0.25, "reports": 0.05}  # the other 10% is reserved
+MAX_UNIT_TOKENS = 300
 MAX_UNIT_CANDIDATES = 300
 CITATION_WEIGHT = (
     0.25  # how much "cited by many entities" counts against closeness (tuned on the easy questions)
