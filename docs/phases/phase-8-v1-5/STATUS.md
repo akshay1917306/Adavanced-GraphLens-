@@ -132,3 +132,14 @@ Pipeline tests 481 pass (two budget tests updated to the new 60% share), ruff cl
 | A4 retries + uvicorn | tests with fakes | built |
 
 Part A spend, estimated: about $0.24 of the $0.60 cap.
+
+## Part A closed (2026-10-30)
+
+PR 14 squash-merged (main 00ba599, all 6 CI jobs green), tag `phase-8a`. Honest misses: A1 first-word target
+(under 2 s) missed; A3 easy set and refusal set not re-run; gap and p95 not re-measured.
+
+## Part B started (2026-10-30)
+
+Branch `phase-8b/sign-in` from main. Only documents so far: `THREATS.md` (20 threats) and `DESIGN-B.md`.
+No code, no download, no spend. Waiting for the owner's answers to the five questions at the end of
+`DESIGN-B.md`.
