@@ -22,7 +22,7 @@ from graphlens_pipeline.linking import (
     name_matches,
     sanitise,
 )
-from graphlens_pipeline.llm import Llm, LlmError, cost_usd
+from graphlens_pipeline.llm import Llm, LlmError, cost_usd, delta_kwargs
 from graphlens_pipeline.localanswer import MAX_OUTPUT_TOKENS, REFUSAL, Check, check_citations
 from graphlens_pipeline.localcontext import ContextItem, LocalContext, _safe
 from graphlens_pipeline.reports import _clean
@@ -253,25 +253,28 @@ def answer_relate(
     index_version: str,
     unit_rows,
     count,
+    find=find_paths,
+    shared=shared_communities,
 ) -> RelateAnswer:
-    """The whole relate path. `unit_rows(ids) -> {id: row}` reads the passages (Postgres)."""
+    """The whole relate path. `unit_rows(ids) -> {id: row}` reads the passages (Postgres).
+    `find` and `shared` are the two graph reads; the search service passes versions that retry."""
     ends, early = link_pair(index, question)
     if early:
         return early
     a, b = ends
     result = RelateAnswer(sanitise(question).text, "answered", ends=[a.name, b.name])
-    paths = find_paths(driver, a.id, b.id, predicates, index_version)
+    paths = find(driver, a.id, b.id, predicates, index_version)
     if not paths:
         result.status = "no_path"
         result.reason = f"No path of at most {MAX_HOPS} hops joins {a.name} and {b.name}."
-        result.shared_communities = shared_communities(driver, a.id, b.id, index_version)
+        result.shared_communities = shared(driver, a.id, b.id, index_version)
         return result
     result.paths = paths
     unit_ids = sorted({u for p in paths for h in p.hops for u in h.evidence[:UNITS_PER_HOP]})
     context = assemble_relate(result.question, ends, paths, unit_rows(unit_ids), count)
     result.context = context
     try:
-        reply = llm.complete(RELATE_SYSTEM, context.prompt, MAX_OUTPUT_TOKENS)
+        reply = llm.complete(RELATE_SYSTEM, context.prompt, MAX_OUTPUT_TOKENS, **delta_kwargs())
     except LlmError as error:
         result.status = "refused"
         result.reason = f"The path was found, but the explanation could not be written ({error})."

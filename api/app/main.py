@@ -1,6 +1,7 @@
 """GraphLens API entry point."""
 
 import hmac
+import json
 import logging
 from typing import Annotated
 from uuid import UUID
@@ -8,7 +9,7 @@ from uuid import UUID
 from fastapi import Depends, FastAPI, Header, Query, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.exc import InterfaceError, OperationalError
 from sqlalchemy.exc import TimeoutError as PoolTimeout
@@ -204,6 +205,17 @@ def ask(
 ) -> AskResponse:
     """Answer one question with its evidence. A refusal or a clarify request is a normal 200."""
     response = service.ask(body.question, body.compare)
+    return _save_and_count(body, response, visitor_id, store, limiter)
+
+
+def _save_and_count(
+    body: AskRequest,
+    response: AskResponse,
+    visitor_id: UUID,
+    store: Store,
+    limiter: Limiter,
+) -> AskResponse:
+    """After an answer exists: count its cost toward today's cap, then try to save it."""
     spent = response.answer.cost_usd + (response.baseline.cost_usd if response.baseline else 0.0)
     limiter.record_cost(spent)  # counts toward today's cap, even if saving fails below
     try:
@@ -214,6 +226,60 @@ def ask(
         log.error("could not save the answer: %s", type(error).__name__)
         return response.model_copy(update={"saved": False})
     return response.model_copy(update={"answer_id": answer_id, "saved": True})
+
+
+STREAM_ERRORS = {
+    EngineTimeout: ("engine_timeout", "The answer took too long. Please try again."),
+    EngineUnavailable: ("engine_unavailable", "The answer engine is not available right now."),
+}
+
+
+@app.post(
+    "/api/v1/ask/stream",
+    response_model=None,
+    dependencies=[Depends(ask_limits)],
+)
+def ask_stream(
+    body: AskRequest,
+    visitor_id: Annotated[UUID, Depends(current_visitor)],
+    service: Annotated[AskService, Depends(get_ask_service)],
+    store: Annotated[Store, Depends(get_store)],
+    limiter: Annotated[Limiter, Depends(get_limiter)],
+):
+    """Like /ask, but the answer text arrives while it is written. Lines of JSON:
+    `{"type":"delta","text":...}`, then `{"type":"final","response":{...}}` (the body of /ask), or
+    `{"type":"error","code":...,"message":...}`. The text of a delta is a draft: the final answer
+    is checked and may replace or refuse it. Problems before the first byte are normal HTTP errors.
+    """
+    opener = getattr(service, "open_stream", None)
+    events = opener(body.question, body.compare) if opener else None  # may raise: normal HTTP error
+
+    def line(event: dict) -> str:
+        return json.dumps(event) + "\n"
+
+    def lines():
+        try:
+            if events is None:  # replay: the whole answer is ready at once
+                final = service.ask(body.question, body.compare)
+            else:
+                final = None
+                for kind, value in events:
+                    if kind == "delta":
+                        yield line({"type": "delta", "text": value})
+                    else:
+                        final = value
+            if final is None:
+                raise EngineUnavailable("no final answer")
+        except (EngineTimeout, EngineUnavailable) as error:
+            code, message = STREAM_ERRORS[type(error)]
+            yield line({"type": "error", "code": code, "message": message})
+            return
+        finished = _save_and_count(body, final, visitor_id, store, limiter)
+        yield line({"type": "final", "response": finished.model_dump()})
+
+    return StreamingResponse(
+        lines(), media_type="application/x-ndjson", headers={"Cache-Control": "no-store"}
+    )
 
 
 @app.post("/api/v1/feedback", response_model=None)

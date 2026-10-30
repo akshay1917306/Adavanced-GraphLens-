@@ -115,12 +115,18 @@ class GuardedLlm:
         self.model = inner.model
 
     def complete(
-        self, system: str, user: str, max_output_tokens: int, json_schema: dict | None = None
+        self,
+        system: str,
+        user: str,
+        max_output_tokens: int,
+        json_schema: dict | None = None,
+        on_delta=None,
     ) -> LlmResult:
         if not self._breaker.allow():
             raise LlmError("the model is paused after repeated failures")
+        extra = {"on_delta": on_delta} if on_delta is not None else {}
         try:
-            result = self._inner.complete(system, user, max_output_tokens, json_schema)
+            result = self._inner.complete(system, user, max_output_tokens, json_schema, **extra)
         except LlmError:
             self._breaker.record_failure()
             raise

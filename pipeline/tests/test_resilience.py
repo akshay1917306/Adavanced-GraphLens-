@@ -123,3 +123,65 @@ def test_a_working_model_passes_through_and_keeps_its_name():
     guarded = GuardedLlm(FakeModel())
     assert guarded.model == "gpt-4.1-mini"
     assert guarded.complete("s", "u", 10).text == "ok"
+
+
+def test_plain_rag_retrieval_is_retried_through_the_search_argument(monkeypatch):
+    from graphlens_pipeline import answer as answer_module
+    from graphlens_pipeline.answer import Passage, answer_question
+
+    calls = []
+
+    def search(client, engine, embedder, question, k, collection):
+        calls.append(question)
+        if len(calls) == 1:
+            raise ConnectionError("qdrant dropped")
+        return [Passage(0, "u_1", "Evidence.", "1 Intro", "Paper", "2023.1", 0.5)]
+
+    class Llm:
+        model = "m"
+
+        def complete(self, system, user, max_output_tokens, **kwargs):
+            return LlmResult("Fact [1].", "m", 100, 10)
+
+    monkeypatch.setattr(answer_module.time, "sleep", lambda s: None)
+    result = answer_question(
+        "What is X?", None, None, None, Llm(), search=retry_reads(search, sleep=lambda s: None)
+    )
+    assert len(calls) == 2 and not result.refused
+
+
+def test_relate_graph_reads_are_retried_through_the_find_and_shared_arguments():
+    from graphlens_pipeline.relate import answer_relate
+
+    seen = []
+
+    def find(driver, a, b, predicates, version):
+        seen.append("find")
+        if seen.count("find") == 1:
+            raise ServiceUnavailable("neo4j dropped")
+        return []
+
+    def shared(driver, a, b, version):
+        seen.append("shared")
+        if seen.count("shared") == 1:
+            raise ServiceUnavailable("neo4j dropped")
+        return [{"title": "Topic"}]
+
+    class Index:
+        pass
+
+    import graphlens_pipeline.relate as relate_module
+
+    ends = (type("E", (), {"id": "a", "name": "A"})(), type("E", (), {"id": "b", "name": "B"})())
+    original = relate_module.link_pair
+    relate_module.link_pair = lambda index, question: (ends, None)
+    try:
+        answer = answer_relate(
+            None, None, Index(), "How is A related to B?", [], "v", lambda ids: {}, len,
+            find=retry_reads(find, sleep=lambda s: None),
+            shared=retry_reads(shared, sleep=lambda s: None),
+        )  # fmt: skip
+    finally:
+        relate_module.link_pair = original
+    assert answer.status == "no_path" and seen == ["find", "find", "shared", "shared"]
+    assert answer.shared_communities == [{"title": "Topic"}]

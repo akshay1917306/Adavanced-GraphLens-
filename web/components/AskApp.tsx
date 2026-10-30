@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { call } from "@/lib/client";
+import { askStream, call } from "@/lib/client";
 import { writeTheme } from "@/lib/theme";
 import type { AskResponse, Preferences } from "@/lib/types";
 import AnswerCard from "./AnswerCard";
@@ -33,6 +33,7 @@ export default function AskApp() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<AskResponse | null>(null);
+  const [draft, setDraft] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const [prefs, setPrefs] = useState<Preferences>(DEFAULT_PREFS);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -56,7 +57,11 @@ export default function AskApp() {
     setBusy(true);
     setError("");
     setSelected(null);
-    const res = await call<AskResponse>("/api/ask", "POST", { question: trimmed, compare });
+    setDraft("");
+    const res = await askStream<AskResponse>({ question: trimmed, compare }, (piece) =>
+      setDraft((text) => text + piece),
+    );
+    setDraft("");
     if (res.ok && res.data) {
       setResult(res.data);
       setTimeout(() => resultRef.current?.focus(), 0);
@@ -156,8 +161,17 @@ export default function AskApp() {
           </form>
 
           <div aria-live="polite" className="status-line">
-            {busy ? "Looking for an answer…" : ""}
+            {busy ? (draft ? "Writing the answer, then checking its sources…" : "Looking for an answer…") : ""}
           </div>
+          {busy && draft && (
+            <section className="card draft" aria-label="Draft answer">
+              <header className="card-head">
+                <h2>Draft</h2>
+                <span className="muted">still being checked, the final answer may differ</span>
+              </header>
+              <p className="answer">{draft}</p>
+            </section>
+          )}
           {error && (
             <p className="notice error" role="alert">
               {error}

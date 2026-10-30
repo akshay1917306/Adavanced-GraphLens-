@@ -19,7 +19,7 @@ from sqlalchemy import Engine, text
 
 from graphlens_pipeline.chunking import get_encoding
 from graphlens_pipeline.embed import LIVE_ALIAS
-from graphlens_pipeline.llm import Llm, LlmError, cost_usd
+from graphlens_pipeline.llm import Llm, LlmError, cost_usd, delta_kwargs
 
 TOP_K = 6
 PREFETCH = 20  # candidates taken from each of the dense and sparse searches before fusion
@@ -189,6 +189,7 @@ def answer_question(
     llm: Llm,
     k: int = TOP_K,
     collection: str = LIVE_ALIAS,
+    search=None,
 ) -> AnswerResult:
     question = question.strip()
     if not question:
@@ -197,14 +198,15 @@ def answer_question(
         raise AnswerError(f"the question is longer than {MAX_QUESTION_CHARS} characters")
 
     started = time.perf_counter()
-    found = search_passages(client, engine, embedder, question, k, collection)
+    # `search` is the retrieval function; the search service passes a version that retries
+    found = (search or search_passages)(client, engine, embedder, question, k, collection)
     context, passages = build_context(found, get_encoding())
     if not passages:  # nothing retrieved: refuse without spending money on the model
         return AnswerResult(question, REFUSAL_TEXT, True, [], latency_ms=_ms(started))
 
     user = f"<passages>\n{context}\n</passages>\n\n<question>\n{question}\n</question>"
     try:
-        reply = llm.complete(SYSTEM_PROMPT, user, MAX_OUTPUT_TOKENS)
+        reply = llm.complete(SYSTEM_PROMPT, user, MAX_OUTPUT_TOKENS, **delta_kwargs())
     except LlmError as error:
         raise AnswerError(str(error)) from error
 

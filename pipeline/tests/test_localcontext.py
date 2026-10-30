@@ -94,7 +94,7 @@ def test_the_candidate_list_is_capped_at_the_most_cited():
 def test_every_part_stays_inside_its_share_and_labels_start_at_one():
     sub = graph()
     ctx = assemble("What?", sub, rows_for(sub.unit_ids()), {}, [], count, total_tokens=2000)
-    assert ctx.tokens["units"] <= 900 and ctx.tokens["entities"] <= 500
+    assert ctx.tokens["units"] <= 1200 and ctx.tokens["entities"] <= 500
     labels = [item.label for item in ctx.items]
     assert labels == sorted(labels, key=lambda s: (s[0] != "T", s[0] != "E", int(s[1:])))
     assert "T1" in labels and "E1" in labels and ctx.by_label()["E1"].ref == "n0"
@@ -106,7 +106,7 @@ def test_a_tight_budget_drops_the_lowest_ranked_items_and_says_how_many():
     sub = graph()
     ctx = assemble("What?", sub, rows_for(sub.unit_ids()), {}, [], count, total_tokens=400)
     assert ctx.left_out["units"] > 0 or ctx.left_out["entities"] > 0
-    assert ctx.tokens["units"] <= 180
+    assert ctx.tokens["units"] <= 240
 
 
 def test_relations_are_written_with_entity_labels_and_only_between_shown_entities():

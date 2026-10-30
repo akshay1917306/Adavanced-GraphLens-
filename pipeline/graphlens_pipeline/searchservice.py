@@ -11,7 +11,9 @@ shape (tested without any database), `SearchService` that routes a question and 
 
 import dataclasses
 import hmac
+import json
 import logging
+import queue
 import re
 import threading
 import time
@@ -25,9 +27,10 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Header, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 
+from graphlens_pipeline.llm import reset_delta_sink, set_delta_sink
 from graphlens_pipeline.replayexport import KIND_OF_LABEL, _title, pick_graph
 from graphlens_pipeline.resilience import GuardedLlm, retry_reads
 
@@ -242,7 +245,9 @@ class SearchService:
         self._b = backends
         self._model = model
 
-    def ask(self, question: str, compare: bool) -> dict:
+    def ask(self, question: str, compare: bool, on_delta: Callable[[str], None] | None = None):
+        """`on_delta` gets the text of the main answer piece by piece while the model writes it
+        (local, relate and plain-RAG modes). The comparison answer is never streamed."""
         started = time.perf_counter()
         route = self._b.route(question)
         runners = {
@@ -251,7 +256,12 @@ class SearchService:
             "global": self._b.global_,
             "baseline": self._b.baseline,
         }
-        answer = runners[route.mode](question)
+        token = set_delta_sink(on_delta) if on_delta else None
+        try:
+            answer = runners[route.mode](question)
+        finally:
+            if token is not None:
+                reset_delta_sink(token)
         answer["cost_usd"] = round(answer["cost_usd"] + (route.cost_usd or 0.0), 6)
         answer["latency_ms"] = round((time.perf_counter() - started) * 1000)
         answer["model"] = answer["model"] or self._model
@@ -337,6 +347,68 @@ def create_app(
             return _error("not_ready", "The search service is still starting.", 503)
         return {"status": "ok"}
 
+    @app.post("/search/stream", response_model=None)
+    def search_stream(
+        body: SearchRequest,
+        request: Request,
+        x_search_key: Annotated[str | None, Header()] = None,
+        x_request_id: Annotated[str | None, Header()] = None,
+    ):
+        """Same work as /search, sent as lines of JSON: `{"type":"delta","text":...}` while the
+        model writes, then one `{"type":"final","reply":{...}}` (the same body as /search), or
+        `{"type":"error","code":...}`. Refusals before streaming starts are plain HTTP errors."""
+        request.state.request_id = (x_request_id or uuid4().hex)[:64]
+        if not key or x_search_key is None or not hmac.compare_digest(x_search_key, key):
+            return _error("unauthorized", "Missing or wrong key.", 401)
+        if app.state.service is None:
+            return _error("not_ready", "The search service is still starting.", 503)
+        if not slots.acquire(timeout=queue_wait):
+            return _error("busy", "The search service is busy. Please try again shortly.", 503)
+
+        events: queue.Queue = queue.Queue()
+
+        def run():
+            try:
+                reply = app.state.service.ask(
+                    body.question.strip(),
+                    body.compare,
+                    on_delta=lambda text: events.put({"type": "delta", "text": text}),
+                )
+                events.put({"type": "final", "reply": reply})
+            except Exception as error:  # reported by type only, never with the question
+                log.error("search stream failed %s", type(error).__name__)
+                events.put({"type": "error", "code": "search_failed"})
+            finally:
+                slots.release()
+
+        pool.submit(run)
+        request_id = request.state.request_id
+
+        def lines():
+            ends = time.monotonic() + deadline
+            while True:
+                try:
+                    event = events.get(timeout=max(0.0, ends - time.monotonic()))
+                except queue.Empty:
+                    yield json.dumps({"type": "error", "code": "search_timeout"}) + "\n"
+                    return
+                yield json.dumps(event) + "\n"
+                if event["type"] != "delta":
+                    if event["type"] == "final":
+                        answer = event["reply"]["answer"]
+                        log.info(
+                            "search request_id=%s mode=%s status=%s ms=%s streamed",
+                            request_id,
+                            answer["mode"],
+                            answer["status"],
+                            answer["latency_ms"],
+                        )
+                    return
+
+        return StreamingResponse(
+            lines(), media_type="application/x-ndjson", headers={"Cache-Control": "no-store"}
+        )
+
     @app.post("/search", response_model=None)
     def search(
         body: SearchRequest,
@@ -381,11 +453,11 @@ def create_app(
 def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index_version, encoder):
     """The four modes wired to the real databases, the local embedding model and the model client.
     Everything heavy is imported here so the builders above stay light to test."""
-    from graphlens_pipeline.answer import AnswerError, answer_question
+    from graphlens_pipeline.answer import AnswerError, answer_question, search_passages
     from graphlens_pipeline.globalsearch import answer_from_selection, select_communities
     from graphlens_pipeline.localanswer import answer_local
     from graphlens_pipeline.localcontext import postgres_unit_rows
-    from graphlens_pipeline.relate import answer_relate
+    from graphlens_pipeline.relate import answer_relate, find_paths, shared_communities
     from graphlens_pipeline.router import route_question
 
     # reads are free and change nothing, so they get a short retry; the model is guarded and
@@ -417,8 +489,9 @@ def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index
 
     def relate(question):
         answer = answer_relate(
-            driver, llm, deps.index, question, predicates, index_version, unit_rows, count
-        )
+            driver, llm, deps.index, question, predicates, index_version, unit_rows, count,
+            find=retry_reads(find_paths), shared=retry_reads(shared_communities),
+        )  # fmt: skip
         return build_relate(answer, unit_rows)
 
     def global_(question):
@@ -431,7 +504,10 @@ def real_backends(deps, llm, driver, engine, qdrant, embedder, predicates, index
 
     def baseline(question):
         try:
-            return build_baseline(answer_question(question, qdrant, engine, embedder, llm, k=6))
+            result = answer_question(
+                question, qdrant, engine, embedder, llm, k=6, search=retry_reads(search_passages)
+            )
+            return build_baseline(result)
         except AnswerError as error:
             return _answer(
                 "baseline", "refused", message=f"The answer could not be written ({error})."
