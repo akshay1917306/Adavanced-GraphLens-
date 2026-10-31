@@ -23,7 +23,14 @@ Written plainly so nobody has to discover them. Updated at the end of Phase 7.
 
 ## Security and operations
 
-- Anonymous visitors only. A stolen cookie works until it expires or the data is deleted.
+- Accounts are optional (Phase 8B). Anonymous visitors still work: a stolen anonymous cookie works until it
+  expires or the data is deleted. A stolen session cookie works until the session is ended (30 days idle, 90
+  days at most). Over plain `http` (the local default) a password and a cookie can be read by anyone on the
+  same network; there is **no HTTPS**. The email is **not verified** and nothing is sent to it. A user who
+  loses both the password and the 8 recovery codes depends on the owner, who can issue a one-time link
+  (`scripts/reset-link.sh`). There is no second factor and no outside security review: the sign-in is built
+  with the measures in docs/phases/phase-8-v1-5/THREATS.md and is not called secure. Sign-up shows that an
+  email already exists. Backups hold password hashes and emails and are not encrypted.
 - **No HTTPS, no monitoring, no alerts.** Do not expose it to the internet. No outside security review.
 - Backups are manual; Neo4j Community can only be dumped while stopped, so the site goes down for about
   a minute. Restore was tested only into an empty stack. Redis counters are not saved.

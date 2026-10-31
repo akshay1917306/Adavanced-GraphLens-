@@ -14,16 +14,19 @@ Mark an item only after it was run, and say where. A missed target is reported, 
 
 ## Part B: sign-in with password reset
 
-- [x] Threat list written before code (`THREATS.md`, `DESIGN-B.md`); owner review pending
-- [ ] Sign up, sign in, sign out, delete account; passwords hashed with argon2id, never logged
-- [ ] Recovery codes: 8 single-use codes shown once, only hashes stored; reset works once per code
-- [ ] Owner-issued reset link: works once, expires in 30 minutes, audited
-- [ ] A reset ends all sessions of that account
-- [ ] Login and reset rate limits per address and per account; generic errors; no account enumeration (tested)
-- [ ] A user never sees another user's rows (tests for every route); anonymous mode still works
-- [ ] Claiming anonymous data is opt-in and one time
-- [ ] Cookies, CSP and headers unchanged or stricter; secret scan and dependency audit green
-- [ ] Two-account check by hand in the browser
+Tests: API 198 pass (31 new in `api/tests/test_auth.py`, on a throwaway database), pipeline unchanged,
+`eslint`, `tsc`, `next build` pass. Browser check on a separate empty stack (`gltest`), not on the real data.
+
+- [x] Threat list written before code (`THREATS.md`, `DESIGN-B.md`); owner approved the defaults (D76)
+- [x] Sign up, sign in, sign out, delete account; passwords hashed with argon2id, never logged (test greps the logs for the password, codes and tokens; browser check greps the container logs: 0 hits)
+- [x] Recovery codes: 8 single-use codes shown once, only hashes stored; reset works once per code (test and browser)
+- [x] Owner-issued reset link: works once, expires in 30 minutes, audited (test; browser used the real script and page; the 30-minute expiry was tested by moving the clock in the database, not by waiting)
+- [x] A reset ends all sessions of that account (test and browser)
+- [x] Login and reset rate limits per address and per typed email; generic errors (tests; the real Redis limiter answered 429 in the browser run). **Account enumeration is NOT fully closed:** sign-up says the email exists, and the admin link route says 404
+- [x] A user never sees another user's rows (tests for history, conversation, delete, feedback, saved, preferences; browser: second account got 404 for the first account's conversation); anonymous mode still works (the 167 older tests pass)
+- [x] Claiming anonymous data is opt-in and one time (tests and browser)
+- [ ] Cookies, CSP and headers unchanged or stricter; secret scan and dependency audit green: **local gitleaks to run before the push; CI `audit` job will check the new packages (`argon2-cffi`, `cffi`, `pycparser` pinned to 3.0 because 3.12 is under two weeks old)**
+- [x] Two-account check by hand in the browser (done through the app's own page and same-origin requests; the buttons were mostly driven by script, so the look of the screens was not reviewed by a person)
 
 ## Release
 

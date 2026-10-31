@@ -138,6 +138,6 @@ pipeline, compose (including the search service profile), secret scan, dependenc
 ## Important limits (short)
 
 Full list in [docs/LIMITS.md](docs/LIMITS.md). 25 development papers only. Questions drafted by
-Claude, same-family judge, small sets. Anonymous visitors only (no sign-in). No HTTPS, no monitoring.
+Claude, same-family judge, small sets. Optional accounts (email and password, unverified email, no second factor); anonymous use still works. No HTTPS, no monitoring.
 Backups are manual and take Neo4j offline for about a minute. Two known advisories in the pipeline's
 PDF libraries are accepted for now (D59). Not production-ready.

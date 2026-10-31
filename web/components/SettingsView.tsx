@@ -66,8 +66,9 @@ export default function SettingsView({ prefs, onChange }: Props) {
 
       <h3>My data</h3>
       <p className="muted">
-        You are an anonymous visitor: there is no account. Your history, saved answers, ratings and
-        settings are linked only to a cookie in this browser.
+        Without an account you are an anonymous visitor: your history, saved answers, ratings and
+        settings are linked only to a cookie in this browser. If you signed in on the Account tab,
+        “Delete all my data” clears the data but keeps the account; delete the account itself there.
       </p>
       {confirming ? (
         <div className="row-actions">

@@ -79,6 +79,20 @@ has newer data, restoring on another operating system, a backup taken while a li
 | Port already in use | Another program uses that port. Change the `*_PORT` value in `.env`. |
 | Neo4j does not become healthy after a restore | Give it a minute; then `docker compose logs neo4j`. If it says the store is damaged, restore again from an older backup. |
 
+## Accounts (Phase 8B)
+
+Accounts are optional. When the API starts it applies the new migration `0002` to the real database
+(it adds columns and three tables; nothing is removed). **Make a backup first** (`bash scripts/backup.sh`).
+
+- **Owner reset link** for someone who lost their password and recovery codes:
+  `bash scripts/reset-link.sh person@example.com`. It needs `ADMIN_API_KEY` in `.env`, prints a link that works
+  once for 30 minutes, and never prints the key. Give the link only to that person. Without the key
+  the admin route is switched off.
+- Settings in `.env` (optional): `MAX_USERS` (default 200), `RATE_SIGNUP_IP_PER_HOUR` (default 5).
+- Delete a person's account on request: they can do it on the Account tab; there is no owner command for it.
+- Passwords and recovery codes are stored only as argon2id hashes; if the database is lost the owner
+  cannot read them, and cannot recover a password.
+
 ## Keys and spending
 
 The OpenAI key lives only in `.env` (git-ignored). Spending is limited three ways: the monthly limit
