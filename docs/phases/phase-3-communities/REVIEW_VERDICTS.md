@@ -1,5 +1,7 @@
 # Judge review: do you agree with the verdicts?
 
+> **Owner verdict check, 2026-10-31:** the owner read all 10 pairs. **Agreed with the judge on 8 of 10** (V01 to V08, global search B more useful), **disagreed on 2 of 10** (V09, V10): the baseline answer is better there because it names the paper ID of each claim, while global search names only communities (C7, C1, ...). Note that the judge picked B on comprehensiveness, diversity and empowerment in all 10 and that B is 2.5 to 5 times longer (length bias is possible). The owner's reasons are about being able to trace an answer to a paper.
+
 Answer A is the **plain-RAG baseline**, answer B is **global search** (the judge saw them
 in both orders and did not know which was which). For each question, read both
 answers and the verdicts. Reply per question with `agree`, or the criterion you
@@ -40,7 +42,7 @@ In summary, the corpus covers a variety of approaches to multi-hop reasoning, in
 | empowerment | B (global) | Answer A explains the rationale behind different approaches and highlights key insights, enabling readers to understand the strengths and challenges of various multi-hop reasoning methods. ; Answer B helps the reader understand the topic deeply by explaining different techniques, their benefits, and challenges, enabling informed judgments about multi-hop reasoning approaches. |
 | directness | tie | Answer A directly and clearly addresses how the papers approach multi-hop reasoning with specific examples and explanations, whereas Answer B is more general and less focused. ; Both answers directly address how the papers approach multi-hop reasoning, though Answer B is more elaborate, both are clear and specific in their explanations. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful, it names more approaches)
 
 ## V02: G04 What new datasets or benchmarks are introduced in the corpus?
 
@@ -81,7 +83,7 @@ Together, these datasets and benchmarks cover a wide spectrum of QA challenges, 
 | empowerment | B (global) | Answer A provides detailed descriptions and contexts for each dataset, enabling readers to understand their purposes and applications, unlike Answer B which offers limited insight. ; Answer B equips the reader with detailed knowledge about various datasets and their specific purposes, enabling informed understanding of the QA landscape, unlike Answer A which is limited to one dataset. |
 | directness | tie | Answer A directly and specifically lists multiple new datasets and benchmarks introduced in the corpus, fully addressing the question, while Answer B only partially addresses it with one example. ; Both answers directly address the question by naming new datasets and benchmarks introduced in the corpus, though Answer B is more extensive. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful, it names more datasets)
 
 ## V03: G06 Which papers address factuality, faithfulness or attribution problems of language model answers?
 
@@ -112,7 +114,7 @@ In summary, the addressed papers cover a range of approaches: improving reasonin
 | empowerment | B (global) | Answer A explains various approaches and concepts in depth, enabling readers to understand different strategies and make informed judgments, unlike B which is more cursory. ; Answer B explains various methods and evaluation strategies, helping readers understand different approaches to address the problems, whereas A is more concise and less explanatory. |
 | directness | tie | Answer A directly and specifically addresses the question by listing relevant papers and their contributions to factuality, faithfulness, and attribution, whereas B is less detailed and less explicit. ; Answer A directly names specific papers and their contributions to factuality, faithfulness, and attribution, providing a clear and focused response, while B is more elaborate and less concise. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful)
 
 ## V04: G09 How are human users or human judges involved in the studies in this corpus?
 
@@ -143,7 +145,7 @@ In summary, human users and judges are involved in this corpus through experimen
 | empowerment | B (global) | Answer A explains how human involvement impacts model improvement, evaluation quality, and benchmark creation, helping readers understand the significance of human roles in the studies, unlike Answer B which is more descriptive without deeper insights. ; Answer B explains how human roles impact QA system assessment and improvement, helping readers understand the significance of human involvement. |
 | directness | tie | Answer A directly and clearly addresses the question by detailing various ways humans are involved in the corpus studies, while Answer B is less focused and more fragmented in its response. ; Answer A directly and specifically describes how human users and judges participate in studies with concrete examples and methods. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful)
 
 ## V05: G10 Which retrieval techniques appear in the corpus papers?
 
@@ -178,7 +180,7 @@ In summary, the corpus highlights a rich variety of retrieval techniques ranging
 | empowerment | B (global) | Answer A offers detailed explanations and examples that help the reader understand different retrieval methods and their applications, enabling more informed judgments compared to the brief summary in Answer B. ; Answer B equips the reader with a deeper understanding of the retrieval landscape by explaining different techniques, their combinations, and contexts, enabling more informed judgments about retrieval methods. |
 | directness | tie | Answer A directly and specifically addresses the question by enumerating and explaining the retrieval techniques appearing in the corpus papers, while Answer B is more general and less specific. ; Answer A directly lists retrieval techniques mentioned in the corpus papers in a concise manner, whereas Answer B, though comprehensive, is more elaborate and less succinct in directly answering the question. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful)
 
 ## V06: G12 What role do data augmentation, counterfactuals or simulated data play in the corpus?
 
@@ -215,7 +217,7 @@ In summary, the corpus demonstrates a rich variety of approaches where counterfa
 | empowerment | B (global) | Answer A explains various approaches and their impacts in detail, enabling readers to understand how these techniques improve robustness and reasoning, thus better equipping them to make informed judgments. ; Answer B equips the reader with detailed examples, methods, and contexts that help understand how these techniques improve QA models and how to evaluate them, enabling informed judgments. |
 | directness | tie | Answer A directly and specifically addresses the role of data augmentation, counterfactuals, and simulated data in the corpus with clear examples and explanations, while Answer B is more general and less detailed. ; Answer A directly and succinctly addresses the role of data augmentation and counterfactuals in improving robustness and generalization, while Answer B, though comprehensive, is more elaborate and less concise. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful)
 
 ## V07: G13 How do the papers deal with long documents or evidence spread over several documents?
 
@@ -250,7 +252,7 @@ In summary, the papers employ retrieval-based frameworks, multi-hop reasoning wi
 | empowerment | B (global) | Answer A explains various techniques and their purposes in detail, helping readers understand how different methods tackle long documents and dispersed evidence, while Answer B is more general and less explanatory. ; Answer B helps the reader understand different strategies and their implications, enabling informed judgments about the strengths and limitations of various methods. |
 | directness | B (global) | Answer A directly and clearly addresses how papers deal with long documents and evidence spread over multiple documents with specific examples and methods, whereas Answer B is less specific and more general. ; Answer B directly and clearly addresses how the papers deal with long documents and multi-document evidence with specific examples and explanations, whereas Answer A is more general and less explicit. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful)
 
 ## V08: G15 Which papers build their method around a pre-trained language model or an encoder-decoder Transformer, and for what?
 
@@ -287,7 +289,7 @@ In summary, a variety of methods build on pre-trained encoder-decoder Transforme
 | empowerment | B (global) | Answer A explains how the models are used and their purposes, helping readers understand the applications and benefits of pre-trained models in QA, unlike Answer B which is more terse and less explanatory. ; Answer B explains how different models leverage pre-trained Transformers for specific purposes, helping readers understand the applications and contexts better. |
 | directness | tie | Answer A directly addresses the question by explicitly naming papers, models, and their purposes related to pre-trained language models and encoder-decoder Transformers, while Answer B is less direct and more fragmented. ; Answer A directly lists specific papers and their use of pre-trained models concisely, while B is more elaborate but less focused on directly answering the question. |
 
-**Your decision:** 
+**Your decision:** agree (owner: B more useful)
 
 ## V09: G16 Which papers handle special kinds of questions, such as temporal, numeric or conditional ones?
 
@@ -320,7 +322,7 @@ In summary, the literature covers a variety of special question types: condition
 | empowerment | B (global) | Answer A explains the approaches and datasets used for special question types, helping readers understand the scope and methods, unlike Answer B which is more cursory. ; Answer B helps the reader understand the topic by explaining various approaches, datasets, and models, enabling informed judgments about handling special question types. |
 | directness | tie | Answer A directly and clearly addresses the question by categorizing papers by question type and summarizing their contributions, while Answer B is less explicit and detailed. ; Answer A directly and succinctly lists specific papers and their focus on special question types, while Answer B is more elaborate and less concise. |
 
-**Your decision:** 
+**Your decision:** DISAGREE, baseline (A) is better: A names the paper ID, so the reader sees which paper each answer comes from, and it gives concrete answers for the conditional questions; B only names communities (C7, C1, ...)
 
 ## V10: G19 Which papers point out weaknesses of existing models, metrics or practices, and which weaknesses?
 
@@ -357,5 +359,5 @@ In summary, these papers collectively identify weaknesses in reasoning capabilit
 | empowerment | B (global) | Answer A helps the reader understand specific weaknesses and their implications, enabling informed judgments about model and metric limitations. ; Answer B helps the reader understand the weaknesses in context and implications for evaluation and model design, enabling more informed judgments, while Answer A is more descriptive without broader insights. |
 | directness | tie | Answer A directly addresses the question by explicitly listing weaknesses and linking them to specific papers and contexts. ; Answer A directly lists specific weaknesses from each paper with clear references, whereas Answer B is more general and synthesizes information, making A more directly responsive to the question. |
 
-**Your decision:** 
+**Your decision:** DISAGREE, baseline (A) is better: A names the paper ID, so each weakness can be traced to a paper at once; B lists more weaknesses but without paper IDs
 

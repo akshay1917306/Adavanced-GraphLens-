@@ -17,3 +17,4 @@ Ideas that are outside the current phase. Nothing here is approved.
 - Add `--replace` to ingest so a changed chunker does not need hand-written SQL (done by hand again for CR-0003).
 - Bigger corpus (100 to 250 papers) and an `add-papers` incremental command; pypdf upgrade with re-extraction (D59, D71, D72). Dropped from v1.5 because the OpenAI limit cannot be raised; needs a new estimate and approval.
 - Email sending for password reset or magic links (costs money); recovery codes are used instead (D70).
+- Global search answers cite communities ([C7]) but not papers. The owner's review (Phase 3 verdicts V09, V10, 2026-10-31) found that naming the paper ID of each claim makes answers easier to trust. Idea: add the papers behind each cited community to the answer. Nothing approved.
