@@ -65,3 +65,7 @@ ratings and verdict check to the checklist.
 - The network to PyPI, GitHub and OpenAI drops now and then; finished work is cached, so run the
   same command again.
 - `global-eval` prints only the cost of the run it just did; the totals are in this file.
+
+## Owner review, 2026-10-31
+
+Community coherence: the owner rated **4 to all 20 communities** (one blanket mark, no comments), average 4.0 against the bar of 3.5. Judge verdicts (10 items) are still open.

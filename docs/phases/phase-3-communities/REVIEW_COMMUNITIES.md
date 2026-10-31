@@ -1,5 +1,7 @@
 # Community review: coherence
 
+> **Owner rating, 2026-10-31:** the owner read the file and gave **4 to all 20 communities** (one blanket mark, no per-community comments). Average 4.0, above the proposed bar of 3.5. A blanket mark cannot show which communities are weak; it only says the owner found none clearly wrong.
+
 For each community below, read the title, the summary and the member list, then give a
 **coherence rating from 1 to 5**: 5 = the members clearly belong together and the
 title and summary describe them well; 3 = partly; 1 = the members are unrelated or the
@@ -17,7 +19,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - YONO model unifies retrieval, reranking, and reading in a single trainable architecture.
   - KG-FiD enhances Fusion-in-Decoder by integrating knowledge graphs and graph neural networks.
   - Retriever-reader frameworks are foundational in ODQA, benefiting from verbalized knowledge and dense retrieval.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K02: WikiHowQA: Benchmark for Multi-Document Non-Factoid QA
 
@@ -29,7 +31,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - The benchmark employs multiple baseline models including DPR combined with BART and GPT-3 variants.
   - An information-augmented human evaluation framework improves annotation reliability.
   - Novel N-Gram Percentage metric and other quality metrics characterize dataset difficulty and quality.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K03: SQUIRE Framework and Multi-hop Reasoning in Knowledge Graphs
 
@@ -41,7 +43,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Transformer encoders are central to SQUIRE's contextualized representation generation.
   - SQUIRE outperforms previous reinforcement learning methods in multi-hop reasoning tasks.
   - Rule-enhanced learning in SQUIRE improves interpretability and robustness to noisy data.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K04: Cross-Lingual Attribution in Multilingual Question Answering Systems
 
@@ -53,7 +55,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - PaLM 2 is a large language model fine-tuned for attribution detection in cross-lingual QA.
   - CORA integrates multilingual retrieval and generation models for attributed QA.
   - Fine-tuned mT5 models improve multilingual attribution detection using NLI datasets.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K05: QA Frameworks and Methods for Snippet Decontextualization
 
@@ -65,7 +67,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Large language models are integral to various QA and decontextualization methods.
   - Decontextualization involves rewriting snippets to be context-independent while preserving meaning.
   - Sequence-based semantic parsing models enhance decontextualization and QA tasks.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K06: RGF Method for Counterfactual Data Augmentation in QA
 
@@ -77,7 +79,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - RGF uses multiple methods including REALM-Qgen and sequence-to-sequence question generation.
   - RGF enhances local consistency and robustness of QA models.
   - RGF addresses semantic diversity including directionality and fluency in generated data.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K07: QA-Based Framework for Decontextualizing Scientific Snippets
 
@@ -89,7 +91,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - QADECONTEXT outperforms end-to-end prompting strategies in snippet rewriting.
   - The framework uses both closed-source and open-source large language models for various components.
   - Datasets like QASPER and S2ORC provide domain-specific data for training and evaluation.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K08: Evaluation Methods for Long-Form Question Answering
 
@@ -101,7 +103,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Multiple evaluation aspects assess the quality of LFQA answers.
   - Human and expert judgments are crucial for evaluating LFQA answers.
   - String-matching metrics like ROUGE are used but have limitations.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K09: Authors Affiliated with Zhejiang University's Computer Science College
 
@@ -110,7 +112,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
 - **Members (most connected first):** College of Computer Science and Technology, Zhejiang University (Organization); Weiming Lu (Author); Xiaoxia Cheng (Author); Yechun Tang (Author)
 - **Findings:**
   - All three authors are affiliated with the same academic institution.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K10: Temporal Question Answering Methods and Dataset
 
@@ -122,7 +124,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - TEQUILA uses hand-crafted rules to decompose complex temporal relations in KGQA.
   - AQQU and QUINT are general KGQA methods evaluated on TempQuestions.
   - Incorporating TEQUILA improves AQQU and QUINT performance on TempQuestions.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K11: Explainable Multi-Hop QA Systems and Approaches
 
@@ -134,7 +136,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Some papers explore explainable multi-hop QA without rationale annotations.
   - Multi-task loss functions are applied for supervised explainable multi-hop QA.
   - Specialized network architectures are designed for supervised explainable multi-hop QA.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K12: Semantic Framework for Temporal Question Answering over Knowledge Graphs
 
@@ -146,7 +148,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - SF-TCons is a semantic framework modeling temporal constraints in KGQA.
   - Interpretation structures SEQUENT, PARTOF, and SAME ENTITY represent temporal relations.
   - SF-TQA uses entity linking (ELQ) and knowledge graphs for answering questions.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K13: SQUIRE Framework for Multi-hop Knowledge Graph Reasoning
 
@@ -158,7 +160,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Transformer encoder computes contextualized representations for queries and paths.
   - No-constraint generation allows flexible path sequence generation.
   - Self-consistency improves decoding of target entities.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K14: Tsinghua University AI Researchers and Affiliations
 
@@ -170,7 +172,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - All authors are affiliated with Beijing National Research Center for Information Science and Technology.
   - Authors are also affiliated with Tsinghua University's Department of Automation.
   - Institute for Artificial Intelligence at Tsinghua University is a key affiliation.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K15: Adaptive Mutual Knowledge Distillation for Long-Tailed QA
 
@@ -182,7 +184,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Adaptive mutual knowledge distillation improves model training by selective knowledge transfer.
   - The retrieve-then-rerank framework jointly trained with QA models enhances performance.
   - R2 model gradually outperforms R1 during training and improves over baseline retrievers.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K16: ReasoningLM: Subgraph Reasoning in Pre-trained Language Models
 
@@ -194,7 +196,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - An adaptation tuning strategy is proposed to adapt PLM parameters for subgraph reasoning.
   - Large language models such as ChatGPT are used for automatic data construction and question synthesis.
   - The paper evaluates ReasoningLM on datasets like MQA-1H and Wikidata2.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K17: Data-to-Text Generation and Structured Data in ODQA
 
@@ -206,7 +208,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Oguz et al. (2020) utilize multiple structured data sources for ODQA.
   - Li et al. (2020) propose a hybrid framework combining text and tables.
   - Tables serve as a primary structured data format in this community.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K18: Knowledge Graph Embedding Models and Wikidata5M Dataset
 
@@ -218,7 +220,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - Traditional KGE models scale linearly with the number of entities and have limited versatility.
   - DKRL uses compositional embeddings combining word embeddings and CNN encoders to improve scalability.
   - KEPLER employs a Transformer-based encoder combining KGE training with masked language modeling to enhance scalability.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K19: Large Language Models Evaluated on Multi-hop KGQA Datasets
 
@@ -230,7 +232,7 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - MQA-2H is a multi-hop dataset used for evaluating KGQA systems.
   - MQA-3H is another multi-hop dataset for KGQA evaluation.
   - LLMs are evaluated on both MQA-2H and MQA-3H datasets.
-- **Your rating (1 to 5):** 
+- **Your rating (1 to 5):** 4
 
 ## K20: KGT5: Seq2Seq Transformer for Knowledge Graph Link Prediction and QA
 
@@ -242,5 +244,4 @@ on low ratings help. (Proposed bar: an average of at least 3.5.)
   - KGT5 is evaluated on multiple benchmark datasets including Freebase, ComplexWebQuestions, MetaQA, WN18RR, and YAGO3-10.
   - KGT5 improves upon conventional knowledge graph embedding models by sampling sequences instead of scoring entities.
   - Training uses only natural language question and answer entity pairs without ground truth queries.
-- **Your rating (1 to 5):** 
-
+- **Your rating (1 to 5):** 4
