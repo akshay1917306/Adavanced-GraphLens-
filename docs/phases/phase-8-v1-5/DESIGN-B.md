@@ -61,9 +61,9 @@ without codes and owner help a lost password cannot be recovered.
 
 | Setting | Default |
 |---|---|
-| Password length | 10 to 128; refused if on the bundled list of about 500 common passwords, or equal to the email |
+| Password length | 10 to 128; refused if on the bundled list of about 100 common passwords, or equal to the email or its first part, or with fewer than 4 different characters |
 | Argon2id | memory 19 MiB, 2 passes, 1 lane (OWASP minimum for argon2id); at most 2 hashes at once |
-| Sign-in | 10 per 15 min per address; 10 failures in a row lock the account for 15 min (delay grows 1, 2, 4, 8 s) |
+| Sign-in | 10 tries per 15 min per address and 10 per 15 min per typed email (known or not); no lock flag and no sleep delay, so unknown emails cannot be told apart |
 | Reset (code or link) | 10 tries per hour per address and per account |
 | Sign-up | 5 per hour per address; total users capped at 200 |
 | Session | idle 30 days, absolute 90 days |

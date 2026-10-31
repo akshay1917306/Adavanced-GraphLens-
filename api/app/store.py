@@ -190,7 +190,17 @@ class Store:
                 ),
                 {"v": visitor_id},
             ).mappings().one()  # fmt: skip
-            conn.execute(text("DELETE FROM visitors WHERE id = :v"), {"v": visitor_id})
+            signed_in = conn.execute(
+                text("SELECT user_id FROM visitors WHERE id = :v"), {"v": visitor_id}
+            ).scalar()
+            if signed_in is None:
+                conn.execute(text("DELETE FROM visitors WHERE id = :v"), {"v": visitor_id})
+            else:  # the home visitor of an account stays; only its data goes
+                for table in ("conversations", "saved_answers", "feedback", "preferences"):
+                    conn.execute(
+                        text(f"DELETE FROM {table} WHERE visitor_id = :v"),  # noqa: S608
+                        {"v": visitor_id},
+                    )
         return dict(counts)
 
     def _owns_answer(self, conn, visitor_id: UUID, answer_id: UUID) -> bool:
