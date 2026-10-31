@@ -24,6 +24,7 @@ BLUEPRINT_TABLES = {
     "feedback", "saved_answers", "admin_audit_log",
     "eval_sets", "eval_questions", "eval_runs", "eval_results",
 }  # fmt: skip
+ACCOUNT_TABLES = {"sessions", "recovery_codes", "reset_tokens"}  # added by 0002 (Phase 8)
 
 
 def alembic(*args: str) -> None:
@@ -42,7 +43,10 @@ def table_names() -> set[str]:
 def test_upgrade_creates_all_tables_and_downgrade_removes_them():
     alembic("downgrade", "base")
     alembic("upgrade", "head")
+    assert table_names() == BLUEPRINT_TABLES | ACCOUNT_TABLES
+    alembic("downgrade", "0001")  # the accounts step alone can be undone
     assert table_names() == BLUEPRINT_TABLES
+    alembic("upgrade", "head")
     alembic("downgrade", "base")
     assert table_names() == set()
     alembic("upgrade", "head")  # leave the database migrated for later tests

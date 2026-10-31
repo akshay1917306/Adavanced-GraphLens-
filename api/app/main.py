@@ -15,6 +15,7 @@ from sqlalchemy.exc import InterfaceError, OperationalError
 from sqlalchemy.exc import TimeoutError as PoolTimeout
 
 from app.ask import AskService, EngineUnavailable, get_ask_service, set_ask_service
+from app.auth import router as auth_router
 from app.config import get_settings
 from app.hardening import configure_logging, hardening
 from app.health import run_checks
@@ -79,6 +80,7 @@ app.add_middleware(
 
 
 app.middleware("http")(hardening)  # added after CORS, so it wraps it
+app.include_router(auth_router)
 
 
 def _error(code: str, message: str, http_status: int) -> JSONResponse:

@@ -526,3 +526,33 @@ details.panel summary {
 details.panel summary h2 {
   display: inline;
 }
+
+/* Sign-in (Phase 8, Part B) */
+.field {
+  display: grid;
+  gap: 0.25rem;
+  max-width: 24rem;
+}
+
+input[type="email"],
+input[type="password"] {
+  font: inherit;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border, currentColor);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+
+.codes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+.codes code {
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+}

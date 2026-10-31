@@ -8,18 +8,20 @@ import AnswerCard from "./AnswerCard";
 import EvidencePanel from "./EvidencePanel";
 import HistoryView from "./HistoryView";
 import SavedView from "./SavedView";
+import AccountView from "./AccountView";
 import SettingsView from "./SettingsView";
 import ThemeToggle from "./ThemeToggle";
 
 const MAX_CHARS = 4000;
 
-type View = "ask" | "history" | "saved" | "settings";
+type View = "ask" | "history" | "saved" | "settings" | "account";
 
 const VIEWS: { id: View; label: string }[] = [
   { id: "ask", label: "Ask" },
   { id: "history", label: "My questions" },
   { id: "saved", label: "Saved" },
   { id: "settings", label: "Settings" },
+  { id: "account", label: "Account" },
 ];
 
 const DEFAULT_PREFS: Preferences = { theme: "system", default_mode: "auto", evidence_panel_open: true };
@@ -111,6 +113,7 @@ export default function AskApp() {
       {view === "history" && <HistoryView onAskAgain={askAgain} />}
       {view === "saved" && <SavedView />}
       {view === "settings" && <SettingsView prefs={prefs} onChange={setPrefs} />}
+      {view === "account" && <AccountView />}
 
       {view === "ask" && (
         <>

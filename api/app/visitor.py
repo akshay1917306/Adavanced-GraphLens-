@@ -1,4 +1,4 @@
-"""Anonymous visitors with signed tokens (no sign-in; see D11, D51).
+"""Anonymous visitors with signed tokens, and signed-in sessions that resolve to a visitor.
 
 A token is `v1.<visitor id>.<expiry>.<HMAC>`. Only the API can make one, so a visitor id that
 someone copies or guesses is useless without the signature. A missing, forged, expired or
@@ -13,6 +13,7 @@ from uuid import UUID
 
 from fastapi import Depends, Header
 
+from app.accounts import Accounts, get_accounts
 from app.config import get_settings
 from app.store import Store, get_store
 
@@ -68,9 +69,16 @@ def signing_secret() -> str:
 
 def get_visitor(
     store: Annotated[Store, Depends(get_store)],
+    accounts: Annotated[Accounts, Depends(get_accounts)],
     x_visitor_token: Annotated[str | None, Header()] = None,
 ) -> UUID:
-    """The visitor of this request. Deny by default."""
+    """The visitor of this request. Deny by default. A signed-in session resolves to the
+    account's home visitor, so every route treats it like any other visitor."""
+    if (x_visitor_token or "").startswith("s1."):
+        user = accounts.resolve_session(x_visitor_token or "")
+        if user is None:
+            raise VisitorRequired
+        return user.home_visitor_id
     secret = get_settings().visitor_token_secret.get_secret_value()
     visitor_id = verify_token(x_visitor_token or "", secret)
     if visitor_id is None or not store.visitor_exists(visitor_id):

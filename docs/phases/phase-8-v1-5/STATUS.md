@@ -132,3 +132,30 @@ Pipeline tests 481 pass (two budget tests updated to the new 60% share), ruff cl
 | A4 retries + uvicorn | tests with fakes | built |
 
 Part A spend, estimated: about $0.24 of the $0.60 cap.
+
+## Part A closed (2026-10-30)
+
+PR 14 squash-merged (main 00ba599, all 6 CI jobs green), tag `phase-8a`. Honest misses: A1 first-word target
+(under 2 s) missed; A3 easy set and refusal set not re-run; gap and p95 not re-measured.
+
+## Part B started (2026-10-30)
+
+Branch `phase-8b/sign-in` from main. Only documents so far: `THREATS.md` (20 threats) and `DESIGN-B.md`.
+No code, no download, no spend. Waiting for the owner's answers to the five questions at the end of
+`DESIGN-B.md`.
+
+## Part B built (2026-10-31)
+
+Branch `phase-8b/sign-in`. Spend $0. Download approved by the owner: `argon2-cffi` 25.1.0 (14 KB) with
+`argon2-cffi-bindings` 26.1.0 (26 KB), plus `cffi` 2.1.1 (213 KB) and `pycparser` 3.0, which come with it.
+I told the owner only about the first two; **the other two were a surprise of the lock file** (both small,
+MIT-0 and BSD-3).
+
+- Migration `0002` (columns on `users`; tables `sessions`, `recovery_codes`, `reset_tokens`); reversible, tested up, down to 0001 and down to base.
+- API: `/api/v1/auth/{signup,login,logout,logout-all,me,recovery-codes,reset,reset-with-link,claim,account}` and `/api/v1/admin/reset-link`.
+- An account owns one home visitor, so no data route changed. `DELETE /me` on a signed-in user clears the data but keeps the account.
+- Web: Account tab (sign in, sign up, recovery codes screen with a "saved" tick, forgot password, account page), `/reset` page for the owner link (token in the URL fragment, removed from the address bar), session in an HttpOnly cookie that the page never sees, `Origin` check on changing requests.
+- `scripts/reset-link.sh`, settings `MAX_USERS` and `RATE_SIGNUP_IP_PER_HOUR`, RUNBOOK and LIMITS updated.
+- Bugs found by my own testing and fixed: a wrong password on "delete account" signed the user out and a later delete silently answered success (fixed: only a successful action or a plain sign-out removes the cookie); test cleanup left rows behind.
+- **The real database has NOT been migrated.** It migrates by itself the next time the API starts; back up first (RUNBOOK).
+- Not done / not verified: HTTPS; outside review; email checks; a person looking at the screens (small width, dark theme, keyboard use); a real browser test of `Secure` cookies; behaviour with many accounts; password-strength list is only about 100 entries.
