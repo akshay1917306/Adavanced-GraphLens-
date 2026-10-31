@@ -52,7 +52,7 @@ Mark an item only after it was run, and say where it was run. A missed target is
 
 ## Owner review
 
-- [ ] Phase 3 community ratings and judge verdicts reviewed (**community ratings done 2026-10-31: 4 to all 20, average 4.0, bar 3.5 met; judge verdicts still open**)
+- [ ] Phase 3 community ratings and judge verdicts reviewed (**done 2026-10-31: community ratings 4 to all 20, average 4.0, bar 3.5 met; judge verdicts: agreed on 8 of 10, disagreed on V09 and V10 because global answers name no paper IDs**)
 - [ ] Phase 4 review pages reviewed
 - [ ] Spot-check of 10 citations and 10 judge verdicts done
 
