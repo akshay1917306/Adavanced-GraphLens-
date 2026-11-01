@@ -54,7 +54,7 @@ Mark an item only after it was run, and say where it was run. A missed target is
 
 - [ ] Phase 3 community ratings and judge verdicts reviewed (**done 2026-10-31: community ratings 4 to all 20, average 4.0, bar 3.5 met; judge verdicts: agreed on 8 of 10, disagreed on V09 and V10 because global answers name no paper IDs**)
 - [ ] Phase 4 review pages reviewed (**2026-11-01: unanswerable 10 of 10 OK by the owner after a search of the papers; relate R01 to R05 OK by the owner, R06 to R20 screened by Claude and accepted; hard questions 30 of 30 screened by Claude and accepted. Not an independent human check of R06 to R20 and of the 30 hard questions**)
-- [ ] Spot-check of 10 citations and 10 judge verdicts done
+- [x] Spot-check of 10 citations and 10 judge verdicts done (**2026-11-01, `REVIEW_SPOTCHECK.md`: judge agreed on 10 of 10; citations 8 support, 1 partly, 1 no support; one wrong number (C06) that the automatic citation check had marked verified**)
 
 ## Operations and release
 
