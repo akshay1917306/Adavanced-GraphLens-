@@ -96,3 +96,7 @@ Fill CHECKLIST, write WALKTHROUGH, update README and DECISIONS (D35-D40), look a
   PowerShell for `docker compose run -v ...` commands and write long scripts to a file first.
 - The network to PyPI, GitHub and OpenAI drops now and then; finished work is cached, so run the
   same command again.
+
+## Owner review, 2026-11-01
+
+Unanswerable (10): all OK by the owner, after a text search showed the named models and benchmarks are not in the papers. Relate pairs (20): R01 to R05 OK by the owner; R06 to R20 screened by Claude (R15 to R20 flagged as weak links) and accepted by the owner. Hard questions (30): screened by Claude (48 of 48 quotes found word for word; numbers consistent) and accepted by the owner. The owner said they do not know these topics, so R06 to R20 and the 30 hard questions are **not an independent human check**. Nothing was changed or dropped.
